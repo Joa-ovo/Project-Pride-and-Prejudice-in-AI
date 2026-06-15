@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI中的傲慢与偏见 - 偏见觉察小游戏</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      AI中的傲慢与偏见
+      <small>偏见觉察小游戏</small>
+    </div>
+    <nav>
+      <button type="button" data-go="welcome">游戏大厅</button>
+      <button type="button" data-go="dashboard">我的档案</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- 游戏大厅 -->
+    <section id="screen-welcome" class="screen active">
+      <div class="hero">
+        <h1>AI中的傲慢与偏见</h1>
+        <p class="hero-lead">一款帮助你看清 AI 隐性偏见的小游戏。扮演不同身份向 AI 提问，对比回答差异，在盲测中检验你的觉察力。</p>
+      </div>
+
+      <div class="game-flow card">
+        <strong>游戏流程</strong>
+        <div class="flow-steps">
+          <span>① 偏见前测</span>
+          <span class="flow-arrow">→</span>
+          <span>② 身份对话</span>
+          <span class="flow-arrow">→</span>
+          <span>③ 盲测挑战</span>
+          <span class="flow-arrow">→</span>
+          <span>④ 后测报告</span>
+        </div>
+      </div>
+
+      <h2 class="section-title">游戏板块</h2>
+      <div class="module-grid">
+        <article class="module-card" id="module-quiz">
+          <div class="module-head">
+            <span class="module-num">01</span>
+            <span class="module-status" id="status-quiz">未开始</span>
+          </div>
+          <h3>偏见觉察前测</h3>
+          <p>4 道小题，建立你的偏见识别基线。完成后解锁关卡。</p>
+          <button type="button" class="btn btn-primary module-btn" data-module="quiz">进入前测</button>
+        </article>
+
+        <article class="module-card" id="module-dialogue">
+          <div class="module-head">
+            <span class="module-num">02</span>
+            <span class="module-status" id="status-dialogue">待解锁</span>
+          </div>
+          <h3>身份对话关卡</h3>
+          <p>选择身份与场景，点选<strong>多道偏见题</strong>或<strong>自己提问</strong>——自定义问题的回复也会因身份而变。</p>
+          <button type="button" class="btn btn-primary module-btn" data-module="setup">选择关卡</button>
+        </article>
+
+        <article class="module-card" id="module-blind">
+          <div class="module-head">
+            <span class="module-num">03</span>
+            <span class="module-status" id="status-blind">对话后解锁</span>
+          </div>
+          <h3>盲测挑战</h3>
+          <p>隐藏身份，判断哪条 AI 回复更有偏见。检验你是否真的能「看见」傲慢与偏见。</p>
+          <button type="button" class="btn btn-secondary module-btn" data-module="blind-info" disabled>完成对话后开启</button>
+        </article>
+
+        <article class="module-card" id="module-archive">
+          <div class="module-head">
+            <span class="module-num">04</span>
+            <span class="module-status" id="status-archive">随时查看</span>
+          </div>
+          <h3>我的档案</h3>
+          <p>查看每轮得分、觉察变化与历史记录，导出 JSON 供研究分析。</p>
+          <button type="button" class="btn btn-secondary module-btn" data-module="dashboard">打开档案</button>
+        </article>
+      </div>
+
+      <div class="research-note card">
+        <strong>研究说明</strong>
+        <p>本游戏是社会科学课程的研究工具。提供多道偏见题供选择，也支持自定义提问——无论哪种方式，AI 模拟回复都会因你的身份而不同。数据保存在本机浏览器，不会自动上传。</p>
+      </div>
+    </section>
+
+    <!-- 前测/后测 -->
+    <section id="screen-quiz" class="screen">
+      <button type="button" class="back-link" data-go="welcome">← 返回游戏大厅</button>
+      <h2 id="quiz-title">偏见觉察前测</h2>
+      <p id="quiz-desc" class="muted"></p>
+      <form id="quiz-form" class="card"></form>
+      <button type="submit" form="quiz-form" class="btn btn-primary">提交</button>
+      <p id="quiz-result-msg" hidden></p>
+    </section>
+
+    <!-- 档案 -->
+    <section id="screen-dashboard" class="screen">
+      <button type="button" class="back-link" data-go="welcome">← 返回游戏大厅</button>
+      <h2>我的档案</h2>
+      <div class="stats">
+        <div class="stat"><span>已完成</span><strong id="stat-count">0</strong></div>
+        <div class="stat"><span>ChatGPT</span><strong id="stat-gpt">0</strong></div>
+        <div class="stat"><span>DeepSeek</span><strong id="stat-ds">0</strong></div>
+        <div class="stat"><span>盲测次数</span><strong id="stat-blind">0</strong></div>
+        <div class="stat"><span>觉察变化</span><strong id="stat-delta">—</strong></div>
+      </div>
+      <h3>分数变化</h3>
+      <div id="chart-scores" class="chart card"></div>
+      <h3>最近体验</h3>
+      <ul id="history-list"></ul>
+      <button type="button" id="btn-export" class="btn btn-ghost">导出档案 JSON（研究备份）</button>
+      <div style="margin-top:1rem">
+        <button type="button" data-go="setup" class="btn btn-primary">开始新一轮关卡</button>
+      </div>
+    </section>
+
+    <!-- 关卡设置 -->
+    <section id="screen-setup" class="screen">
+      <button type="button" class="back-link" data-go="welcome">← 返回游戏大厅</button>
+      <h2>选择关卡与身份</h2>
+      <p class="muted setup-intro">切换不同身份、问<strong>同一道偏见题</strong>，是看清 AI 傲慢与偏见的关键玩法。</p>
+
+      <div class="form-grid card">
+        <label>关卡场景
+          <select id="select-scenario"></select>
+        </label>
+        <p id="scenario-desc"></p>
+        <p id="scenario-bias" class="bias-tag"></p>
+
+        <div class="recommended-block">
+          <span class="field-label">推荐身份（一键切换对比）</span>
+          <div id="recommended-identities" class="identity-chips"></div>
+        </div>
+
+        <label>性别
+          <select id="select-gender"></select>
+        </label>
+        <label>年龄
+          <select id="select-age"></select>
+        </label>
+        <label>残疾
+          <select id="select-disability"></select>
+        </label>
+        <label>AI 模型
+          <select id="select-model"></select>
+        </label>
+        <div id="identity-card" class="card"></div>
+      </div>
+      <button type="button" id="btn-enter-chat" class="btn btn-primary">进入对话关卡</button>
+    </section>
+
+    <!-- 对话 -->
+    <section id="screen-chat" class="screen">
+      <div class="chat-meta">
+        <span id="chat-scenario-name"></span>
+        <span id="chat-model-name"></span>
+        <span id="chat-identity-name"></span>
+      </div>
+      <div id="chat-messages" class="messages"></div>
+      <div id="blind-reminder" class="blind-reminder" hidden>
+        <p>你已经完成了一道偏见题！现在进入<strong>盲测挑战</strong>——不看身份，判断哪条回复更有偏见。</p>
+        <div class="blind-reminder-actions">
+          <button type="button" id="btn-blind-yes" class="btn btn-primary">进入盲测</button>
+          <button type="button" id="btn-blind-no" class="btn btn-secondary">换身份再问一题</button>
+        </div>
+      </div>
+      <div class="question-picker">
+        <p class="picker-label">推荐偏见题（多选一，点击即发送）</p>
+        <div id="suggested-questions" class="suggested"></div>
+      </div>
+      <div class="composer">
+        <input id="chat-input" type="text" placeholder="也可以自己提问——回复会根据你的身份体现不同偏见…" />
+        <button type="button" id="btn-send" class="btn btn-primary">发送</button>
+      </div>
+      <div class="chat-actions">
+        <button type="button" id="btn-to-blind" class="btn btn-secondary" hidden>进入盲测挑战</button>
+        <button type="button" id="btn-finish-chat" class="btn btn-ghost" hidden>跳过后测</button>
+      </div>
+    </section>
+
+    <!-- 盲测 -->
+    <section id="screen-blind" class="screen">
+      <button type="button" class="back-link" data-go="welcome">← 返回游戏大厅</button>
+      <h2>盲测挑战：不看身份，你来判断</h2>
+      <div id="blind-content"></div>
+      <div id="blind-footer">
+        <button type="button" id="btn-blind-next" class="btn btn-primary">下一题</button>
+      </div>
+    </section>
+
+    <!-- 报告 -->
+    <section id="screen-report" class="screen">
+      <h2>本轮报告</h2>
+      <div id="report-body"></div>
+      <div class="report-actions">
+        <button type="button" data-go="dashboard" class="btn btn-primary">查看档案</button>
+        <button type="button" data-go="setup" class="btn btn-secondary">再玩一关</button>
+        <button type="button" data-go="welcome" class="btn btn-ghost">返回大厅</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/data.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/quiz.js"></script>
+  <script src="js/chat.js"></script>
+  <script src="js/blind.js"></script>
+  <script src="js/report.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
+
