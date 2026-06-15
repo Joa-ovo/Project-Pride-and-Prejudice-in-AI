@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI中的傲慢与偏见 · 项目介绍</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #5c5c5c;
+      --border: #e8e8e8;
+      --accent: #2d5a8e;
+      --bg: #fafafa;
+      --card: #ffffff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text);
+      background: var(--bg);
+      padding: 3rem 1.25rem 5rem;
+    }
+
+    main {
+      max-width: 42rem;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    h1 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    .tagline {
+      font-size: 1.15rem;
+      color: var(--muted);
+    }
+
+    .meta {
+      margin-top: 1.25rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    section {
+      margin-bottom: 2.75rem;
+    }
+
+    h2 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 0.85rem;
+      letter-spacing: 0.02em;
+    }
+
+    p + p { margin-top: 0.85rem; }
+
+    ul {
+      margin-top: 0.75rem;
+      padding-left: 1.35rem;
+    }
+
+    li + li { margin-top: 0.45rem; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .card strong {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-size: 0.95rem;
+    }
+
+    .card p {
+      font-size: 0.98rem;
+      color: var(--muted);
+    }
+
+    .flow {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      margin-top: 1rem;
+    }
+
+    .flow-step {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      font-size: 0.98rem;
+    }
+
+    .flow-step span {
+      flex-shrink: 0;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .research-q {
+      font-style: italic;
+      color: var(--text);
+      border-left: 3px solid var(--accent);
+      padding-left: 1rem;
+      margin-top: 0.75rem;
+    }
+
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>AI中的傲慢与偏见</h1>
+      <p class="tagline">在对话里看见傲慢与偏见</p>
+      <p class="meta">AI for Social Sciences · Generation AI 2026 · 项目想法文档</p>
+    </header>
+
+    <section>
+      <h2>社会议题与受众</h2>
+      <p>
+        越来越多高中生和年轻人把 ChatGPT、DeepSeek 等 AI 当作日常顾问——问求职、问学习、问生活安排。但 AI 的回答并不总是中立的：同样的问题，如果系统「知道」你是男性还是女性、年轻还是年长、有无残疾，回复的语气、建议和假设可能悄然不同。这种<strong>隐性偏见</strong>很难在日常使用中察觉，却会影响用户对自身能力的判断，以及对 AI 的信任。
+      </p>
+      <p>
+        <strong>AI中的傲慢与偏见</strong>面向经常使用 AI 的高中生与青年用户，也面向关心 AI 公平性的社会科学学习者。它不是要吓唬人不用 AI，而是让人在安全的模拟环境里<strong>亲身体验</strong>差异、学会质疑，并反思：我是否意识到了这些偏见？我能识别它们吗？
+      </p>
+    </section>
+
+    <section>
+      <h2>形式：偏见觉察小游戏</h2>
+      <p>
+        本项目是一款<strong>小游戏</strong>，定位为社会科学课程的研究工具。进入游戏大厅后，四个板块一目了然：偏见前测、身份对话关卡、盲测挑战、我的档案。玩家选择场景、设定虚拟身份，向 AI 提出<strong>精心设计的偏见题</strong>——每道题都旨在清晰展现差别对待，而非泛泛闲聊。
+      </p>
+      <p>核心玩法包含四层：</p>
+      <ul>
+        <li><strong>偏见前测</strong>——4 道觉察题，建立基线分数，解锁后续关卡。</li>
+        <li><strong>身份对话</strong>——扮演不同身份（推荐：参照组 / 性别偏见 / 交叉偏见 / 对照组），对同一偏见题观察 AI 回复差异与觉察提示。</li>
+        <li><strong>盲测挑战</strong>——隐藏身份，判断哪条回复更有偏见，检验真实觉察力。</li>
+        <li><strong>成长档案</strong>——汇总每轮得分与历史，支持导出 JSON 供研究分析。</li>
+      </ul>
+      <p>
+        本周最小可上线版本：游戏大厅 → 前测 → 一轮身份对话（至少 1 道偏见题）→ 盲测 → 后测 → 查看报告。数据保存在本机浏览器（localStorage），不上传服务器。
+      </p>
+      <p style="margin-top:1rem">
+        <a href="index.html">→ 打开小游戏</a>
+      </p>
+    </section>
+
+    <section>
+      <h2>研究问题</h2>
+      <p class="research-q">
+        通过沉浸式模拟对话与盲测，高中生对 AI 隐性偏见的觉察程度是否会提高？不同场景、不同 AI 模型下，用户识别偏见的能力有何差异？
+      </p>
+      <p style="margin-top:0.85rem">
+        相关阅读方向：算法偏见（algorithmic bias）、刻板印象激活（stereotype activation）、AI 素养（AI literacy）、交互式学习对态度转变的效果，以及残障、性别与年龄交叉视角下的技术公平研究。
+      </p>
+    </section>
+
+    <section>
+      <h2>如何收集用户反馈</h2>
+      <p>反馈收集从产品设计第一天就嵌入流程，而非体验结束后才发问卷：</p>
+
+      <div class="flow">
+        <div class="flow-step"><span>1</span><div><strong>前测 / 后测</strong>——4 + 3 道偏见觉察题，测量体验前后的观念变化。</div></div>
+        <div class="flow-step"><span>2</span><div><strong>对话行为</strong>——记录场景、身份组合、模型选择、提问内容、对话轮次、是否阅读觉察提示。</div></div>
+        <div class="flow-step"><span>3</span><div><strong>盲测表现</strong>——记录每题选择、是否正确识别偏见方向、是否猜对目标身份。</div></div>
+        <div class="flow-step"><span>4</span><div><strong>档案导出</strong>——用户可一键导出 JSON，研究者可汇总约 25 名参与者数据进行集中分析。</div></div>
+        <div class="flow-step"><span>5</span><div><strong>补充问卷</strong>（计划）——体验后简短开放题：「哪条回复让你最意外？」「你会如何改写这条 AI 回复？」</div></div>
+      </div>
+
+      <div class="card">
+        <strong>可测量的数据点</strong>
+        <p>
+          前测与后测分数差（Δ）、盲测正确率、不同身份组合下的觉察提示点击率、ChatGPT vs DeepSeek 的识别难度对比、职业场景 vs 日常场景的表现差异，以及用户自报的偏见意识变化。
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <h2>反馈如何支撑研究论文</h2>
+      <p>这些反馈直接对应一篇小型用户研究论文的结构：</p>
+      <ul>
+        <li><strong>文献综述</strong>——梳理 AI 偏见、算法公平与青少年 AI 使用现状，引用真实文献（需自行核验 AI 提供的线索）。</li>
+        <li><strong>方法</strong>——描述本项目的设计逻辑、参与者招募（目标约 25 人）、前测—干预—后测流程，以及数据变量定义。</li>
+        <li><strong>结果</strong>——用配对样本比较前测/后测分数；报告盲测正确率；按场景、模型、身份交叉制表或可视化。</li>
+        <li><strong>讨论</strong>——解释哪些偏见最容易被忽视、交互式体验是否有效提升觉察，以及工具对 AI 素养教育的启示。</li>
+        <li><strong>伦理</strong>——说明本地存储、知情同意、模拟对话非真实 API 调用的局限，以及如何避免对弱势群体的二次刻板化。</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>本周目标</h2>
+      <div class="card">
+        <strong>最小可行版本（MVP）</strong>
+        <p>
+          可公开访问的小游戏：玩家从游戏大厅进入，完成「前测 → 身份对话 → 盲测 → 后测 → 报告」全流程。代码托管于 GitHub，本页（idea.html）说明研究设计，index.html 为可运行小游戏。
+        </p>
+      </div>
+    </section>
+
+    <footer>
+      <p>AI中的傲慢与偏见 · Pride & Prejudice in AI — 用对话看见看不见的假设。</p>
+    </footer>
+  </main>
+</body>
+</html>
