@@ -6,7 +6,13 @@
 
 ## 给谁用
 
-**一名**经常使用 ChatGPT / DeepSeek 问求职或学习问题的高中生或大一学生（社会科学课参与者），此前未系统了解「反事实公平」或算法偏见概念。
+**一名**经常使用 ChatGPT / DeepSeek 或其他 AI 解决生活、学习、职业问题的人，此前可能还没有系统察觉 AI 回答中的隐性偏见。
+
+## Research Question & Hypothesis
+
+**Research Question:** How does *Pride & Prejudice in AI*, an identity-simulation game where users ask AI questions through simulated identities to experience implicit bias, affect bias awareness and prompting behavior for people who often use AI to solve life, learning, or career problems?
+
+**Hypothesis:** I hypothesize that after using *Pride & Prejudice in AI*, people who often use AI to solve life, learning, or career problems will increase their awareness of implicit bias in AI responses and increase their use of prompts that reduce the influence of bias.
 
 ## 核心流程
 
