@@ -195,3 +195,61 @@ To conclude, my final goal is not to make people afraid of AI. My goal is to hel
 Thank you for listening. I would also like to thank Lawted Wu for the feedback and guidance. I welcome your questions and suggestions.
 
 谢谢大家的聆听。我也想感谢 Lawted Wu 老师的反馈和指导。欢迎大家提出问题和建议。
+
+## Possible Questions and Answers
+
+### Question 1: Why do you use scripted AI answers instead of a live AI API?
+
+**Answer:** I use scripted answers because this is a classroom teaching demo. A live API may give different answers every time, so the comparison may become unstable. Scripted answers help users focus on the main idea: same question, different identity. Later, I can compare the scripts with real ChatGPT and DeepSeek answers.
+
+**问题 1：为什么你使用脚本化 AI 回答，而不是实时 AI API？**
+
+**回答：** 我使用脚本化回答，是因为这是一个课堂教学展示。实时 API 每次回答可能不同，对比会变得不稳定。脚本化回答可以让用户专注于核心想法：同一个问题，不同身份。之后我可以把脚本和真实 ChatGPT、DeepSeek 回答进行对照。
+
+### Question 2: How will you know if the game really changes users?
+
+**Answer:** I will not only ask users how they feel. I will use several kinds of evidence: pre-test and post-test answers, blind-test accuracy, whether users switch identities, whether they use constraint prompts, and their short comments. This can show both awareness and possible behavior change.
+
+**问题 2：你怎么知道这个游戏真的改变了用户？**
+
+**回答：** 我不会只问用户自己的感受。我会使用几类证据：前测和后测答案、盲测正确率、用户是否切换身份、是否使用约束语，以及他们的简短评论。这样可以同时看到意识变化和可能的行为变化。
+
+### Question 3: Who are your target users?
+
+**Answer:** My target users are non-technical Chinese users who often use AI for life, learning, or career problems. For example, students or young workers may ask AI about study plans, job applications, salary, or daily choices. They do not need to know algorithmic bias before using the game.
+
+**问题 3：你的目标用户是谁？**
+
+**回答：** 我的目标用户是没有技术背景、但经常用 AI 解决生活、学习或职业问题的中文用户。比如学生或年轻职场人士，可能会问 AI 关于学习计划、求职、薪资或日常选择的问题。他们不需要提前了解算法偏见。
+
+### Question 4: How is your project different from existing fairness tools or games?
+
+**Answer:** Many fairness tools are made for developers and researchers, so they need technical knowledge. Some public games teach fairness, but many are in English or not about AI dialogue. My project focuses on Chinese AI advice and gives users a short practice: switch identity, compare answers, take a blind test, and write a better prompt.
+
+**问题 4：你的项目和已有的公平性工具或游戏有什么不同？**
+
+**回答：** 很多公平性工具是给开发者和研究者用的，需要技术知识。有些公众游戏会讲公平性，但很多是英文的，或者不是关于 AI 对话的。我的项目关注中文 AI 建议，并给用户一个短练习：切换身份、比较回答、做盲测、写更好的提问方式。
+
+### Question 5: How do you tell the difference between useful safety advice and biased advice?
+
+**Answer:** This is an important challenge. Not all safety advice is bias. I will look at whether the advice is based on real user information or only on identity assumptions. If AI lowers the user's goal before asking about their ability, experience, or real needs, then it may be biased.
+
+**问题 5：你怎样区分有用的安全建议和有偏见的建议？**
+
+**回答：** 这是一个重要挑战。不是所有安全建议都是偏见。我会看这个建议是基于真实用户信息，还是只基于身份假设。如果 AI 在不了解用户能力、经验或真实需求之前就降低用户目标，那它就可能带有偏见。
+
+### Question 6: What will you do if the user study does not show strong results?
+
+**Answer:** That would still be useful. It may mean the game raises awareness, but one short experience is not enough to change behavior. Then I can improve the prompt practice part, add a follow-up task, or test the game with more users.
+
+**问题 6：如果用户研究没有显示出明显结果，你会怎么办？**
+
+**回答：** 这仍然是有用的结果。它可能说明游戏提高了意识，但一次短体验不足以改变行为。之后我可以改进约束语练习部分，加入后续任务，或者用更多用户进行测试。
+
+### Question 7: How will you protect user data?
+
+**Answer:** The current version stores data locally in the browser and does not upload it automatically. If I export JSON records for research, I will collect only necessary data, remove personal identifiers, and explain the purpose to users clearly.
+
+**问题 7：你会怎样保护用户数据？**
+
+**回答：** 当前版本把数据保存在本地浏览器里，不会自动上传。如果我为了研究导出 JSON 记录，我会只收集必要数据，去除个人身份标识，并向用户清楚说明数据用途。
