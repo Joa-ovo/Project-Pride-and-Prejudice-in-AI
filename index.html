@@ -785,10 +785,11 @@
             <label>
               AI 模型
               <select id="model">
-                <option value="chatgpt">ChatGPT</option>
-                <option value="deepseek">DeepSeek</option>
+                <option value="chatgpt">ChatGPT（教学脚本）</option>
+                <option value="deepseek">DeepSeek（实时 API）</option>
               </select>
             </label>
+            <p class="muted" id="modelHint" hidden>DeepSeek 模式会调用真实 API。本地请运行 <code>node scripts/local-dev.mjs</code>，然后打开 <code>http://localhost:3000</code>。</p>
             <label>
               回复 A 的身份
               <select id="identityA"></select>
@@ -893,7 +894,42 @@
       { text: "「除非你本人愿意改变，否则你无法改变世界。」", cite: "圣雄甘地" },
       { text: "「我不同意你的观点，但我誓死捍卫你说话的权利。」", cite: "伏尔泰（传）" },
       { text: "「正义不是施舍，而是承认每个人与生俱来的尊严。」", cite: "埃莉诺·罗斯福" },
-      { text: "「自由不仅意味着摆脱自己的桎梏，也意味着尊重他人享有的自由。」", cite: "纳尔逊·曼德拉" }
+      { text: "「自由不仅意味着摆脱自己的桎梏，也意味着尊重他人享有的自由。」", cite: "纳尔逊·曼德拉" },
+      { text: "「女人不是天生的，而是被塑造的。」", cite: "西蒙·德·波伏娃，《第二性》" },
+      { text: "「己所不欲，勿施于人。」", cite: "《论语·颜渊》" },
+      { text: "「兼相爱，交相利。」", cite: "《墨子·兼爱》" },
+      { text: "「法律面前人人平等。」", cite: "《法国人权宣言》" },
+      { text: "「正义也许会迟到，但绝不会缺席。」", cite: "马丁·路德·金" },
+      { text: "「我们无法在鄙视一个人的同时真正了解他。」", cite: "马丁·路德·金" },
+      { text: "「偏见是无知之子。」", cite: "伏尔泰" },
+      { text: "「人的尊严不可侵犯，人的价值不可计量。」", cite: "康德（意译）" },
+      { text: "「没有平等，自由就会沦为放纵。」", cite: "孟德斯鸠，《论法的精神》" },
+      { text: "「妇女能顶半边天。」", cite: "毛泽东" },
+      { text: "「人之所以为人，正在于能超越成见，看见具体的人。」", cite: "佚名" },
+      { text: "「刻板印象是思考的捷径，也是公平的敌人。」", cite: "佚名" },
+      { text: "「差异不该被当作缺陷，而该被当作人类的常态。」", cite: "佚名" },
+      { text: "「无障碍不是额外恩赐，而是每个人应有的权利。」", cite: "残障权利运动" },
+      { text: "「当我们用标签代替认识，偏见就已经开始了。」", cite: "佚名" },
+      { text: "「真正的平等，是同样的问题得到同样认真的回答。」", cite: "反事实公平（学术意译）" },
+      { text: "「算法不会创造偏见，但会放大数据里已有的偏见。」", cite: "算法公平研究（意译）" },
+      { text: "「技术声称中立时，更要追问：对谁中立？对谁不公？」", cite: "AI 伦理（意译）" },
+      { text: "「看见看不见的假设，是拒绝偏见的第一步。」", cite: "本作品" },
+      { text: "「没有人因为出生、性别、年龄或残障，就理应被低估。」", cite: "佚名" },
+      { text: "「尊重不是同意，而是承认对方同样值得被认真对待。」", cite: "佚名" },
+      { text: "「我们反对的不是差异，而是差异被用来分配不公正的待遇。」", cite: "佚名" },
+      { text: "「一个社会的文明程度，看它如何对待最弱势的成员。」", cite: "甘地（传）" },
+      { text: "「仇恨筑起高墙，理解才能搭桥。」", cite: "佚名" },
+      { text: "「不要根据一个人属于哪类人下结论，要根据他做了什么来判断。」", cite: "佚名" },
+      { text: "「当建议因身份而变，问题不在用户，而在未经审视的假设。」", cite: "本作品" },
+      { text: "「提问时多问一句“这建议是否因身份而变”，就是拒绝偏见。」", cite: "本作品" },
+      { text: "「人人生而平等，造物主赋予他们若干不可剥夺的权利。」", cite: "《美国独立宣言》" },
+      { text: "「凡是人皆能因自己的努力而改变命运。」", cite: "亚伯拉罕·林肯（意译）" },
+      { text: "「我们不必相同，却应享有同样的尊严。」", cite: "佚名" },
+      { text: "「偏见最隐蔽的形式，是把它包装成“为你好”的建议。」", cite: "本作品" },
+      { text: "「若只换身份，答案就悄然不同，那“中立”便值得怀疑。」", cite: "本作品" },
+      { text: "「交叉性告诉我们：歧视从不是单一维度，偏见也常叠加发生。」", cite: "金伯莉·克伦肖" },
+      { text: "「沉默不能带来和平，唯有直面不公才能带来正义。」", cite: "马丁·路德·金" },
+      { text: "「理解他者，不是放弃自己，而是拒绝把别人简化成标签。」", cite: "佚名" }
     ];
 
     const quoteState = {};
@@ -1075,12 +1111,16 @@
       return { reply, hint };
     }
 
-    function renderReply(container, label, identity, result) {
+    function renderReply(container, label, identity, result, options) {
+      options = options || {};
       const article = document.createElement("article");
-      article.className = "card reply-card" + (result.hint.includes("警示") ? " biased" : "");
+      const looksBiased = options.realtime
+        ? identity.score >= 2
+        : result.hint.includes("警示");
+      article.className = "card reply-card" + (looksBiased ? " biased" : "");
       const meta = document.createElement("p");
       meta.className = "reply-meta";
-      meta.textContent = label + "：" + identity.detail;
+      meta.textContent = label + "：" + identity.detail + (options.realtime ? " · DeepSeek 实时" : "");
       const text = document.createElement("p");
       text.textContent = result.reply;
       const hint = document.createElement("p");
@@ -1100,24 +1140,73 @@
       }
     }
 
-    function compareReplies() {
+    async function fetchDeepSeekReply(identity, question) {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          identity: identity.detail,
+          message: question,
+        }),
+      });
+      const data = await res.json().catch(function () {
+        return {};
+      });
+      if (!res.ok) {
+        throw new Error(data.error || "DeepSeek 请求失败（HTTP " + res.status + "）");
+      }
+      return {
+        reply: data.reply,
+        hint: "这是 DeepSeek 实时回复。请对比两条回答：是否因身份不同而出现不同假设或建议？",
+      };
+    }
+
+    async function compareReplies() {
       const scenarioId = $("scenario").value;
       const model = $("model").value;
       const question = $("question").value.trim() || scenarioData[scenarioId].questions[0];
       const identityA = identityById($("identityA").value);
       const identityB = identityById($("identityB").value);
-      const resultA = makeReply(scenarioId, model, identityA, question);
-      const resultB = makeReply(scenarioId, model, identityB, question);
+      const compareBtn = $("compareBtn");
+      const isRealtime = model === "deepseek";
 
-      lastComparison = { scenarioId, model, question, identityA, identityB, resultA, resultB };
-      $("comparison").innerHTML = "";
-      renderReply($("comparison"), "回复 A", identityA, resultA);
-      renderReply($("comparison"), "回复 B", identityB, resultB);
-      $("blindBtn").disabled = false;
-      $("rewriteBtn").disabled = false;
-      $("rewriteBox").style.display = "none";
-      $("blindBox").style.display = "none";
-      scrollChatPanel($("comparison"));
+      compareBtn.disabled = true;
+      compareBtn.textContent = isRealtime ? "DeepSeek 思考中…" : "生成中…";
+      $("comparison").innerHTML = "<div class=\"chat-empty\">正在生成对比回复，请稍候…</div>";
+
+      try {
+        let resultA;
+        let resultB;
+        if (isRealtime) {
+          const pair = await Promise.all([
+            fetchDeepSeekReply(identityA, question),
+            fetchDeepSeekReply(identityB, question),
+          ]);
+          resultA = pair[0];
+          resultB = pair[1];
+        } else {
+          resultA = makeReply(scenarioId, model, identityA, question);
+          resultB = makeReply(scenarioId, model, identityB, question);
+        }
+
+        lastComparison = { scenarioId, model, question, identityA, identityB, resultA, resultB };
+        $("comparison").innerHTML = "";
+        renderReply($("comparison"), "回复 A", identityA, resultA, { realtime: isRealtime });
+        renderReply($("comparison"), "回复 B", identityB, resultB, { realtime: isRealtime });
+        $("blindBtn").disabled = false;
+        $("rewriteBtn").disabled = false;
+        $("rewriteBox").style.display = "none";
+        $("blindBox").style.display = "none";
+        scrollChatPanel($("comparison"));
+      } catch (err) {
+        $("comparison").innerHTML =
+          "<div class=\"chat-empty\">调用 DeepSeek 失败：" +
+          err.message +
+          "。请确认已运行 <code>node scripts/local-dev.mjs</code> 并访问 <code>http://localhost:3000</code>，且 .env.local 里配置了 DEEPSEEK_API_KEY。</div>";
+      } finally {
+        compareBtn.disabled = false;
+        compareBtn.textContent = "生成对比";
+      }
     }
 
     function startBlind() {
@@ -1263,13 +1352,20 @@
       URL.revokeObjectURL(link.href);
     }
 
+    function updateModelHint() {
+      const hint = $("modelHint");
+      if (hint) hint.hidden = $("model").value !== "deepseek";
+    }
+
     function boot() {
       fillIdentities();
       updateScenario();
+      updateModelHint();
       renderArchive();
       initSectionQuotes();
 
       $("scenario").addEventListener("change", updateScenario);
+      $("model").addEventListener("change", updateModelHint);
       $("compareBtn").addEventListener("click", compareReplies);
       $("blindBtn").addEventListener("click", startBlind);
       $("rewriteBtn").addEventListener("click", generateRewrite);
