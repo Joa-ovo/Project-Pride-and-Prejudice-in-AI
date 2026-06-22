@@ -518,6 +518,36 @@
       font-weight: 700;
     }
 
+    .section-quote {
+      margin-top: 1rem;
+      padding: 0.65rem 0.9rem;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 10px;
+      background: #fbfaf8;
+      color: #3a4a42;
+    }
+
+    .section-quote p {
+      margin: 0;
+      font-size: 0.88rem;
+      font-weight: 500;
+      line-height: 1.6;
+    }
+
+    .section-quote cite {
+      display: block;
+      margin-top: 0.35rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-style: normal;
+    }
+
+    footer .section-quote {
+      margin-top: 0;
+      margin-bottom: 1rem;
+    }
+
     footer {
       color: var(--muted);
       border-top: 1px solid var(--border);
@@ -614,6 +644,10 @@
           <p>可选推荐题或自定义提问；AI 模拟回复会随身份变化。数据仅存本机浏览器，不会自动上传。</p>
         </div>
       </aside>
+      <blockquote class="section-quote">
+        <p>「傲慢让别人无法来爱我，偏见让我无法去爱别人。」</p>
+        <cite>简·奥斯汀，《傲慢与偏见》</cite>
+      </blockquote>
     </section>
 
     <section>
@@ -643,6 +677,10 @@
           <p class="module-tagline">查看得分与觉察变化，导出 JSON 供研究分析。</p>
         </article>
       </div>
+      <blockquote class="section-quote">
+        <p>「我梦想有一天，人们将不再以肤色，而以品格的优劣来评价一个人。」</p>
+        <cite>马丁·路德·金</cite>
+      </blockquote>
     </section>
 
     <section id="game" class="card">
@@ -738,6 +776,10 @@
           </div>
         </div>
       </div>
+      <blockquote class="section-quote">
+        <p>「没有人应该因为自己无法改变的特质，而承担不利的后果。」</p>
+        <cite>约翰·罗尔斯，《正义论》</cite>
+      </blockquote>
     </section>
 
     <section id="archive" class="card">
@@ -751,6 +793,10 @@
       <p class="muted">最近体验会保存在本机浏览器；完成盲测后也会匿名上传至研究数据库（不含姓名等个人信息）。</p>
       <ul class="history-list" id="historyList"></ul>
       <button type="button" class="btn btn-ghost" id="exportBtn">导出档案 JSON（研究备份）</button>
+      <blockquote class="section-quote">
+        <p>「偏见比无知更容易让人误入歧途；无知是空无一物，偏见却满是幻象。」</p>
+        <cite>萧伯纳</cite>
+      </blockquote>
     </section>
 
     <section id="research" class="card">
@@ -767,9 +813,14 @@
       <p class="muted">
         依据研究资料：招聘、薪资谈判、年龄与残障相关建议中都已有可复核的偏见证据。这个项目不是要证明“AI 一定坏”，而是把反事实公平从论文方法变成普通用户可练习的 AI 对话素养。
       </p>
+      <blockquote class="section-quote">
+        <p>「人人生而自由，在尊严和权利上一律平等。」</p>
+        <cite>《世界人权宣言》</cite>
+      </blockquote>
     </section>
 
     <footer>
+      <blockquote class="section-quote" id="footerQuote" aria-live="polite"></blockquote>
       <p>AI中的傲慢与偏见 · Pride & Prejudice in AI — 用对话看见看不见的假设。</p>
     </footer>
   </main>
@@ -778,6 +829,22 @@
   <script src="js/supabase-config.js"></script>
   <script>
     const STORAGE_KEY = "ai_pride_prejudice_single_file_records_v1";
+
+    const footerQuotes = [
+      { text: "「平等不是把所有人都变成一样，而是给每个人同样的尊重与机会。」", cite: "佚名" },
+      { text: "「教育是最有力的武器，你可以用它来改变世界。」", cite: "纳尔逊·曼德拉" },
+      { text: "「我们最深的恐惧，不是力量不足，而是我们的力量强大到无法驾驭。」", cite: "玛丽安·威廉姆森" },
+      { text: "「除非你本人愿意改变，否则你无法改变世界。」", cite: "圣雄甘地" },
+      { text: "「我不同意你的观点，但我誓死捍卫你说话的权利。」", cite: "伏尔泰（传）" },
+      { text: "「正义不是施舍，而是承认每个人与生俱来的尊严。」", cite: "埃莉诺·罗斯福" }
+    ];
+
+    function renderFooterQuote() {
+      const box = $("footerQuote");
+      if (!box) return;
+      const pick = footerQuotes[Math.floor(Math.random() * footerQuotes.length)];
+      box.innerHTML = "<p>" + pick.text + "</p><cite>" + pick.cite + "</cite>";
+    }
 
     const identities = [
       { id: "ref", label: "参照组", detail: "男性 · 26-45 · 无残疾", score: 0 },
@@ -1110,6 +1177,7 @@
       fillIdentities();
       updateScenario();
       renderArchive();
+      renderFooterQuote();
 
       $("scenario").addEventListener("change", updateScenario);
       $("compareBtn").addEventListener("click", compareReplies);
