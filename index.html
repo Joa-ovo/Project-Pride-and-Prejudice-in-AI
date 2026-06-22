@@ -528,6 +528,18 @@
       color: #3a4a42;
     }
 
+    .section-quote-inner {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.55rem;
+    }
+
+    .section-quote blockquote {
+      flex: 1;
+      margin: 0;
+      min-width: 0;
+    }
+
     .section-quote p {
       margin: 0;
       font-size: 0.88rem;
@@ -543,9 +555,34 @@
       font-style: normal;
     }
 
-    footer .section-quote {
-      margin-top: 0;
-      margin-bottom: 1rem;
+    .quote-refresh {
+      flex-shrink: 0;
+      width: 2rem;
+      height: 2rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--accent);
+      cursor: pointer;
+      font-size: 1.15rem;
+      line-height: 1;
+      padding: 0;
+      margin-top: 0.1rem;
+    }
+
+    .quote-refresh:hover {
+      background: var(--accent-light);
+      border-color: var(--accent);
+    }
+
+    .quote-refresh.spinning {
+      animation: quote-spin 0.45s ease;
+    }
+
+    @keyframes quote-spin {
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     footer {
@@ -644,10 +681,12 @@
           <p>可选推荐题或自定义提问；AI 模拟回复会随身份变化。数据仅存本机浏览器，不会自动上传。</p>
         </div>
       </aside>
-      <blockquote class="section-quote">
-        <p>「傲慢让别人无法来爱我，偏见让我无法去爱别人。」</p>
-        <cite>简·奥斯汀，《傲慢与偏见》</cite>
-      </blockquote>
+      <div class="section-quote" data-quote-group="overview">
+        <div class="section-quote-inner">
+          <blockquote aria-live="polite"></blockquote>
+          <button type="button" class="quote-refresh" data-quote-target="overview" aria-label="换一句" title="换一句">↻</button>
+        </div>
+      </div>
     </section>
 
     <section>
@@ -677,13 +716,16 @@
           <p class="module-tagline">查看得分与觉察变化，导出 JSON 供研究分析。</p>
         </article>
       </div>
-      <blockquote class="section-quote">
-        <p>「我梦想有一天，人们将不再以肤色，而以品格的优劣来评价一个人。」</p>
-        <cite>马丁·路德·金</cite>
-      </blockquote>
+      <div class="section-quote" data-quote-group="modules">
+        <div class="section-quote-inner">
+          <blockquote aria-live="polite"></blockquote>
+          <button type="button" class="quote-refresh" data-quote-target="modules" aria-label="换一句" title="换一句">↻</button>
+        </div>
+      </div>
     </section>
 
-    <section id="game" class="card">
+    <section id="game">
+      <div class="card">
       <h2>身份对话关卡：同一问题，只换身份</h2>
       <p class="muted">右侧选场景、身份和问题，左侧 AI 对话区独立滚动，随时对照回复与觉察提示。</p>
 
@@ -776,13 +818,17 @@
           </div>
         </div>
       </div>
-      <blockquote class="section-quote">
-        <p>「没有人应该因为自己无法改变的特质，而承担不利的后果。」</p>
-        <cite>约翰·罗尔斯，《正义论》</cite>
-      </blockquote>
+      </div>
+      <div class="section-quote" data-quote-group="game">
+        <div class="section-quote-inner">
+          <blockquote aria-live="polite"></blockquote>
+          <button type="button" class="quote-refresh" data-quote-target="game" aria-label="换一句" title="换一句">↻</button>
+        </div>
+      </div>
     </section>
 
-    <section id="archive" class="card">
+    <section id="archive">
+      <div class="card">
       <h2>我的档案</h2>
       <div class="stats">
         <div class="card stat"><span>已完成</span><strong id="statTotal">0</strong></div>
@@ -793,13 +839,17 @@
       <p class="muted">最近体验会保存在本机浏览器；完成盲测后也会匿名上传至研究数据库（不含姓名等个人信息）。</p>
       <ul class="history-list" id="historyList"></ul>
       <button type="button" class="btn btn-ghost" id="exportBtn">导出档案 JSON（研究备份）</button>
-      <blockquote class="section-quote">
-        <p>「偏见比无知更容易让人误入歧途；无知是空无一物，偏见却满是幻象。」</p>
-        <cite>萧伯纳</cite>
-      </blockquote>
+      </div>
+      <div class="section-quote" data-quote-group="archive">
+        <div class="section-quote-inner">
+          <blockquote aria-live="polite"></blockquote>
+          <button type="button" class="quote-refresh" data-quote-target="archive" aria-label="换一句" title="换一句">↻</button>
+        </div>
+      </div>
     </section>
 
-    <section id="research" class="card">
+    <section id="research">
+      <div class="card">
       <h2>这个作品要研究什么</h2>
       <p class="research-q">
         通过沉浸式模拟对话与盲测，高中生对 AI 隐性偏见的觉察程度是否会提高？不同场景、不同 AI 模型下，用户识别偏见的能力有何差异？
@@ -813,14 +863,16 @@
       <p class="muted">
         依据研究资料：招聘、薪资谈判、年龄与残障相关建议中都已有可复核的偏见证据。这个项目不是要证明“AI 一定坏”，而是把反事实公平从论文方法变成普通用户可练习的 AI 对话素养。
       </p>
-      <blockquote class="section-quote">
-        <p>「人人生而自由，在尊严和权利上一律平等。」</p>
-        <cite>《世界人权宣言》</cite>
-      </blockquote>
+      </div>
+      <div class="section-quote" data-quote-group="research">
+        <div class="section-quote-inner">
+          <blockquote aria-live="polite"></blockquote>
+          <button type="button" class="quote-refresh" data-quote-target="research" aria-label="换一句" title="换一句">↻</button>
+        </div>
+      </div>
     </section>
 
     <footer>
-      <blockquote class="section-quote" id="footerQuote" aria-live="polite"></blockquote>
       <p>AI中的傲慢与偏见 · Pride & Prejudice in AI — 用对话看见看不见的假设。</p>
     </footer>
   </main>
@@ -830,20 +882,58 @@
   <script>
     const STORAGE_KEY = "ai_pride_prejudice_single_file_records_v1";
 
-    const footerQuotes = [
+    const equalityQuotes = [
+      { text: "「傲慢让别人无法来爱我，偏见让我无法去爱别人。」", cite: "简·奥斯汀，《傲慢与偏见》" },
+      { text: "「我梦想有一天，人们将不再以肤色，而以品格的优劣来评价一个人。」", cite: "马丁·路德·金" },
+      { text: "「没有人应该因为自己无法改变的特质，而承担不利的后果。」", cite: "约翰·罗尔斯，《正义论》" },
+      { text: "「偏见比无知更容易让人误入歧途；无知是空无一物，偏见却满是幻象。」", cite: "萧伯纳" },
+      { text: "「人人生而自由，在尊严和权利上一律平等。」", cite: "《世界人权宣言》" },
       { text: "「平等不是把所有人都变成一样，而是给每个人同样的尊重与机会。」", cite: "佚名" },
       { text: "「教育是最有力的武器，你可以用它来改变世界。」", cite: "纳尔逊·曼德拉" },
-      { text: "「我们最深的恐惧，不是力量不足，而是我们的力量强大到无法驾驭。」", cite: "玛丽安·威廉姆森" },
       { text: "「除非你本人愿意改变，否则你无法改变世界。」", cite: "圣雄甘地" },
       { text: "「我不同意你的观点，但我誓死捍卫你说话的权利。」", cite: "伏尔泰（传）" },
-      { text: "「正义不是施舍，而是承认每个人与生俱来的尊严。」", cite: "埃莉诺·罗斯福" }
+      { text: "「正义不是施舍，而是承认每个人与生俱来的尊严。」", cite: "埃莉诺·罗斯福" },
+      { text: "「自由不仅意味着摆脱自己的桎梏，也意味着尊重他人享有的自由。」", cite: "纳尔逊·曼德拉" }
     ];
 
-    function renderFooterQuote() {
-      const box = $("footerQuote");
-      if (!box) return;
-      const pick = footerQuotes[Math.floor(Math.random() * footerQuotes.length)];
-      box.innerHTML = "<p>" + pick.text + "</p><cite>" + pick.cite + "</cite>";
+    const quoteState = {};
+
+    function pickQuote(excludeText) {
+      const pool = equalityQuotes.filter((item) => item.text !== excludeText);
+      const list = pool.length ? pool : equalityQuotes;
+      return list[Math.floor(Math.random() * list.length)];
+    }
+
+    function renderQuoteBlock(blockquote, quote) {
+      blockquote.innerHTML = "<p>" + quote.text + "</p><cite>" + quote.cite + "</cite>";
+    }
+
+    const quoteGroupOrder = ["overview", "modules", "game", "archive", "research"];
+
+    function refreshQuote(group, forceNew) {
+      const container = document.querySelector('.section-quote[data-quote-group="' + group + '"]');
+      if (!container) return;
+      const blockquote = container.querySelector("blockquote");
+      if (!blockquote) return;
+      const currentText = blockquote.querySelector("p")?.textContent || "";
+      const next = forceNew ? pickQuote(currentText) : quoteState[group];
+      if (!next) return;
+      quoteState[group] = next;
+      renderQuoteBlock(blockquote, next);
+    }
+
+    function initSectionQuotes() {
+      quoteGroupOrder.forEach((group, index) => {
+        quoteState[group] = equalityQuotes[index % equalityQuotes.length];
+        refreshQuote(group, false);
+      });
+      document.querySelectorAll(".quote-refresh").forEach((button) => {
+        button.addEventListener("click", () => {
+          button.classList.add("spinning");
+          button.addEventListener("animationend", () => button.classList.remove("spinning"), { once: true });
+          refreshQuote(button.dataset.quoteTarget, true);
+        });
+      });
     }
 
     const identities = [
@@ -1177,7 +1267,7 @@
       fillIdentities();
       updateScenario();
       renderArchive();
-      renderFooterQuote();
+      initSectionQuotes();
 
       $("scenario").addEventListener("change", updateScenario);
       $("compareBtn").addEventListener("click", compareReplies);
