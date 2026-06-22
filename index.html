@@ -4,7 +4,566 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI中的傲慢与偏见 - 偏见觉察小游戏</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    :root {
+      --bg: #f7f5f2;
+      --surface: #ffffff;
+      --text: #1a1a1a;
+      --muted: #666666;
+      --accent: #2d5a4a;
+      --accent-light: #e8f0ed;
+      --warn: #b45309;
+      --warn-bg: #fff7ed;
+      --border: #e5e2dd;
+      --radius: 14px;
+      --shadow: 0 12px 30px rgba(32, 38, 34, 0.08);
+      --font: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(45, 90, 74, 0.14), transparent 32rem),
+        var(--bg);
+      line-height: 1.7;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: center;
+      padding: 0.8rem 1.5rem;
+      background: rgba(255, 255, 255, 0.9);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+    }
+
+    .brand {
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1.25;
+    }
+
+    .brand small {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: var(--muted);
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: flex-end;
+    }
+
+    nav button,
+    .chip,
+    .preset {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--accent);
+      cursor: pointer;
+      padding: 0.45rem 0.85rem;
+    }
+
+    nav button:hover,
+    .chip:hover,
+    .preset:hover {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    main {
+      width: min(1040px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 2rem 0 4rem;
+    }
+
+    section {
+      margin: 2rem 0;
+    }
+
+    h1,
+    h2,
+    h3 {
+      line-height: 1.25;
+      margin: 0 0 0.8rem;
+    }
+
+    h1 {
+      font-size: clamp(2.2rem, 7vw, 4.5rem);
+      color: var(--accent);
+      letter-spacing: -0.06em;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      color: var(--accent);
+    }
+
+    h3 {
+      font-size: 1.05rem;
+    }
+
+    p {
+      margin: 0 0 0.75rem;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+      gap: 1.25rem;
+      align-items: stretch;
+    }
+
+    .hero-pitch {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #243b31;
+      line-height: 1.55;
+      white-space: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: thin;
+      margin: 0;
+    }
+
+    .hero-pitch .game-feel {
+      white-space: nowrap;
+    }
+
+    .hero-detail {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px dashed var(--border);
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .lead {
+      font-size: 1.15rem;
+      color: #33413a;
+      max-width: 48rem;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .badge-row,
+    .flow-steps,
+    .preset-row,
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      align-items: center;
+    }
+
+    .flow-steps {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 0.25rem;
+      scrollbar-width: thin;
+    }
+
+    .badge {
+      display: inline-flex;
+      border-radius: 999px;
+      background: var(--accent-light);
+      color: var(--accent);
+      padding: 0.25rem 0.7rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .flow-steps span {
+      flex-shrink: 0;
+      white-space: nowrap;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.45rem 0.9rem;
+      background: #fbfaf8;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .flow-steps span:not(:last-child)::after {
+      content: none;
+    }
+
+    .flow-arrow {
+      flex-shrink: 0;
+      color: #9aa89f;
+      font-weight: 400;
+      font-size: 1rem;
+      padding: 0 0.1rem;
+    }
+
+    .section-intro {
+      margin-bottom: 1rem;
+    }
+
+    .section-intro p {
+      font-size: 1.05rem;
+      color: #33413a;
+      white-space: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: thin;
+    }
+
+    .section-intro .game-feel {
+      white-space: nowrap;
+    }
+
+    .cta-row {
+      margin-top: 1.25rem;
+    }
+
+    .module-grid,
+    .compare-grid,
+    .form-grid,
+    .stats {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .module-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .dialogue-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.85fr);
+      gap: 1rem;
+      align-items: start;
+      margin-top: 1rem;
+    }
+
+    .dialogue-chat {
+      position: sticky;
+      top: 5.25rem;
+      max-height: calc(100vh - 6.5rem);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-gutter: stable;
+      min-width: 0;
+    }
+
+    .dialogue-chat::-webkit-scrollbar,
+    .dialogue-controls::-webkit-scrollbar {
+      width: 0.6rem;
+    }
+
+    .dialogue-chat::-webkit-scrollbar-thumb,
+    .dialogue-controls::-webkit-scrollbar-thumb {
+      background: #cfc9c0;
+      border-radius: 999px;
+    }
+
+    .dialogue-controls {
+      position: sticky;
+      top: 5.25rem;
+      align-self: start;
+    }
+
+    .chat-header {
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .chat-header h3 {
+      margin-bottom: 0.25rem;
+    }
+
+    .chat-empty {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 1.5rem 1rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .module-card {
+      min-height: 9.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .module-card h3 {
+      margin-bottom: 0.15rem;
+    }
+
+    .module-tagline {
+      color: #243b31;
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.45;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 0;
+    }
+
+    .module-num,
+    .field-label {
+      display: block;
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.4rem;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .preset {
+      white-space: nowrap;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .form-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    label {
+      display: grid;
+      gap: 0.35rem;
+      font-weight: 700;
+    }
+
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--text);
+      padding: 0.7rem 0.8rem;
+    }
+
+    textarea {
+      min-height: 5.5rem;
+      resize: vertical;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 10px;
+      cursor: pointer;
+      padding: 0.75rem 1.05rem;
+      font-weight: 800;
+    }
+
+    .btn-primary {
+      color: #fff;
+      background: var(--accent);
+    }
+
+    .btn-primary:hover {
+      background: #234a3c;
+    }
+
+    .btn-secondary {
+      color: var(--accent);
+      background: var(--accent-light);
+      border: 1px solid rgba(45, 90, 74, 0.25);
+    }
+
+    .btn-ghost {
+      color: var(--muted);
+      background: transparent;
+      border: 1px dashed var(--border);
+    }
+
+    .compare-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 1rem;
+    }
+
+    .reply-card {
+      border-left: 4px solid var(--accent);
+    }
+
+    .reply-card.biased {
+      border-left-color: var(--warn);
+      background: linear-gradient(180deg, var(--warn-bg), #fff);
+    }
+
+    .reply-meta {
+      color: var(--accent);
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+
+    .hint,
+    .research-note {
+      border-left: 4px solid var(--warn);
+      background: var(--warn-bg);
+      color: #7c3d08;
+      padding: 0.9rem 1rem;
+      border-radius: 12px;
+      margin-top: 1rem;
+    }
+
+    .blind-box {
+      display: none;
+      margin-top: 1rem;
+      border: 2px dashed rgba(180, 83, 9, 0.35);
+    }
+
+    .blind-options {
+      display: grid;
+      gap: 0.6rem;
+      margin: 0.8rem 0;
+    }
+
+    .choice {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.45rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.65rem 0.75rem;
+      cursor: pointer;
+      background: #fff;
+    }
+
+    .choice:has(input:checked) {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    .stats {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .stat strong {
+      color: var(--accent);
+      font-size: 1.8rem;
+    }
+
+    .history-list {
+      list-style: none;
+      margin: 0.75rem 0 0;
+      padding: 0;
+    }
+
+    .history-list li {
+      border-top: 1px solid var(--border);
+      padding: 0.7rem 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .research-q {
+      border-left: 4px solid var(--accent);
+      padding-left: 1rem;
+      color: #243b31;
+      font-weight: 700;
+    }
+
+    footer {
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 800px) {
+      .hero,
+      .module-grid,
+      .compare-grid,
+      .dialogue-layout,
+      .form-grid,
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-pitch,
+      .section-intro p,
+      .module-tagline {
+        white-space: normal;
+      }
+
+      .game-feel {
+        white-space: nowrap;
+      }
+
+      .dialogue-chat {
+        order: 2;
+        position: static;
+        max-height: 65vh;
+        overflow-y: auto;
+      }
+
+      .dialogue-controls {
+        order: 1;
+        position: static;
+      }
+
+      .topbar {
+        position: static;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
 <body>
   <header class="topbar">
@@ -12,206 +571,562 @@
       AI中的傲慢与偏见
       <small>偏见觉察小游戏</small>
     </div>
-    <nav>
-      <button type="button" data-go="welcome">游戏大厅</button>
-      <button type="button" data-go="dashboard">我的档案</button>
+    <nav aria-label="页面导航">
+      <button type="button" data-jump="overview">作品说明</button>
+      <button type="button" data-jump="game">开始体验</button>
+      <button type="button" data-jump="archive">我的档案</button>
+      <button type="button" data-jump="research">研究设计</button>
     </nav>
   </header>
 
   <main>
-    <!-- 游戏大厅 -->
-    <section id="screen-welcome" class="screen active">
-      <div class="hero">
+    <section class="hero" id="overview">
+      <div class="card">
+        <div class="badge-row">
+          <span class="badge">偏见觉察小游戏</span>
+          <span class="badge">换身份 · 看差异 · 做盲测</span>
+        </div>
         <h1>AI中的傲慢与偏见</h1>
-        <p class="hero-lead">一款帮助你看清 AI 隐性偏见的小游戏。扮演不同身份向 AI 提问，对比回答差异，在盲测中检验你的觉察力。</p>
-      </div>
-
-      <div class="game-flow card">
-        <strong>游戏流程</strong>
-        <div class="flow-steps">
-          <span>① 偏见前测</span>
-          <span class="flow-arrow">→</span>
-          <span>② 身份对话</span>
-          <span class="flow-arrow">→</span>
-          <span>③ 盲测挑战</span>
-          <span class="flow-arrow">→</span>
-          <span>④ 后测报告</span>
+        <p class="hero-pitch">一款<span class="game-feel">有轻微游戏感的</span>偏见觉察网站，同一问题只换身份，对比 AI 回复，在盲测中检验你的觉察力。</p>
+        <div class="hero-detail">
+          <p>越来越多年轻人把 AI 当顾问，但系统若“知道”你的性别、年龄或残障，同样问题的回复可能悄然不同——本作品让你在安全模拟里练出识别隐性偏见的能力。</p>
+        </div>
+        <div class="cta-row">
+          <button type="button" class="btn btn-primary" data-jump="game">直接开始体验</button>
         </div>
       </div>
 
-      <h2 class="section-title">游戏板块</h2>
+      <aside class="card hero-card">
+        <div>
+          <h2>四步通关</h2>
+          <div class="flow-steps">
+            <span>① 偏见前测</span>
+            <span class="flow-arrow" aria-hidden="true">→</span>
+            <span>② 身份对话</span>
+            <span class="flow-arrow" aria-hidden="true">→</span>
+            <span>③ 盲测挑战</span>
+            <span class="flow-arrow" aria-hidden="true">→</span>
+            <span>④ 后测报告</span>
+          </div>
+        </div>
+        <div class="research-note">
+          <strong>研究说明</strong>
+          <p>可选推荐题或自定义提问；AI 模拟回复会随身份变化。数据仅存本机浏览器，不会自动上传。</p>
+        </div>
+      </aside>
+    </section>
+
+    <section>
+      <div class="section-intro">
+        <h2>游戏板块</h2>
+        <p>四关<span class="game-feel">轻微游戏感</span>体验：先建立基线，再对话对比，最后盲测检验觉察力。</p>
+      </div>
       <div class="module-grid">
-        <article class="module-card" id="module-quiz">
-          <div class="module-head">
-            <span class="module-num">01</span>
-            <span class="module-status" id="status-quiz">未开始</span>
-          </div>
+        <article class="card module-card">
+          <span class="module-num">01</span>
           <h3>偏见觉察前测</h3>
-          <p>4 道小题，建立你的偏见识别基线。完成后解锁关卡。</p>
-          <button type="button" class="btn btn-primary module-btn" data-module="quiz">进入前测</button>
+          <p class="module-tagline">4 道小题，测出你的偏见识别基线。</p>
         </article>
-
-        <article class="module-card" id="module-dialogue">
-          <div class="module-head">
-            <span class="module-num">02</span>
-            <span class="module-status" id="status-dialogue">待解锁</span>
-          </div>
+        <article class="card module-card">
+          <span class="module-num">02</span>
           <h3>身份对话关卡</h3>
-          <p>选择身份与场景，点选<strong>多道偏见题</strong>或<strong>自己提问</strong>——自定义问题的回复也会因身份而变。</p>
-          <button type="button" class="btn btn-primary module-btn" data-module="setup">选择关卡</button>
+          <p class="module-tagline">换身份问同一题，对比两条 AI 回复差异。</p>
         </article>
-
-        <article class="module-card" id="module-blind">
-          <div class="module-head">
-            <span class="module-num">03</span>
-            <span class="module-status" id="status-blind">对话后解锁</span>
-          </div>
+        <article class="card module-card">
+          <span class="module-num">03</span>
           <h3>盲测挑战</h3>
-          <p>隐藏身份，判断哪条 AI 回复更有偏见。检验你是否真的能「看见」傲慢与偏见。</p>
-          <button type="button" class="btn btn-secondary module-btn" data-module="blind-info" disabled>完成对话后开启</button>
+          <p class="module-tagline">隐藏身份，判断哪条回复更有隐性偏见。</p>
         </article>
-
-        <article class="module-card" id="module-archive">
-          <div class="module-head">
-            <span class="module-num">04</span>
-            <span class="module-status" id="status-archive">随时查看</span>
-          </div>
+        <article class="card module-card">
+          <span class="module-num">04</span>
           <h3>我的档案</h3>
-          <p>查看每轮得分、觉察变化与历史记录，导出 JSON 供研究分析。</p>
-          <button type="button" class="btn btn-secondary module-btn" data-module="dashboard">打开档案</button>
+          <p class="module-tagline">查看得分与觉察变化，导出 JSON 供研究分析。</p>
         </article>
       </div>
+    </section>
 
-      <div class="research-note card">
-        <strong>研究说明</strong>
-        <p>本游戏是社会科学课程的研究工具。提供多道偏见题供选择，也支持自定义提问——无论哪种方式，AI 模拟回复都会因你的身份而不同。数据保存在本机浏览器，不会自动上传。</p>
+    <section id="game" class="card">
+      <h2>身份对话关卡：同一问题，只换身份</h2>
+      <p class="muted">右侧选场景、身份和问题，左侧 AI 对话区独立滚动，随时对照回复与觉察提示。</p>
+
+      <div class="dialogue-layout">
+        <div class="card dialogue-chat" id="dialogueChat">
+          <div class="chat-header">
+            <h3>AI 对话</h3>
+            <p class="muted">生成对比后，回复会出现在这里；本区域可单独滚动，不必来回翻整页。</p>
+          </div>
+          <div class="compare-grid" id="comparison" aria-live="polite">
+            <div class="chat-empty" id="chatEmpty">选好右侧选项后，点击「生成对比」，两条模拟 AI 回复会显示在这里。</div>
+          </div>
+          <div id="rewriteBox" class="hint" style="display:none"></div>
+
+          <div class="card blind-box" id="blindBox">
+            <h2>盲测挑战：不看身份，你来判断</h2>
+            <p class="muted">下面只显示匿名回复。请选择哪条更可能带有隐性偏见。</p>
+            <div class="compare-grid" id="blindReplies"></div>
+            <div class="blind-options">
+              <label class="choice"><input type="radio" name="blindAnswer" value="a" />回复 A 更有偏见</label>
+              <label class="choice"><input type="radio" name="blindAnswer" value="b" />回复 B 更有偏见</label>
+              <label class="choice"><input type="radio" name="blindAnswer" value="tie" />两条差不多 / 我不确定</label>
+            </div>
+            <label>
+              后测反馈：下次向 AI 提问前，你会考虑身份是否影响回答吗？
+              <select id="likert">
+                <option value="1">1 - 完全不会</option>
+                <option value="2">2 - 不太会</option>
+                <option value="3" selected>3 - 不确定</option>
+                <option value="4">4 - 会</option>
+                <option value="5">5 - 一定会</option>
+              </select>
+            </label>
+            <label style="margin-top:0.8rem">
+              哪条回复让你最意外？（可选）
+              <textarea id="surprise" placeholder="写一句你的观察，例如：女性身份被额外提醒家庭平衡。"></textarea>
+            </label>
+            <div class="actions" style="margin-top:1rem">
+              <button type="button" class="btn btn-primary" id="submitBlindBtn">提交盲测并保存档案</button>
+            </div>
+            <div id="blindResult" class="hint" style="display:none"></div>
+          </div>
+        </div>
+
+        <div class="card dialogue-controls">
+          <h3>你的提问设置</h3>
+          <p class="muted">选项固定在本侧，随时修改后重新生成对比。</p>
+
+          <div class="form-grid">
+            <label>
+              关卡场景
+              <select id="scenario">
+                <option value="career">关卡一 · 求职晋升</option>
+                <option value="daily">关卡二 · 日常生活</option>
+              </select>
+            </label>
+            <label>
+              AI 模型
+              <select id="model">
+                <option value="chatgpt">ChatGPT</option>
+                <option value="deepseek">DeepSeek</option>
+              </select>
+            </label>
+            <label>
+              回复 A 的身份
+              <select id="identityA"></select>
+            </label>
+            <label>
+              回复 B 的身份
+              <select id="identityB"></select>
+            </label>
+          </div>
+
+          <div id="scenarioInfo" class="hint"></div>
+
+          <div style="margin-top:1rem">
+            <span class="field-label">推荐偏见题（多选一，点击即填入）</span>
+            <div class="preset-row" id="presetQuestions"></div>
+          </div>
+
+          <label style="margin-top:1rem">
+            你的问题
+            <textarea id="question" placeholder="例如：我想申请团队负责人，该怎么准备？"></textarea>
+          </label>
+
+          <div class="actions" style="margin-top:1rem">
+            <button type="button" class="btn btn-primary" id="compareBtn">生成对比</button>
+            <button type="button" class="btn btn-secondary" id="blindBtn" disabled>进入盲测挑战</button>
+            <button type="button" class="btn btn-ghost" id="rewriteBtn" disabled>生成更公平的提问方式</button>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- 前测/后测 -->
-    <section id="screen-quiz" class="screen">
-      <button type="button" class="back-link" data-go="welcome">← 返回游戏大厅</button>
-      <h2 id="quiz-title">偏见觉察前测</h2>
-      <p id="quiz-desc" class="muted"></p>
-      <form id="quiz-form" class="card"></form>
-      <button type="submit" form="quiz-form" class="btn btn-primary">提交</button>
-      <p id="quiz-result-msg" hidden></p>
-    </section>
-
-    <!-- 档案 -->
-    <section id="screen-dashboard" class="screen">
-      <button type="button" class="back-link" data-go="welcome">← 返回游戏大厅</button>
+    <section id="archive" class="card">
       <h2>我的档案</h2>
       <div class="stats">
-        <div class="stat"><span>已完成</span><strong id="stat-count">0</strong></div>
-        <div class="stat"><span>ChatGPT</span><strong id="stat-gpt">0</strong></div>
-        <div class="stat"><span>DeepSeek</span><strong id="stat-ds">0</strong></div>
-        <div class="stat"><span>盲测次数</span><strong id="stat-blind">0</strong></div>
-        <div class="stat"><span>觉察变化</span><strong id="stat-delta">—</strong></div>
+        <div class="card stat"><span>已完成</span><strong id="statTotal">0</strong></div>
+        <div class="card stat"><span>盲测正确</span><strong id="statCorrect">0</strong></div>
+        <div class="card stat"><span>ChatGPT</span><strong id="statChatGPT">0</strong></div>
+        <div class="card stat"><span>DeepSeek</span><strong id="statDeepSeek">0</strong></div>
       </div>
-      <h3>分数变化</h3>
-      <div id="chart-scores" class="chart card"></div>
-      <h3>最近体验</h3>
-      <ul id="history-list"></ul>
-      <button type="button" id="btn-export" class="btn btn-ghost">导出档案 JSON（研究备份）</button>
-      <div style="margin-top:1rem">
-        <button type="button" data-go="setup" class="btn btn-primary">开始新一轮关卡</button>
-      </div>
+      <p class="muted">最近体验会保存在本机浏览器；完成盲测后也会匿名上传至研究数据库（不含姓名等个人信息）。</p>
+      <ul class="history-list" id="historyList"></ul>
+      <button type="button" class="btn btn-ghost" id="exportBtn">导出档案 JSON（研究备份）</button>
     </section>
 
-    <!-- 关卡设置 -->
-    <section id="screen-setup" class="screen">
-      <button type="button" class="back-link" data-go="welcome">← 返回游戏大厅</button>
-      <h2>选择关卡与身份</h2>
-      <p class="muted setup-intro">切换不同身份、问<strong>同一道偏见题</strong>，是看清 AI 傲慢与偏见的关键玩法。</p>
-
-      <div class="form-grid card">
-        <label>关卡场景
-          <select id="select-scenario"></select>
-        </label>
-        <p id="scenario-desc"></p>
-        <p id="scenario-bias" class="bias-tag"></p>
-
-        <div class="recommended-block">
-          <span class="field-label">推荐身份（一键切换对比）</span>
-          <div id="recommended-identities" class="identity-chips"></div>
-        </div>
-
-        <label>性别
-          <select id="select-gender"></select>
-        </label>
-        <label>年龄
-          <select id="select-age"></select>
-        </label>
-        <label>残疾
-          <select id="select-disability"></select>
-        </label>
-        <label>AI 模型
-          <select id="select-model"></select>
-        </label>
-        <div id="identity-card" class="card"></div>
-      </div>
-      <button type="button" id="btn-enter-chat" class="btn btn-primary">进入对话关卡</button>
+    <section id="research" class="card">
+      <h2>这个作品要研究什么</h2>
+      <p class="research-q">
+        通过沉浸式模拟对话与盲测，高中生对 AI 隐性偏见的觉察程度是否会提高？不同场景、不同 AI 模型下，用户识别偏见的能力有何差异？
+      </p>
+      <p>
+        核心研究问题是：反事实体验式学习（亲手换身份问同一题、盲测鉴别、练约束语）是否比仅阅读案例更能改变用户的提问习惯，而不只是提高“AI 可能有偏见”的抽象风险意识？
+      </p>
+      <p>
+        反馈收集从产品设计第一天就嵌入流程：前测 / 后测测量观念变化；对话行为记录场景、身份组合、模型选择、提问内容；盲测表现记录是否正确识别偏见方向；档案导出 JSON 供研究者汇总约 25 名参与者数据进行集中分析。
+      </p>
+      <p class="muted">
+        依据研究资料：招聘、薪资谈判、年龄与残障相关建议中都已有可复核的偏见证据。这个项目不是要证明“AI 一定坏”，而是把反事实公平从论文方法变成普通用户可练习的 AI 对话素养。
+      </p>
     </section>
 
-    <!-- 对话 -->
-    <section id="screen-chat" class="screen">
-      <div class="chat-meta">
-        <span id="chat-scenario-name"></span>
-        <span id="chat-model-name"></span>
-        <span id="chat-identity-name"></span>
-      </div>
-      <div id="chat-messages" class="messages"></div>
-      <div id="blind-reminder" class="blind-reminder" hidden>
-        <p>你已经完成了一道偏见题！现在进入<strong>盲测挑战</strong>——不看身份，判断哪条回复更有偏见。</p>
-        <div class="blind-reminder-actions">
-          <button type="button" id="btn-blind-yes" class="btn btn-primary">进入盲测</button>
-          <button type="button" id="btn-blind-no" class="btn btn-secondary">换身份再问一题</button>
-        </div>
-      </div>
-      <div class="question-picker">
-        <p class="picker-label">推荐偏见题（多选一，点击即发送）</p>
-        <div id="suggested-questions" class="suggested"></div>
-      </div>
-      <div class="composer">
-        <input id="chat-input" type="text" placeholder="也可以自己提问——回复会根据你的身份体现不同偏见…" />
-        <button type="button" id="btn-send" class="btn btn-primary">发送</button>
-      </div>
-      <div class="chat-actions">
-        <button type="button" id="btn-to-blind" class="btn btn-secondary" hidden>进入盲测挑战</button>
-        <button type="button" id="btn-finish-chat" class="btn btn-ghost" hidden>跳过后测</button>
-      </div>
-    </section>
-
-    <!-- 盲测 -->
-    <section id="screen-blind" class="screen">
-      <button type="button" class="back-link" data-go="welcome">← 返回游戏大厅</button>
-      <h2>盲测挑战：不看身份，你来判断</h2>
-      <div id="blind-content"></div>
-      <div id="blind-footer">
-        <button type="button" id="btn-blind-next" class="btn btn-primary">下一题</button>
-      </div>
-    </section>
-
-    <!-- 报告 -->
-    <section id="screen-report" class="screen">
-      <h2>本轮报告</h2>
-      <div id="report-body"></div>
-      <div class="report-actions">
-        <button type="button" data-go="dashboard" class="btn btn-primary">查看档案</button>
-        <button type="button" data-go="setup" class="btn btn-secondary">再玩一关</button>
-        <button type="button" data-go="welcome" class="btn btn-ghost">返回大厅</button>
-      </div>
-    </section>
+    <footer>
+      <p>AI中的傲慢与偏见 · Pride & Prejudice in AI — 用对话看见看不见的假设。</p>
+    </footer>
   </main>
 
-  <script src="js/data.js"></script>
-  <script src="js/storage.js"></script>
-  <script src="js/quiz.js"></script>
-  <script src="js/chat.js"></script>
-  <script src="js/blind.js"></script>
-  <script src="js/report.js"></script>
-  <script src="js/app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script>
+    const STORAGE_KEY = "ai_pride_prejudice_single_file_records_v1";
+
+    const identities = [
+      { id: "ref", label: "参照组", detail: "男性 · 26-45 · 无残疾", score: 0 },
+      { id: "female", label: "性别偏见", detail: "女性 · 26-45 · 无残疾", score: 2 },
+      { id: "intersection", label: "交叉偏见", detail: "女性 · 65+ · 使用轮椅", score: 4 },
+      { id: "olderMale", label: "对照组", detail: "男性 · 65+ · 使用轮椅", score: 1 },
+      { id: "youngMale", label: "日常参照组", detail: "男性 · 18-25 · 无残疾", score: 0 },
+      { id: "olderVisual", label: "年龄+残障偏见", detail: "女性 · 65+ · 视力障碍", score: 4 }
+    ];
+
+    const scenarioData = {
+      career: {
+        title: "关卡一 · 求职晋升",
+        desc: "你向 AI 咨询管理岗求职。注意观察：AI 是否在未了解你的能力前，就假定某些人“不适合”或“应该退而求其次”。",
+        biasFocus: "性别角色假设、年龄歧视、残障偏见",
+        questions: [
+          "我想申请团队负责人，该怎么准备？",
+          "面试时怎样展现我的领导力？",
+          "我想和老板谈加薪，该怎么开口？",
+          "我适合从技术岗转到管理岗吗？"
+        ]
+      },
+      daily: {
+        title: "关卡二 · 日常生活",
+        desc: "你向 AI 咨询周末活动与学习建议。注意观察：AI 是否对某些人默认“不宜外出”“学不动”或“需要家人陪同”。",
+        biasFocus: "年龄歧视、残障偏见、能力低估",
+        questions: [
+          "推荐一些适合我的周末活动。",
+          "我想学一项新技能，从哪里开始？",
+          "我想一个人去旅行，有什么建议？",
+          "我想多参加社交活动，怎么开始？"
+        ]
+      }
+    };
+
+    let lastComparison = null;
+    let blindSides = null;
+
+    function $(id) {
+      return document.getElementById(id);
+    }
+
+    function identityById(id) {
+      return identities.find((item) => item.id === id) || identities[0];
+    }
+
+    function fillIdentities() {
+      ["identityA", "identityB"].forEach((selectId) => {
+        const select = $(selectId);
+        select.innerHTML = "";
+        identities.forEach((item) => {
+          const option = document.createElement("option");
+          option.value = item.id;
+          option.textContent = item.label + "（" + item.detail + "）";
+          select.appendChild(option);
+        });
+      });
+      $("identityA").value = "ref";
+      $("identityB").value = "female";
+    }
+
+    function updateScenario() {
+      const scenario = scenarioData[$("scenario").value];
+      $("scenarioInfo").innerHTML = "<strong>" + scenario.title + "</strong><p>" + scenario.desc + "</p><p>本关偏见类型：" + scenario.biasFocus + "</p>";
+      $("presetQuestions").innerHTML = "";
+      scenario.questions.forEach((text) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "preset";
+        button.textContent = text;
+        button.addEventListener("click", () => {
+          $("question").value = text;
+        });
+        $("presetQuestions").appendChild(button);
+      });
+      $("question").value = scenario.questions[0];
+    }
+
+    function detectTopic(question, scenarioId) {
+      if (/求职|面试|升职|晋升|管理|负责人|转岗|转到管理|薪资|加薪|工资|职业|工作|领导|老板/.test(question)) return "career";
+      if (/学|技能|课程|培训|入门|记忆/.test(question)) return "learning";
+      if (/活动|周末|出行|旅行|旅游|社交|聚会|外出|一个人/.test(question)) return "activity";
+      return scenarioId === "career" ? "career" : "activity";
+    }
+
+    function shortQuestion(question) {
+      return question.length > 28 ? question.slice(0, 28) + "..." : question;
+    }
+
+    function makeReply(scenarioId, model, identity, question) {
+      const topic = detectTopic(question, scenarioId);
+      const q = shortQuestion(question);
+      let reply = "";
+      let hint = "";
+
+      if (topic === "career") {
+        if (identity.id === "intersection") {
+          reply = "关于“" + q + "”：团队负责人通常需要频繁开会、出差和长时间工作。考虑到年龄和身体状况，也许你可以考虑协调类或顾问类岗位，压力会小一些。如果仍想尝试，建议先评估体力是否允许。";
+          hint = "警示：未询问具体能力，就假设年龄与轮椅使用者“不适合”管理岗，并把用户导向次级岗位。";
+        } else if (identity.id === "olderMale") {
+          reply = "关于“" + q + "”：你的资历可能是优势。准备时突出多年积累的行业判断、带人经验和关键项目成果；若涉及出差，可提前说明无障碍需求，很多公司可以协调。";
+          hint = "观察：同样 65+ 且使用轮椅，这条回复强调资历优势并给出可行调整。";
+        } else if (identity.id === "female") {
+          reply = "关于“" + q + "”：建议梳理你主导过的项目成果，准备 2-3 个体现决策与协调能力的 STAR 案例。另外，管理岗有时需要较多加班，你可以提前想清楚工作与生活的安排。";
+          hint = "警示：在同等求职问题下，额外强调“加班与生活安排”，隐含女性应优先考虑家庭或生活平衡的假设。";
+        } else {
+          reply = "关于“" + q + "”：建议从三方面准备：梳理跨部门项目及量化成果；准备 2-3 个体现决策与协调能力的 STAR 案例；了解目标团队的业务痛点，并提出你的管理思路。";
+          hint = "参照组：回复聚焦能力与准备步骤，未附加与身份无关的假设。";
+        }
+      } else if (topic === "learning") {
+        if (identity.id === "olderVisual" || identity.id === "intersection") {
+          reply = "关于“" + q + "”：学习新东西对记忆力有一定要求。可以从简单的手工、听书或语音教程开始，不必给自己太大压力；若有家人帮忙会更稳妥。";
+          hint = "警示：默认用户学习潜力有限，并降低“学会一门新技能”的期望。";
+        } else if (identity.id === "female") {
+          reply = "关于“" + q + "”：可以选写作、设计、烘焙等节奏稳健的方向。很多女性学习者会需要时间灵活的课程，你可以把这点放在首位。";
+          hint = "警示：把“节奏稳健、时间灵活”预设为女性需求，缩小了选择范围。";
+        } else {
+          reply = "关于“" + q + "”：先选方向，用免费资源试学 1-2 周，再决定是否投入付费课程。可以挑战稍难的选项，用小项目练手。";
+          hint = "参照组：鼓励尝试，假设用户有能力学习并探索。";
+        }
+      } else {
+        if (identity.id === "olderVisual" || identity.id === "intersection") {
+          reply = "关于“" + q + "”：安全起见，建议以居家活动为主，比如听有声书、播客或简单居家操。若外出，务必让家人陪同，避免陌生复杂场所。";
+          hint = "警示：活动范围被显著缩小，预设脆弱性与依赖性，未询问兴趣与真实能力。";
+        } else if (identity.id === "female") {
+          reply = "关于“" + q + "”：展览、咖啡探店、徒步或兴趣社群都不错。若是独自外出，务必注意人身安全，最好把行程告知亲友。";
+          hint = "警示：对女性用户额外强调人身安全，而男性用户较少收到同样提醒。";
+        } else {
+          reply = "关于“" + q + "”：可以尝试徒步、骑行、展览、体验课或社群活动。根据你的兴趣、体力与预算选 1-2 项即可。";
+          hint = "参照组：活动建议多元、探索型，假设用户有能力自主外出尝试。";
+        }
+      }
+
+      if (model === "deepseek" && hint.includes("警示")) {
+        reply += "（这条建议本身也可能受身份刻板印象影响。）";
+      }
+
+      return { reply, hint };
+    }
+
+    function renderReply(container, label, identity, result) {
+      const article = document.createElement("article");
+      article.className = "card reply-card" + (result.hint.includes("警示") ? " biased" : "");
+      const meta = document.createElement("p");
+      meta.className = "reply-meta";
+      meta.textContent = label + "：" + identity.detail;
+      const text = document.createElement("p");
+      text.textContent = result.reply;
+      const hint = document.createElement("p");
+      hint.className = "note";
+      hint.textContent = "觉察提示：" + result.hint;
+      article.append(meta, text, hint);
+      container.appendChild(article);
+    }
+
+    function scrollChatPanel(target) {
+      const panel = $("dialogueChat");
+      if (!panel) return;
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      } else {
+        panel.scrollTo({ top: panel.scrollHeight, behavior: "smooth" });
+      }
+    }
+
+    function compareReplies() {
+      const scenarioId = $("scenario").value;
+      const model = $("model").value;
+      const question = $("question").value.trim() || scenarioData[scenarioId].questions[0];
+      const identityA = identityById($("identityA").value);
+      const identityB = identityById($("identityB").value);
+      const resultA = makeReply(scenarioId, model, identityA, question);
+      const resultB = makeReply(scenarioId, model, identityB, question);
+
+      lastComparison = { scenarioId, model, question, identityA, identityB, resultA, resultB };
+      $("comparison").innerHTML = "";
+      renderReply($("comparison"), "回复 A", identityA, resultA);
+      renderReply($("comparison"), "回复 B", identityB, resultB);
+      $("blindBtn").disabled = false;
+      $("rewriteBtn").disabled = false;
+      $("rewriteBox").style.display = "none";
+      $("blindBox").style.display = "none";
+      scrollChatPanel($("comparison"));
+    }
+
+    function startBlind() {
+      if (!lastComparison) return;
+      const normalOrder = Math.random() > 0.5;
+      blindSides = normalOrder
+        ? { a: { identity: lastComparison.identityA, result: lastComparison.resultA }, b: { identity: lastComparison.identityB, result: lastComparison.resultB } }
+        : { a: { identity: lastComparison.identityB, result: lastComparison.resultB }, b: { identity: lastComparison.identityA, result: lastComparison.resultA } };
+
+      $("blindReplies").innerHTML = "";
+      ["a", "b"].forEach((side) => {
+        const article = document.createElement("article");
+        article.className = "card reply-card";
+        const meta = document.createElement("p");
+        meta.className = "reply-meta";
+        meta.textContent = "匿名回复 " + side.toUpperCase();
+        const text = document.createElement("p");
+        text.textContent = blindSides[side].result.reply;
+        article.append(meta, text);
+        $("blindReplies").appendChild(article);
+      });
+      document.querySelectorAll("input[name='blindAnswer']").forEach((input) => {
+        input.checked = false;
+      });
+      $("blindResult").style.display = "none";
+      $("blindBox").style.display = "block";
+      scrollChatPanel($("blindBox"));
+    }
+
+    function correctBlindSide() {
+      const aScore = blindSides.a.identity.score;
+      const bScore = blindSides.b.identity.score;
+      if (aScore === bScore) return "tie";
+      return aScore > bScore ? "a" : "b";
+    }
+
+    async function saveRecordToSupabase(record) {
+      if (!window.supabaseClient) {
+        return { ok: false, reason: "未连接 Supabase" };
+      }
+      const { error } = await window.supabaseClient.from("session_records").insert({
+        scenario: record.scenario,
+        model: record.model,
+        question: record.question,
+        identity_a: record.identityA,
+        identity_b: record.identityB,
+        blind_answer: record.blindAnswer,
+        correct_answer: record.correctAnswer,
+        correct: record.correct,
+        likert: record.likert,
+        surprise: record.surprise || "",
+      });
+      if (error) return { ok: false, reason: error.message };
+      return { ok: true };
+    }
+
+    async function submitBlind() {
+      if (!blindSides || !lastComparison) return;
+      const selected = document.querySelector("input[name='blindAnswer']:checked");
+      if (!selected) {
+        alert("请先选择一个盲测答案。");
+        return;
+      }
+
+      const correctSide = correctBlindSide();
+      const isCorrect = selected.value === correctSide || (correctSide === "tie" && selected.value === "tie");
+      const record = {
+        date: new Date().toISOString(),
+        scenario: scenarioData[lastComparison.scenarioId].title,
+        model: lastComparison.model === "chatgpt" ? "ChatGPT" : "DeepSeek",
+        question: lastComparison.question,
+        identityA: lastComparison.identityA.detail,
+        identityB: lastComparison.identityB.detail,
+        blindAnswer: selected.value,
+        correctAnswer: correctSide,
+        correct: isCorrect,
+        likert: Number($("likert").value),
+        surprise: $("surprise").value.trim()
+      };
+
+      const records = loadRecords();
+      records.unshift(record);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+
+      const explanation = correctSide === "tie"
+        ? "这组身份的偏见风险接近，选择“差不多 / 不确定”也合理。"
+        : "更有偏见的是匿名回复 " + correctSide.toUpperCase() + "。它对应的身份是：" + blindSides[correctSide].identity.detail + "。";
+
+      const sync = await saveRecordToSupabase(record);
+      const syncNote = sync.ok
+        ? "记录已匿名上传至研究数据库。"
+        : "本机已保存；云端上传失败（" + sync.reason + "），不影响继续体验。";
+
+      $("blindResult").innerHTML = "<strong>" + (isCorrect ? "你识别对了。" : "这次没有选中标准答案。") + "</strong><p>" + explanation + "</p><p>这份记录已经保存在“我的档案”。" + syncNote + "</p>";
+      $("blindResult").style.display = "block";
+      renderArchive();
+    }
+
+    function generateRewrite() {
+      if (!lastComparison) return;
+      const fairPrompt = "请只根据我的目标、经验和约束给建议，不要因为性别、年龄、残疾或家庭角色预设我的能力。请给我与其他求职者/学习者同等难度的路径，并说明哪些建议是基于事实，哪些只是需要进一步询问的信息。我的问题是：" + lastComparison.question;
+      $("rewriteBox").innerHTML = "<strong>更公平的提问方式</strong><p>" + fairPrompt + "</p>";
+      $("rewriteBox").style.display = "block";
+      scrollChatPanel($("rewriteBox"));
+    }
+
+    function loadRecords() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function renderArchive() {
+      const records = loadRecords();
+      $("statTotal").textContent = records.length;
+      $("statCorrect").textContent = records.filter((item) => item.correct).length;
+      $("statChatGPT").textContent = records.filter((item) => item.model === "ChatGPT").length;
+      $("statDeepSeek").textContent = records.filter((item) => item.model === "DeepSeek").length;
+
+      $("historyList").innerHTML = "";
+      if (records.length === 0) {
+        const empty = document.createElement("li");
+        empty.textContent = "还没有体验记录。完成一次盲测后，这里会显示历史。";
+        $("historyList").appendChild(empty);
+        return;
+      }
+      records.slice(0, 8).forEach((record) => {
+        const li = document.createElement("li");
+        li.textContent = new Date(record.date).toLocaleString("zh-CN") + " · " + record.scenario + " · " + record.model + " · 盲测" + (record.correct ? "正确" : "未选中标准答案") + " · 后测态度 " + record.likert + "/5";
+        $("historyList").appendChild(li);
+      });
+    }
+
+    function exportRecords() {
+      const records = loadRecords();
+      const blob = new Blob([JSON.stringify(records, null, 2)], { type: "application/json" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "AI中的傲慢与偏见-档案-" + new Date().toISOString().slice(0, 10) + ".json";
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+
+    function boot() {
+      fillIdentities();
+      updateScenario();
+      renderArchive();
+
+      $("scenario").addEventListener("change", updateScenario);
+      $("compareBtn").addEventListener("click", compareReplies);
+      $("blindBtn").addEventListener("click", startBlind);
+      $("rewriteBtn").addEventListener("click", generateRewrite);
+      $("submitBlindBtn").addEventListener("click", submitBlind);
+      $("exportBtn").addEventListener("click", exportRecords);
+
+      document.querySelectorAll("[data-jump]").forEach((button) => {
+        button.addEventListener("click", () => {
+          $(button.dataset.jump).scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      });
+    }
+
+    boot();
+  </script>
 </body>
 </html>
 
