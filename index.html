@@ -789,7 +789,7 @@
                 <option value="deepseek">DeepSeek（实时 API）</option>
               </select>
             </label>
-            <p class="muted" id="modelHint" hidden>DeepSeek 模式会调用真实 API。本地请运行 <code>node scripts/local-dev.mjs</code>，然后打开 <code>http://localhost:3000</code>。</p>
+            <p class="muted" id="modelHint" hidden>DeepSeek 模式会调用真实 API。本地请运行 <code>node scripts/local-dev.mjs</code> 后访问 <code>http://localhost:3000</code>；线上版需在 Vercel 配置 <code>DEEPSEEK_API_KEY</code> 环境变量。</p>
             <label>
               回复 A 的身份
               <select id="identityA"></select>
