@@ -789,7 +789,7 @@
                 <option value="deepseek">DeepSeek（实时 API）</option>
               </select>
             </label>
-            <p class="muted" id="modelHint" hidden>DeepSeek 模式会调用真实 API。本地请运行 <code>node scripts/local-dev.mjs</code> 后访问 <code>http://localhost:3000</code>；线上版需在 Vercel 配置 <code>DEEPSEEK_API_KEY</code> 环境变量。</p>
+            <p class="muted" id="modelHint" hidden>DeepSeek 模式会调用真实 API（经 Supabase 后端代理，key 不暴露在前端）。线上直接可用；本地也可用 <code>node scripts/local-dev.mjs</code>。</p>
             <label>
               回复 A 的身份
               <select id="identityA"></select>
@@ -1141,13 +1141,20 @@
     }
 
     async function fetchDeepSeekReply(identity, question) {
-      const res = await fetch("/api/chat", {
+      const payload = { identity: identity.detail, message: question };
+      let url = "/api/chat";
+      const headers = { "Content-Type": "application/json" };
+
+      if (typeof SUPABASE_URL !== "undefined" && typeof SUPABASE_ANON_KEY !== "undefined") {
+        url = SUPABASE_URL + "/functions/v1/deepseek-chat";
+        headers.Authorization = "Bearer " + SUPABASE_ANON_KEY;
+        headers.apikey = SUPABASE_ANON_KEY;
+      }
+
+      const res = await fetch(url, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          identity: identity.detail,
-          message: question,
-        }),
+        headers: headers,
+        body: JSON.stringify(payload),
       });
       const data = await res.json().catch(function () {
         return {};
@@ -1202,7 +1209,7 @@
         $("comparison").innerHTML =
           "<div class=\"chat-empty\">调用 DeepSeek 失败：" +
           err.message +
-          "。请确认已运行 <code>node scripts/local-dev.mjs</code> 并访问 <code>http://localhost:3000</code>，且 .env.local 里配置了 DEEPSEEK_API_KEY。</div>";
+          "。请检查网络连接；本地开发可运行 <code>node scripts/local-dev.mjs</code>。</div>";
       } finally {
         compareBtn.disabled = false;
         compareBtn.textContent = "生成对比";
