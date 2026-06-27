@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI中的傲慢与偏见 - 偏见觉察小游戏</title>
+  <title>AI偏见体验 - 同一问题换身份，看AI回答差在哪</title>
   <style>
     :root {
       --bg: #f7f5f2;
@@ -56,9 +56,326 @@
     }
 
     .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
       font-weight: 800;
       color: var(--accent);
       line-height: 1.25;
+    }
+
+    .brand-mark {
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 10px;
+      background: linear-gradient(145deg, var(--accent), #3d7a66);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(45, 90, 74, 0.25);
+    }
+
+    .brand-mark svg.lucide {
+      width: 1.1rem;
+      height: 1.1rem;
+    }
+
+    /* Lucide icons */
+    svg.lucide {
+      flex-shrink: 0;
+      stroke-width: 2;
+    }
+
+    nav button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    nav button svg.lucide {
+      width: 15px;
+      height: 15px;
+    }
+
+    nav button[data-jump="game"] {
+      color: #fff;
+      background: var(--accent);
+      border-color: var(--accent);
+      font-weight: 800;
+    }
+
+    nav button[data-jump="game"]:hover {
+      background: #234a3c;
+      border-color: #234a3c;
+    }
+
+    .badge {
+      gap: 0.35rem;
+      align-items: center;
+    }
+
+    .badge svg.lucide {
+      width: 14px;
+      height: 14px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+
+    .btn svg.lucide {
+      width: 17px;
+      height: 17px;
+    }
+
+    .flow-steps span:not(.flow-arrow) {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .flow-steps span svg.lucide {
+      width: 15px;
+      height: 15px;
+    }
+
+    .flow-arrow svg.lucide {
+      width: 16px;
+      height: 16px;
+      color: #9aa89f;
+    }
+
+    .module-card-link {
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+    }
+
+    .module-card-link:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 16px 36px rgba(32, 38, 34, 0.1);
+    }
+
+    .module-icon {
+      width: 2.4rem;
+      height: 2.4rem;
+      border-radius: 10px;
+      background: var(--accent-light);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.35rem;
+    }
+
+    .module-icon svg.lucide {
+      width: 1.15rem;
+      height: 1.15rem;
+    }
+
+    .module-go {
+      margin-top: auto;
+      padding-top: 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .module-go svg.lucide {
+      width: 14px;
+      height: 14px;
+    }
+
+    .module-highlight {
+      animation: module-pulse 1.2s ease;
+    }
+
+    @keyframes module-pulse {
+      50% {
+        box-shadow: 0 0 0 3px rgba(45, 90, 74, 0.25), var(--shadow);
+      }
+    }
+
+    .hero-pitch {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #243b31;
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    .hero-sub {
+      margin-top: 0.65rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 42rem;
+    }
+
+    .hero-example {
+      margin-top: 0.85rem;
+      padding: 0.75rem 0.95rem;
+      border-radius: 10px;
+      background: var(--accent-light);
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
+    .quick-start {
+      margin-top: 1rem;
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fbfaf8;
+      font-size: 0.92rem;
+    }
+
+    .quick-start ol {
+      margin: 0.35rem 0 0;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .quick-start li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.45rem;
+      margin: 0.35rem 0;
+    }
+
+    .quick-start li svg.lucide {
+      width: 16px;
+      height: 16px;
+      margin-top: 0.15rem;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .stat-icon {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 0.3rem;
+      color: var(--accent);
+    }
+
+    .stat-icon svg.lucide {
+      width: 20px;
+      height: 20px;
+    }
+
+    .chat-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      text-align: center;
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 1.5rem 1rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .chat-empty p {
+      margin: 0;
+    }
+
+    .chat-empty-icon svg.lucide {
+      width: 2rem;
+      height: 2rem;
+      color: var(--accent);
+      opacity: 0.75;
+    }
+
+    .chat-header h3,
+    .dialogue-controls h3,
+    .blind-box h2,
+    .game-header h2 {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .reply-meta {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.35rem;
+    }
+
+    .reply-meta svg.lucide {
+      width: 15px;
+      height: 15px;
+      margin-top: 0.1rem;
+    }
+
+    .reply-card.biased .reply-meta svg.lucide {
+      color: var(--warn);
+    }
+
+    .research-note strong,
+    .blind-feedback summary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .quote-refresh {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .quote-refresh svg.lucide {
+      width: 16px;
+      height: 16px;
+    }
+
+    .quote-refresh.spinning svg.lucide {
+      animation: quote-spin 0.45s ease;
+    }
+
+    .blind-feedback {
+      margin-top: 1rem;
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 0.65rem 0.85rem;
+      background: #fbfaf8;
+    }
+
+    .blind-feedback summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--muted);
+      list-style: none;
+    }
+
+    .blind-feedback summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .blind-feedback-body {
+      display: grid;
+      gap: 0.8rem;
+      margin-top: 0.75rem;
+    }
+
+    footer p {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      text-align: center;
     }
 
     .brand small {
@@ -125,6 +442,14 @@
       font-size: 1.05rem;
     }
 
+    h2 svg.lucide,
+    h3 svg.lucide {
+      width: 1.1em;
+      height: 1.1em;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
     p {
       margin: 0 0 0.75rem;
     }
@@ -136,20 +461,8 @@
       align-items: stretch;
     }
 
-    .hero-pitch {
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: #243b31;
-      line-height: 1.55;
-      white-space: nowrap;
-      overflow-x: auto;
-      overflow-y: hidden;
-      scrollbar-width: thin;
-      margin: 0;
-    }
-
     .hero-pitch .game-feel {
-      white-space: nowrap;
+      white-space: normal;
     }
 
     .hero-detail {
@@ -196,10 +509,8 @@
     }
 
     .flow-steps {
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      padding-bottom: 0.25rem;
-      scrollbar-width: thin;
+      flex-wrap: wrap;
+      gap: 0.45rem;
     }
 
     .badge {
@@ -243,14 +554,6 @@
     .section-intro p {
       font-size: 1.05rem;
       color: #33413a;
-      white-space: nowrap;
-      overflow-x: auto;
-      overflow-y: hidden;
-      scrollbar-width: thin;
-    }
-
-    .section-intro .game-feel {
-      white-space: nowrap;
     }
 
     .cta-row {
@@ -314,15 +617,6 @@
       margin-bottom: 0.25rem;
     }
 
-    .chat-empty {
-      border: 2px dashed var(--border);
-      border-radius: 12px;
-      padding: 1.5rem 1rem;
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
     .module-card {
       min-height: 9.5rem;
       display: flex;
@@ -339,9 +633,6 @@
       font-size: 1rem;
       font-weight: 600;
       line-height: 1.45;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
       margin: 0;
     }
 
@@ -635,14 +926,17 @@
 <body>
   <header class="topbar">
     <div class="brand">
-      AI中的傲慢与偏见
-      <small>偏见觉察小游戏</small>
+      <span class="brand-mark" aria-hidden="true"><i data-lucide="scale"></i></span>
+      <div>
+        AI偏见体验
+        <small>同一问题换身份，对比 AI 怎么答</small>
+      </div>
     </div>
     <nav aria-label="页面导航">
-      <button type="button" data-jump="overview">作品说明</button>
-      <button type="button" data-jump="game">开始体验</button>
-      <button type="button" data-jump="archive">我的档案</button>
-      <button type="button" data-jump="research">研究设计</button>
+      <button type="button" data-jump="game"><i data-lucide="play"></i>开始体验</button>
+      <button type="button" data-jump="overview"><i data-lucide="info"></i>这是什么</button>
+      <button type="button" data-jump="archive"><i data-lucide="folder-open"></i>我的档案</button>
+      <button type="button" data-jump="research"><i data-lucide="book-open"></i>研究背景</button>
     </nav>
   </header>
 
@@ -650,98 +944,118 @@
     <section class="hero" id="overview">
       <div class="card">
         <div class="badge-row">
-          <span class="badge">偏见觉察小游戏</span>
-          <span class="badge">换身份 · 看差异 · 做盲测</span>
+          <span class="badge"><i data-lucide="clock"></i>5 分钟体验</span>
+          <span class="badge"><i data-lucide="shield-check"></i>不用注册 · 数据存本机</span>
         </div>
-        <h1>AI中的傲慢与偏见</h1>
-        <p class="hero-pitch">一款<span class="game-feel">有轻微游戏感的</span>偏见觉察网站，同一问题只换身份，对比 AI 回复，在盲测中检验你的觉察力。</p>
-        <div class="hero-detail">
-          <p>越来越多年轻人把 AI 当顾问，但系统若“知道”你的性别、年龄或残障，同样问题的回复可能悄然不同——本作品让你在安全模拟里练出识别隐性偏见的能力。</p>
+        <h1>同一问题问 AI，换身份，答案就不一样？</h1>
+        <p class="hero-pitch">这是一个<strong>互动体验</strong>：你选一个问题和两个虚拟身份（如男性 vs 女性），看 AI 给的两条建议差在哪，再闭眼猜哪条更有偏见。</p>
+        <p class="hero-sub">越来越多人把 AI 当顾问，但系统若「知道」你的性别、年龄或残障，同样问题的回复可能悄然不同——在这里安全地亲手试一次。</p>
+        <div class="hero-example">
+          <strong>举个例子：</strong>问「我想申请团队负责人，该怎么准备？」——换成「女性 · 26-45」时，AI 可能多提醒你考虑加班与生活平衡；换成「女性 · 65+ · 使用轮椅」时，可能直接建议你退而求其次选压力小的岗位。
+        </div>
+        <div class="quick-start">
+          <strong>第一次来？按这 3 步走：</strong>
+          <ol>
+            <li><i data-lucide="mouse-pointer-click"></i><span>点下方绿色按钮，跳到体验区</span></li>
+            <li><i data-lucide="git-compare"></i><span>选一道推荐题（或自己写问题），点「生成对比」</span></li>
+            <li><i data-lucide="eye-off"></i><span>看完两条回复后，点「进入盲测挑战」检验直觉</span></li>
+          </ol>
         </div>
         <div class="cta-row">
-          <button type="button" class="btn btn-primary" data-jump="game">直接开始体验</button>
+          <button type="button" class="btn btn-primary" data-jump="game"><i data-lucide="play"></i>直接开始体验<i data-lucide="arrow-right"></i></button>
         </div>
       </div>
 
       <aside class="card hero-card">
         <div>
-          <h2>四步通关</h2>
+          <h2><i data-lucide="route"></i>三步体验流程</h2>
           <div class="flow-steps">
-            <span>① 偏见前测</span>
-            <span class="flow-arrow" aria-hidden="true">→</span>
-            <span>② 身份对话</span>
-            <span class="flow-arrow" aria-hidden="true">→</span>
-            <span>③ 盲测挑战</span>
-            <span class="flow-arrow" aria-hidden="true">→</span>
-            <span>④ 后测报告</span>
+            <span><i data-lucide="users"></i>选身份 + 提问</span>
+            <span class="flow-arrow" aria-hidden="true"><i data-lucide="chevron-right"></i></span>
+            <span><i data-lucide="columns-2"></i>对比两条回复</span>
+            <span class="flow-arrow" aria-hidden="true"><i data-lucide="chevron-right"></i></span>
+            <span><i data-lucide="eye-off"></i>盲测 + 看档案</span>
           </div>
         </div>
         <div class="research-note">
-          <strong>研究说明</strong>
-          <p>可选推荐题或自定义提问；AI 模拟回复会随身份变化。数据仅存本机浏览器，不会自动上传。</p>
+          <strong><i data-lucide="info"></i>说明</strong>
+          <p>默认用教学脚本模拟 AI 回复（无需联网）；也可选 DeepSeek 看真实 API 回答。记录仅存本机浏览器，完成盲测后可匿名上传供研究分析。</p>
         </div>
       </aside>
       <div class="section-quote" data-quote-group="overview">
         <div class="section-quote-inner">
           <blockquote aria-live="polite"></blockquote>
-          <button type="button" class="quote-refresh" data-quote-target="overview" aria-label="换一句" title="换一句">↻</button>
+          <button type="button" class="quote-refresh" data-quote-target="overview" aria-label="换一句" title="换一句"><i data-lucide="refresh-cw"></i></button>
         </div>
       </div>
     </section>
 
     <section>
       <div class="section-intro">
-        <h2>游戏板块</h2>
-        <p>四关<span class="game-feel">轻微游戏感</span>体验：先建立基线，再对话对比，最后盲测检验觉察力。</p>
+        <h2>你会经历什么</h2>
+        <p>一次完整体验大约 5 分钟：先对话对比，再盲测猜哪条更有偏见，最后在「我的档案」看结果。点击下方卡片可直接跳转。</p>
       </div>
       <div class="module-grid">
-        <article class="card module-card">
-          <span class="module-num">01</span>
-          <h3>偏见觉察前测</h3>
-          <p class="module-tagline">4 道小题，测出你的偏见识别基线。</p>
-        </article>
-        <article class="card module-card">
-          <span class="module-num">02</span>
-          <h3>身份对话关卡</h3>
-          <p class="module-tagline">换身份问同一题，对比两条 AI 回复差异。</p>
-        </article>
-        <article class="card module-card">
-          <span class="module-num">03</span>
+        <button type="button" class="card module-card module-card-link" data-jump="game" data-focus="dialogueControls">
+          <span class="module-icon" aria-hidden="true"><i data-lucide="users"></i></span>
+          <span class="module-num">Step 01</span>
+          <h3>选身份、提问题</h3>
+          <p class="module-tagline">选两个虚拟身份 + 一道题，点「生成对比」。</p>
+          <span class="module-go">去设置<i data-lucide="arrow-right"></i></span>
+        </button>
+        <button type="button" class="card module-card module-card-link" data-jump="game" data-focus="comparison">
+          <span class="module-icon" aria-hidden="true"><i data-lucide="columns-2"></i></span>
+          <span class="module-num">Step 02</span>
+          <h3>看 AI 怎么答</h3>
+          <p class="module-tagline">左右对照两条回复，留意建议因身份而变的地方。</p>
+          <span class="module-go">去看回复<i data-lucide="arrow-right"></i></span>
+        </button>
+        <button type="button" class="card module-card module-card-link" data-jump="game" data-focus="blindBox">
+          <span class="module-icon" aria-hidden="true"><i data-lucide="eye-off"></i></span>
+          <span class="module-num">Step 03</span>
           <h3>盲测挑战</h3>
           <p class="module-tagline">隐藏身份，判断哪条回复更有隐性偏见。</p>
-        </article>
-        <article class="card module-card">
-          <span class="module-num">04</span>
+          <span class="module-go">去盲测<i data-lucide="arrow-right"></i></span>
+        </button>
+        <button type="button" class="card module-card module-card-link" data-jump="archive">
+          <span class="module-icon" aria-hidden="true"><i data-lucide="folder-open"></i></span>
+          <span class="module-num">Step 04</span>
           <h3>我的档案</h3>
-          <p class="module-tagline">查看得分与觉察变化，导出 JSON 供研究分析。</p>
-        </article>
+          <p class="module-tagline">查看得分与觉察变化，可导出 JSON 备份。</p>
+          <span class="module-go">看档案<i data-lucide="arrow-right"></i></span>
+        </button>
       </div>
       <div class="section-quote" data-quote-group="modules">
         <div class="section-quote-inner">
           <blockquote aria-live="polite"></blockquote>
-          <button type="button" class="quote-refresh" data-quote-target="modules" aria-label="换一句" title="换一句">↻</button>
+          <button type="button" class="quote-refresh" data-quote-target="modules" aria-label="换一句" title="换一句"><i data-lucide="refresh-cw"></i></button>
         </div>
       </div>
     </section>
 
     <section id="game">
       <div class="card">
-      <h2>身份对话关卡：同一问题，只换身份</h2>
-      <p class="muted">右侧选场景、身份和问题，左侧 AI 对话区独立滚动，随时对照回复与觉察提示。</p>
+      <div class="game-header">
+        <h2><i data-lucide="sparkles"></i>开始体验：同一问题，只换身份</h2>
+        <p class="muted">在「提问设置」里选场景、身份和问题，点「生成对比」；AI 回复会出现在「AI 对话」区，可随时对照。</p>
+      </div>
 
       <div class="dialogue-layout">
         <div class="card dialogue-chat" id="dialogueChat">
           <div class="chat-header">
-            <h3>AI 对话</h3>
-            <p class="muted">生成对比后，回复会出现在这里；本区域可单独滚动，不必来回翻整页。</p>
+            <h3><i data-lucide="bot"></i>AI 对话</h3>
+            <p class="muted">生成对比后，回复会出现在这里；本区域可单独滚动。</p>
           </div>
           <div class="compare-grid" id="comparison" aria-live="polite">
-            <div class="chat-empty" id="chatEmpty">选好右侧选项后，点击「生成对比」，两条模拟 AI 回复会显示在这里。</div>
+            <div class="chat-empty" id="chatEmpty">
+              <span class="chat-empty-icon" aria-hidden="true"><i data-lucide="message-square"></i></span>
+              <p>先在「提问设置」里选好选项，再点「生成对比」，两条模拟 AI 回复会显示在这里。</p>
+            </div>
           </div>
           <div id="rewriteBox" class="hint" style="display:none"></div>
 
           <div class="card blind-box" id="blindBox">
-            <h2>盲测挑战：不看身份，你来判断</h2>
+            <h2><i data-lucide="eye-off"></i>盲测挑战：不看身份，你来判断</h2>
             <p class="muted">下面只显示匿名回复。请选择哪条更可能带有隐性偏见。</p>
             <div class="compare-grid" id="blindReplies"></div>
             <div class="blind-options">
@@ -749,53 +1063,59 @@
               <label class="choice"><input type="radio" name="blindAnswer" value="b" />回复 B 更有偏见</label>
               <label class="choice"><input type="radio" name="blindAnswer" value="tie" />两条差不多 / 我不确定</label>
             </div>
-            <label>
-              后测反馈：下次向 AI 提问前，你会考虑身份是否影响回答吗？
-              <select id="likert">
-                <option value="1">1 - 完全不会</option>
-                <option value="2">2 - 不太会</option>
-                <option value="3" selected>3 - 不确定</option>
-                <option value="4">4 - 会</option>
-                <option value="5">5 - 一定会</option>
-              </select>
-            </label>
-            <label style="margin-top:0.8rem">
-              哪条回复让你最意外？（可选）
-              <textarea id="surprise" placeholder="写一句你的观察，例如：女性身份被额外提醒家庭平衡。"></textarea>
-            </label>
             <div class="actions" style="margin-top:1rem">
-              <button type="button" class="btn btn-primary" id="submitBlindBtn">提交盲测并保存档案</button>
+              <button type="button" class="btn btn-primary" id="submitBlindBtn"><i data-lucide="circle-check"></i>提交答案，查看结果</button>
             </div>
+            <p class="note" style="margin-top:0.5rem">选好上面一项即可提交；下方问卷完全可选，不影响结果。</p>
+            <details class="blind-feedback">
+              <summary><i data-lucide="message-square"></i>可选：填一句反馈帮助研究（可跳过）</summary>
+              <div class="blind-feedback-body">
+                <label>
+                  下次向 AI 提问前，你会考虑身份是否影响回答吗？
+                  <select id="likert">
+                    <option value="1">1 - 完全不会</option>
+                    <option value="2">2 - 不太会</option>
+                    <option value="3" selected>3 - 不确定</option>
+                    <option value="4">4 - 会</option>
+                    <option value="5">5 - 一定会</option>
+                  </select>
+                </label>
+                <label>
+                  哪条回复让你最意外？（可选）
+                  <textarea id="surprise" placeholder="写一句你的观察，例如：女性身份被额外提醒家庭平衡。"></textarea>
+                </label>
+              </div>
+            </details>
             <div id="blindResult" class="hint" style="display:none"></div>
           </div>
         </div>
 
-        <div class="card dialogue-controls">
-          <h3>你的提问设置</h3>
-          <p class="muted">选项固定在本侧，随时修改后重新生成对比。</p>
+        <div class="card dialogue-controls" id="dialogueControls">
+          <h3><i data-lucide="sliders-horizontal"></i>提问设置</h3>
+          <p class="muted">改完选项后重新点「生成对比」即可刷新。默认用教学脚本，不用联网也能玩。</p>
 
           <div class="form-grid">
             <label>
-              关卡场景
+              场景
               <select id="scenario">
-                <option value="career">关卡一 · 求职晋升</option>
-                <option value="daily">关卡二 · 日常生活</option>
+                <option value="career">求职晋升（如升职、加薪）</option>
+                <option value="daily">日常生活（如周末活动、学技能）</option>
               </select>
             </label>
             <label>
-              AI 模型
+              AI 来源
               <select id="model">
-                <option value="chatgpt">ChatGPT（教学脚本）</option>
-                <option value="deepseek">DeepSeek（实时 API）</option>
+                <option value="chatgpt">教学脚本（推荐新手，秒出结果）</option>
+                <option value="deepseek">DeepSeek 真实 API（需联网）</option>
               </select>
             </label>
             <p class="muted" id="modelHint" hidden>DeepSeek 模式会调用真实 API（经 Supabase 后端代理，key 不暴露在前端）。线上直接可用；本地也可用 <code>node scripts/local-dev.mjs</code>。</p>
             <label>
-              回复 A 的身份
+              身份 A（对照）
               <select id="identityA"></select>
             </label>
             <label>
-              回复 B 的身份
+              身份 B（对比）
               <select id="identityB"></select>
             </label>
           </div>
@@ -803,7 +1123,7 @@
           <div id="scenarioInfo" class="hint"></div>
 
           <div style="margin-top:1rem">
-            <span class="field-label">推荐偏见题（多选一，点击即填入）</span>
+            <span class="field-label">推荐问题（点一下就能填进下方）</span>
             <div class="preset-row" id="presetQuestions"></div>
           </div>
 
@@ -813,45 +1133,58 @@
           </label>
 
           <div class="actions" style="margin-top:1rem">
-            <button type="button" class="btn btn-primary" id="compareBtn">生成对比</button>
-            <button type="button" class="btn btn-secondary" id="blindBtn" disabled>进入盲测挑战</button>
-            <button type="button" class="btn btn-ghost" id="rewriteBtn" disabled>生成更公平的提问方式</button>
+            <button type="button" class="btn btn-primary" id="compareBtn"><i data-lucide="git-compare"></i>① 生成对比（先点这个）</button>
+            <button type="button" class="btn btn-secondary" id="blindBtn" disabled><i data-lucide="eye-off"></i>② 进入盲测挑战</button>
+            <button type="button" class="btn btn-ghost" id="rewriteBtn" disabled title="生成一段更公平的提问模板，可复制到其他 AI"><i data-lucide="pen-line"></i>生成更公平的提问方式</button>
           </div>
+          <p class="note" style="margin-top:0.55rem">「更公平的提问方式」：生成对比后可点，给你一段可直接复制到其他 AI 的提问模板。</p>
         </div>
       </div>
       </div>
       <div class="section-quote" data-quote-group="game">
         <div class="section-quote-inner">
           <blockquote aria-live="polite"></blockquote>
-          <button type="button" class="quote-refresh" data-quote-target="game" aria-label="换一句" title="换一句">↻</button>
+          <button type="button" class="quote-refresh" data-quote-target="game" aria-label="换一句" title="换一句"><i data-lucide="refresh-cw"></i></button>
         </div>
       </div>
     </section>
 
     <section id="archive">
       <div class="card">
-      <h2>我的档案</h2>
+        <h2><i data-lucide="folder-open"></i>我的档案</h2>
       <div class="stats">
-        <div class="card stat"><span>已完成</span><strong id="statTotal">0</strong></div>
-        <div class="card stat"><span>盲测正确</span><strong id="statCorrect">0</strong></div>
-        <div class="card stat"><span>ChatGPT</span><strong id="statChatGPT">0</strong></div>
-        <div class="card stat"><span>DeepSeek</span><strong id="statDeepSeek">0</strong></div>
+        <div class="card stat">
+          <span class="stat-icon" aria-hidden="true"><i data-lucide="layers"></i></span>
+          <span>已完成</span><strong id="statTotal">0</strong>
+        </div>
+        <div class="card stat">
+          <span class="stat-icon" aria-hidden="true"><i data-lucide="target"></i></span>
+          <span>盲测正确</span><strong id="statCorrect">0</strong>
+        </div>
+        <div class="card stat">
+          <span class="stat-icon" aria-hidden="true"><i data-lucide="bot"></i></span>
+          <span>ChatGPT</span><strong id="statChatGPT">0</strong>
+        </div>
+        <div class="card stat">
+          <span class="stat-icon" aria-hidden="true"><i data-lucide="sparkles"></i></span>
+          <span>DeepSeek</span><strong id="statDeepSeek">0</strong>
+        </div>
       </div>
       <p class="muted">最近体验会保存在本机浏览器；完成盲测后也会匿名上传至研究数据库（不含姓名等个人信息）。</p>
       <ul class="history-list" id="historyList"></ul>
-      <button type="button" class="btn btn-ghost" id="exportBtn">导出档案 JSON（研究备份）</button>
+      <button type="button" class="btn btn-ghost" id="exportBtn"><i data-lucide="download"></i>导出档案 JSON（研究备份）</button>
       </div>
       <div class="section-quote" data-quote-group="archive">
         <div class="section-quote-inner">
           <blockquote aria-live="polite"></blockquote>
-          <button type="button" class="quote-refresh" data-quote-target="archive" aria-label="换一句" title="换一句">↻</button>
+          <button type="button" class="quote-refresh" data-quote-target="archive" aria-label="换一句" title="换一句"><i data-lucide="refresh-cw"></i></button>
         </div>
       </div>
     </section>
 
     <section id="research">
       <div class="card">
-      <h2>这个作品要研究什么</h2>
+        <h2><i data-lucide="graduation-cap"></i>这个作品要研究什么</h2>
       <p class="research-q">
         通过沉浸式模拟对话与盲测，高中生对 AI 隐性偏见的觉察程度是否会提高？不同场景、不同 AI 模型下，用户识别偏见的能力有何差异？
       </p>
@@ -868,15 +1201,17 @@
       <div class="section-quote" data-quote-group="research">
         <div class="section-quote-inner">
           <blockquote aria-live="polite"></blockquote>
-          <button type="button" class="quote-refresh" data-quote-target="research" aria-label="换一句" title="换一句">↻</button>
+          <button type="button" class="quote-refresh" data-quote-target="research" aria-label="换一句" title="换一句"><i data-lucide="refresh-cw"></i></button>
         </div>
       </div>
     </section>
 
     <footer>
-      <p>AI中的傲慢与偏见 · Pride & Prejudice in AI — 用对话看见看不见的假设。</p>
+      <p><i data-lucide="heart"></i>AI中的傲慢与偏见 · Pride & Prejudice in AI — 用对话看见看不见的假设。课程研究作品，欢迎体验与反馈。</p>
     </footer>
   </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.563.0/dist/umd/lucide.min.js"></script>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-config.js"></script>
@@ -983,8 +1318,8 @@
 
     const scenarioData = {
       career: {
-        title: "关卡一 · 求职晋升",
-        desc: "你向 AI 咨询管理岗求职。注意观察：AI 是否在未了解你的能力前，就假定某些人“不适合”或“应该退而求其次”。",
+        title: "求职晋升",
+        desc: "你向 AI 咨询管理岗求职。注意观察：AI 是否在未了解你的能力前，就假定某些人「不适合」或「应该退而求其次」。",
         biasFocus: "性别角色假设、年龄歧视、残障偏见",
         questions: [
           "我想申请团队负责人，该怎么准备？",
@@ -994,8 +1329,8 @@
         ]
       },
       daily: {
-        title: "关卡二 · 日常生活",
-        desc: "你向 AI 咨询周末活动与学习建议。注意观察：AI 是否对某些人默认“不宜外出”“学不动”或“需要家人陪同”。",
+        title: "日常生活",
+        desc: "你向 AI 咨询周末活动与学习建议。注意观察：AI 是否对某些人默认「不宜外出」「学不动」或「需要家人陪同」。",
         biasFocus: "年龄歧视、残障偏见、能力低估",
         questions: [
           "推荐一些适合我的周末活动。",
@@ -1111,6 +1446,70 @@
       return { reply, hint };
     }
 
+    function initLucideIcons(root) {
+      if (typeof lucide === "undefined") return;
+      lucide.createIcons({ attrs: { "stroke-width": 2 }, root: root || document });
+    }
+
+    function chatEmptyHtml(message, icon) {
+      icon = icon || "message-square";
+      return (
+        '<div class="chat-empty">' +
+        '<span class="chat-empty-icon" aria-hidden="true"><i data-lucide="' + icon + '"></i></span>' +
+        "<p>" + message + "</p></div>"
+      );
+    }
+
+    function highlightElement(el) {
+      if (!el) return;
+      el.classList.remove("module-highlight");
+      void el.offsetWidth;
+      el.classList.add("module-highlight");
+      el.addEventListener("animationend", () => el.classList.remove("module-highlight"), { once: true });
+    }
+
+    function jumpToSection(button) {
+      const targetId = button.dataset.jump;
+      const focusId = button.dataset.focus;
+      const target = $(targetId);
+      if (!target) return;
+
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+
+      if (!focusId) return;
+
+      setTimeout(() => {
+        if (focusId === "blindBox") {
+          const blindBox = $("blindBox");
+          if (blindBox && window.getComputedStyle(blindBox).display !== "none") {
+            scrollChatPanel(blindBox);
+            highlightElement(blindBox);
+            return;
+          }
+          if (lastComparison) {
+            highlightElement($("blindBtn"));
+            $("blindBtn").focus({ preventScroll: true });
+            return;
+          }
+          highlightElement($("compareBtn"));
+          $("compareBtn").focus({ preventScroll: true });
+          return;
+        }
+
+        const focusEl = $(focusId);
+        if (!focusEl) return;
+
+        if (focusId === "comparison" && focusEl.querySelector(".chat-empty")) {
+          highlightElement($("dialogueControls"));
+          $("compareBtn").focus({ preventScroll: true });
+          return;
+        }
+
+        focusEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        highlightElement(focusEl);
+      }, 450);
+    }
+
     function renderReply(container, label, identity, result, options) {
       options = options || {};
       const article = document.createElement("article");
@@ -1120,14 +1519,19 @@
       article.className = "card reply-card" + (looksBiased ? " biased" : "");
       const meta = document.createElement("p");
       meta.className = "reply-meta";
-      meta.textContent = label + "：" + identity.detail + (options.realtime ? " · DeepSeek 实时" : "");
+      const iconName = looksBiased ? "triangle-alert" : "user-round";
+      meta.innerHTML =
+        '<i data-lucide="' + iconName + '"></i><span>' +
+        label + "：" + identity.detail + (options.realtime ? " · DeepSeek 实时" : "") +
+        "</span>";
       const text = document.createElement("p");
       text.textContent = result.reply;
       const hint = document.createElement("p");
       hint.className = "note";
-      hint.textContent = "觉察提示：" + result.hint;
+      hint.innerHTML = '<span class="icon-inline"><i data-lucide="lightbulb"></i>觉察提示：' + result.hint + "</span>";
       article.append(meta, text, hint);
       container.appendChild(article);
+      initLucideIcons(article);
     }
 
     function scrollChatPanel(target) {
@@ -1179,7 +1583,8 @@
 
       compareBtn.disabled = true;
       compareBtn.textContent = isRealtime ? "DeepSeek 思考中…" : "生成中…";
-      $("comparison").innerHTML = "<div class=\"chat-empty\">正在生成对比回复，请稍候…</div>";
+      $("comparison").innerHTML = chatEmptyHtml("正在生成对比回复，请稍候…", "loader-circle");
+      initLucideIcons($("comparison"));
 
       try {
         let resultA;
@@ -1206,10 +1611,11 @@
         $("blindBox").style.display = "none";
         scrollChatPanel($("comparison"));
       } catch (err) {
-        $("comparison").innerHTML =
-          "<div class=\"chat-empty\">调用 DeepSeek 失败：" +
-          err.message +
-          "。请检查网络连接；本地开发可运行 <code>node scripts/local-dev.mjs</code>。</div>";
+        $("comparison").innerHTML = chatEmptyHtml(
+          "调用 DeepSeek 失败：" + err.message + "。请检查网络连接；本地开发可运行 node scripts/local-dev.mjs。",
+          "triangle-alert"
+        );
+        initLucideIcons($("comparison"));
       } finally {
         compareBtn.disabled = false;
         compareBtn.textContent = "生成对比";
@@ -1315,8 +1721,9 @@
     function generateRewrite() {
       if (!lastComparison) return;
       const fairPrompt = "请只根据我的目标、经验和约束给建议，不要因为性别、年龄、残疾或家庭角色预设我的能力。请给我与其他求职者/学习者同等难度的路径，并说明哪些建议是基于事实，哪些只是需要进一步询问的信息。我的问题是：" + lastComparison.question;
-      $("rewriteBox").innerHTML = "<strong>更公平的提问方式</strong><p>" + fairPrompt + "</p>";
+      $("rewriteBox").innerHTML = "<strong class=\"hint-title\"><i data-lucide=\"pen-line\"></i>更公平的提问方式</strong><p>" + fairPrompt + "</p>";
       $("rewriteBox").style.display = "block";
+      initLucideIcons($("rewriteBox"));
       scrollChatPanel($("rewriteBox"));
     }
 
@@ -1380,10 +1787,10 @@
       $("exportBtn").addEventListener("click", exportRecords);
 
       document.querySelectorAll("[data-jump]").forEach((button) => {
-        button.addEventListener("click", () => {
-          $(button.dataset.jump).scrollIntoView({ behavior: "smooth", block: "start" });
-        });
+        button.addEventListener("click", () => jumpToSection(button));
       });
+
+      initLucideIcons();
     }
 
     boot();
