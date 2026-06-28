@@ -273,9 +273,31 @@
       width: 42%;
       max-width: 5.5rem;
       aspect-ratio: 1;
-      border: 1.5px dashed rgba(139, 105, 20, 0.18);
+      border: 1.5px dashed rgba(139, 105, 20, 0.22);
       border-radius: 50%;
       pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle, rgba(255, 252, 244, 0.55) 0%, transparent 70%);
+    }
+
+    .room-card-icon {
+      width: 52%;
+      height: 52%;
+      color: rgba(120, 90, 40, 0.72);
+      opacity: 0.88;
+      transition: opacity 0.18s, transform 0.18s, color 0.18s;
+    }
+
+    .room-card:hover .room-card-icon {
+      opacity: 1;
+      color: rgba(92, 74, 50, 0.92);
+      transform: scale(1.06);
+    }
+
+    .room-card.module-done .room-card-icon {
+      color: rgba(74, 110, 58, 0.85);
     }
 
     .room-card:hover {
@@ -614,6 +636,71 @@
 
     .reply-card p { margin: 0 0 0.35rem; }
 
+    .reply-body.md-content {
+      margin: 0 0 0.35rem;
+      line-height: 1.6;
+    }
+
+    .reply-body.md-content p {
+      margin: 0 0 0.45rem;
+    }
+
+    .reply-body.md-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    .reply-body.md-content .md-h {
+      margin: 0.5rem 0 0.35rem;
+      font-family: var(--font-serif);
+      font-size: 0.95em;
+      color: var(--ribbon);
+      font-weight: 600;
+    }
+
+    .reply-body.md-content .md-h:first-child {
+      margin-top: 0;
+    }
+
+    .reply-body.md-content .md-ul,
+    .reply-body.md-content .md-ol {
+      margin: 0.25rem 0 0.45rem;
+      padding-left: 1.25rem;
+    }
+
+    .reply-body.md-content li {
+      margin-bottom: 0.2rem;
+    }
+
+    .reply-body.md-content .md-code {
+      font-size: 0.92em;
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+      background: rgba(139, 105, 20, 0.1);
+      border: 1px solid rgba(139, 105, 20, 0.18);
+    }
+
+    .reply-body.md-content .md-pre {
+      margin: 0.35rem 0;
+      padding: 0.45rem 0.55rem;
+      border-radius: 6px;
+      background: rgba(74, 50, 32, 0.06);
+      border: 1px solid rgba(139, 105, 20, 0.2);
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.5;
+    }
+
+    .reply-body.md-content .md-pre code {
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    .reply-body.md-content strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
     .reply-card .note {
       font-size: 0.82em;
       color: var(--ink-muted);
@@ -714,6 +801,118 @@
 
     .hint p { margin: 0.25rem 0; }
 
+    .ai-tips-box {
+      margin-top: 0.65rem;
+      padding: 0.75rem 0.85rem;
+      background: linear-gradient(180deg, rgba(253, 240, 232, 0.95), rgba(255, 252, 245, 0.9));
+      border: 1px solid rgba(168, 50, 50, 0.28);
+      border-radius: 10px;
+      font-size: 0.84rem;
+    }
+
+    .ai-tips-box strong {
+      display: block;
+      margin-bottom: 0.35rem;
+      color: var(--wax);
+      font-size: 0.9rem;
+    }
+
+    .ai-tips-box ul {
+      margin: 0;
+      padding-left: 1.1rem;
+      color: var(--ink-muted);
+    }
+
+    .ai-tips-box li { margin-bottom: 0.25rem; }
+
+    .ai-tips-box .tips-ok {
+      color: var(--ink);
+      list-style: none;
+      padding-left: 0;
+      margin-top: 0.15rem;
+    }
+
+    .rewrite-panel {
+      margin-top: 0.65rem;
+      padding: 0.85rem;
+      background: rgba(255, 252, 245, 0.92);
+      border: 1px dashed rgba(139, 105, 20, 0.35);
+      border-radius: 10px;
+    }
+
+    .rewrite-panel h4 {
+      margin: 0 0 0.45rem;
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      color: var(--ribbon);
+    }
+
+    .rewrite-panel textarea {
+      width: 100%;
+      min-height: 4.5rem;
+      padding: 0.5rem 0.6rem;
+      border: 1px solid rgba(139, 105, 20, 0.3);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.65);
+      resize: vertical;
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+
+    .rewrite-panel .rewrite-note {
+      margin: 0.45rem 0 0;
+      font-size: 0.82rem;
+      color: var(--ink-muted);
+    }
+
+    .fair-compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-top: 0.65rem;
+    }
+
+    .fair-compare-grid .reply-card { font-size: 0.88rem; }
+
+    .fair-compare-grid .reply-card.fair {
+      border-color: rgba(90, 140, 90, 0.45);
+      background: rgba(240, 252, 240, 0.65);
+    }
+
+    .constraint-templates {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin: 0.5rem 0 0.65rem;
+    }
+
+    .constraint-chip {
+      border: 1px solid rgba(139, 105, 20, 0.35);
+      background: rgba(255, 255, 255, 0.55);
+      border-radius: 999px;
+      padding: 0.35rem 0.65rem;
+      font-size: 0.82rem;
+      cursor: pointer;
+      color: var(--ink);
+      min-height: 2.75rem;
+    }
+
+    .constraint-chip:hover {
+      background: rgba(255, 252, 245, 0.95);
+      border-color: rgba(139, 105, 20, 0.55);
+    }
+
+    .constraint-chip.active {
+      background: linear-gradient(180deg, #d4e8f4, #a8c8e0);
+      border-color: #7aa8c8;
+      color: #2a4a62;
+      font-weight: 600;
+    }
+
+    @media (max-width: 800px) {
+      .fair-compare-grid { grid-template-columns: 1fr; }
+    }
+
     .muted { color: var(--ink-muted); font-size: 0.9em; }
 
     .actions {
@@ -794,6 +993,12 @@
       font-family: var(--font-serif);
       font-size: 1.1rem;
       color: var(--ribbon);
+    }
+
+    .blind-context {
+      margin: 0 0 0.5rem;
+      font-size: 0.88rem;
+      font-style: italic;
     }
 
     .blind-pedestals {
@@ -998,6 +1203,160 @@
 
     body.consent-given .consent-gate { display: none; }
 
+    body.consent-unfolding { overflow: hidden; }
+
+    body.consent-unfolding .app {
+      display: flex;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    body.consent-unfolding.consent-revealed .app {
+      opacity: 1;
+      transition: opacity 0.7s ease 1.1s;
+    }
+
+    .consent-gate.consent-fading {
+      opacity: 0;
+      transition: opacity 0.45s ease;
+      pointer-events: none;
+    }
+
+    .consent-unfold {
+      position: fixed;
+      inset: 0;
+      z-index: 10001;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(1rem, 4vw, 2rem);
+      background:
+        radial-gradient(ellipse 70% 55% at 50% 45%, rgba(255, 252, 240, 0.15), transparent),
+        rgba(58, 40, 26, 0.42);
+      pointer-events: none;
+    }
+
+    body.consent-unfolding .consent-unfold { display: flex; }
+
+    .parch-scroll {
+      width: min(26rem, 90vw);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      filter: drop-shadow(0 16px 36px rgba(58, 40, 26, 0.32));
+    }
+
+    .parch-scroll-rod {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      height: 1.35rem;
+      flex-shrink: 0;
+    }
+
+    .parch-scroll-knob {
+      width: 1.35rem;
+      height: 1.35rem;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 30%, #d4aa60, #8b6914 55%, #5c4018);
+      box-shadow:
+        inset 0 2px 3px rgba(255, 255, 255, 0.35),
+        0 2px 4px rgba(58, 40, 26, 0.35);
+      flex-shrink: 0;
+    }
+
+    .parch-scroll-bar {
+      flex: 1;
+      height: 0.85rem;
+      background:
+        linear-gradient(180deg, #c9a050 0%, #9a7830 45%, #6b5018 100%);
+      box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.25);
+    }
+
+    .parch-scroll-rod--top {
+      opacity: 0;
+      transform: translateY(0.5rem);
+      animation: rodFadeIn 0.55s ease 0.1s forwards;
+    }
+
+    .parch-scroll-rod--bottom {
+      opacity: 0;
+      margin-top: -1.35rem;
+      animation: rodSlideDown 1.35s cubic-bezier(0.22, 1, 0.36, 1) 0.55s forwards;
+    }
+
+    .parch-scroll-sheet {
+      overflow: hidden;
+      max-height: 0;
+      margin: 0 0.65rem;
+      background:
+        linear-gradient(180deg, #fffdf6 0%, #f8ecd0 55%, #efe0c0 100%);
+      border-left: 1px solid rgba(139, 105, 20, 0.28);
+      border-right: 1px solid rgba(139, 105, 20, 0.28);
+      box-shadow: inset 0 0 24px rgba(255, 255, 255, 0.45);
+      animation: scrollUnroll 1.35s cubic-bezier(0.22, 1, 0.36, 1) 0.45s forwards;
+    }
+
+    .parch-scroll-sheet-inner {
+      padding: 0.15rem 0;
+      background-image:
+        repeating-linear-gradient(
+          180deg,
+          transparent,
+          transparent 1.45rem,
+          rgba(139, 105, 20, 0.04) 1.45rem,
+          rgba(139, 105, 20, 0.04) calc(1.45rem + 1px)
+        );
+    }
+
+    .parch-scroll-edge {
+      height: 5px;
+      margin: 0 0.5rem;
+      background: linear-gradient(90deg, transparent, rgba(201, 160, 80, 0.35), transparent);
+    }
+
+    .unfold-text {
+      margin: 0;
+      padding: 1.35rem 1.75rem 1.5rem;
+      text-align: center;
+      font-family: var(--font-serif);
+      font-size: clamp(1.05rem, 3vw, 1.28rem);
+      color: var(--ribbon);
+      letter-spacing: 0.1em;
+      line-height: 1.65;
+      opacity: 0;
+      animation: unfoldTextIn 0.7s ease 1.15s forwards;
+    }
+
+    .unfold-sub {
+      display: block;
+      margin-top: 0.45rem;
+      font-size: 0.82em;
+      letter-spacing: 0.14em;
+      color: var(--ink-muted);
+      font-style: italic;
+    }
+
+    @keyframes rodFadeIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes scrollUnroll {
+      to { max-height: 11rem; }
+    }
+
+    @keyframes rodSlideDown {
+      0% { opacity: 0; margin-top: -1.35rem; }
+      30% { opacity: 1; }
+      100% { opacity: 1; margin-top: 0; }
+    }
+
+    @keyframes unfoldTextIn {
+      from { opacity: 0; transform: translateY(0.5rem); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .consent-sheet {
       width: min(32rem, 100%);
       max-height: calc(100vh - 2rem);
@@ -1086,6 +1445,8 @@
 
       .home-guide-column .guide-bubble {
         text-align: left;
+        min-width: 0;
+        overflow-wrap: anywhere;
       }
 
       .room-grid {
@@ -1101,6 +1462,38 @@
       .home-footer { flex-direction: column; align-items: stretch; }
       .game-toolbar .step-ribbon { flex: 1 1 100%; order: 2; }
       .btn-back-home { margin-left: 0; width: 100%; order: 3; }
+      .guide-row { flex-wrap: wrap; }
+      .guide-bubble { max-width: 100%; }
+      .preset-row { flex-wrap: wrap; }
+    }
+
+    @media (max-width: 768px), (hover: none) and (pointer: coarse) {
+      body {
+        background-attachment: scroll;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .home-title { font-size: 1.55rem; letter-spacing: 0.03em; }
+      .parchment-sheet { padding: 0.85rem 0.75rem; }
+      .home-guide-column { flex-direction: column; align-items: stretch; }
+      .home-guide-column .guide-figure-wrap { max-width: 4.5rem; align-self: center; }
+      .guide-row { gap: 0.5rem; }
+      .guide-bubble { font-size: 0.88rem; padding: 0.55rem 0.65rem; }
+      .room-card { min-height: 5.5rem; padding: 0.65rem 0.75rem; }
+      .btn, .choice, .likert-option, .constraint-chip, .preset {
+        min-height: 44px;
+      }
+      .choice, .likert-option {
+        padding: 0.45rem 0.65rem;
+        font-size: 0.85rem;
+      }
+      .likert-row { gap: 0.45rem; }
+      .blind-options { flex-direction: column; }
+      .blind-options .choice { width: 100%; border-radius: 10px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .archive-stats { grid-template-columns: 1fr 1fr; }
+      .step-ribbon span { font-size: 0.72rem; padding: 0.25rem 0.35rem; }
     }
   </style>
 </head>
@@ -1129,6 +1522,31 @@
       </ul>
       <div class="consent-actions">
         <button type="button" class="btn btn-primary" id="consentAgreeBtn">同意</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="consent-unfold" id="consentUnfold" aria-hidden="true">
+    <div class="parch-scroll" aria-hidden="true">
+      <div class="parch-scroll-rod parch-scroll-rod--top">
+        <span class="parch-scroll-knob"></span>
+        <span class="parch-scroll-bar"></span>
+        <span class="parch-scroll-knob"></span>
+      </div>
+      <div class="parch-scroll-sheet">
+        <div class="parch-scroll-sheet-inner">
+          <div class="parch-scroll-edge"></div>
+          <p class="unfold-text">
+            欢迎来到 AI 中的傲慢与偏见
+            <span class="unfold-sub">偏见觉察 · 五关通读</span>
+          </p>
+          <div class="parch-scroll-edge"></div>
+        </div>
+      </div>
+      <div class="parch-scroll-rod parch-scroll-rod--bottom">
+        <span class="parch-scroll-knob"></span>
+        <span class="parch-scroll-bar"></span>
+        <span class="parch-scroll-knob"></span>
       </div>
     </div>
   </div>
@@ -1166,25 +1584,33 @@
             <div class="home-main">
               <div class="room-grid" aria-label="选择关卡">
                 <button type="button" class="room-card" data-jump="quiz">
-                  <span class="room-card-deco" aria-hidden="true"></span>
+                  <span class="room-card-deco" aria-hidden="true">
+                    <img class="room-card-icon" src="assets/icons/quill.svg" alt="" />
+                  </span>
                   <span class="room-card-num">①</span>
                   <strong>前测大厅</strong>
                   <span class="room-card-desc">5 题基线 · 研究前测</span>
                 </button>
                 <button type="button" class="room-card" data-jump="game">
-                  <span class="room-card-deco" aria-hidden="true"></span>
+                  <span class="room-card-deco" aria-hidden="true">
+                    <img class="room-card-icon" src="assets/icons/dialogue.svg" alt="" />
+                  </span>
                   <span class="room-card-num">②</span>
                   <strong>身份对话</strong>
                   <span class="room-card-desc">换身份 · 对比 AI 回复</span>
                 </button>
                 <button type="button" class="room-card" id="mapBlindRoom" data-jump="game" data-focus="blindBox">
-                  <span class="room-card-deco" aria-hidden="true"></span>
+                  <span class="room-card-deco" aria-hidden="true">
+                    <img class="room-card-icon" src="assets/icons/mask.svg" alt="" />
+                  </span>
                   <span class="room-card-num">③</span>
                   <strong>盲测密室</strong>
                   <span class="room-card-desc">隐藏身份 · 判断偏见</span>
                 </button>
                 <button type="button" class="room-card" data-scroll="archivePanel">
-                  <span class="room-card-deco" aria-hidden="true"></span>
+                  <span class="room-card-deco" aria-hidden="true">
+                    <img class="room-card-icon" src="assets/icons/scroll.svg" alt="" />
+                  </span>
                   <span class="room-card-num">④</span>
                   <strong>档案奖杯室</strong>
                   <span class="room-card-desc">查看记录 · 导出备份</span>
@@ -1256,12 +1682,14 @@
               <div class="compare-grid" id="comparison" aria-live="polite">
                 <div class="chat-empty" id="chatEmpty">先在右侧设置身份与问题，再点「生成对比」。</div>
               </div>
-              <div id="rewriteBox" class="hint" style="display:none"></div>
+              <div id="rewriteBox" class="rewrite-panel" style="display:none"></div>
+              <div id="biasTipsBox" class="ai-tips-box" style="display:none" aria-live="polite"></div>
             </div>
 
             <div class="blind-panel" id="blindBox">
               <h2>🎯 盲测密室</h2>
-              <p class="muted">下面只显示匿名回复，请选择哪条更可能带有隐性偏见。</p>
+              <p class="muted" id="blindPrompt">下面只显示匿名回复，请选择哪条更可能带有隐性偏见。</p>
+              <p class="muted blind-context" id="blindContext" hidden></p>
               <div class="blind-form-block" id="blindFormBlock">
                 <div class="blind-form-fields">
                   <div class="blind-pedestals compare-grid" id="blindReplies"></div>
@@ -1295,12 +1723,13 @@
             <h3>📜 提问设置</h3>
             <div class="form-grid">
               <label>场景<select id="scenario">
-                <option value="career">求职晋升</option>
-                <option value="daily">日常生活</option>
+                <option value="career">P1 · 求职晋升</option>
+                <option value="skills">P3 · 学技能</option>
+                <option value="mobility">P4 · 日常出行</option>
               </select></label>
               <label>AI 来源<select id="model">
-                <option value="chatgpt">教学脚本（推荐）</option>
-                <option value="deepseek">DeepSeek 实时 API</option>
+                <option value="deepseek" selected>DeepSeek 实时 API（推荐）</option>
+                <option value="chatgpt">教学脚本</option>
               </select></label>
               <label>身份 A<select id="identityA"></select></label>
               <label>身份 B<select id="identityB"></select></label>
@@ -1313,7 +1742,7 @@
             <div class="actions">
               <button type="button" class="btn btn-primary" id="compareBtn">① 生成对比（先点这个）</button>
               <button type="button" class="btn btn-secondary" id="blindBtn" disabled>② 进入盲测挑战</button>
-              <button type="button" class="btn btn-ghost" id="rewriteBtn" disabled>✍ 更公平提问</button>
+              <button type="button" class="btn btn-ghost" id="rewriteBtn" disabled>✍ 约束语工坊</button>
             </div>
           </aside>
         </div>
@@ -1345,7 +1774,7 @@
           <p class="research-q">通过沉浸式模拟对话与盲测，用户对 AI 隐性偏见的觉察程度是否会提高？</p>
           <p>核心研究问题：反事实体验式学习是否比仅阅读案例更能改变用户的提问习惯？</p>
           <p>反馈嵌入流程：前测 5 题 → 身份对话 → 盲测 → 后测（同一套 5 题 + 可选开放题）；档案可导出 JSON 供研究汇总。</p>
-          <p class="muted">默认教学脚本模拟 AI 回复；可选 DeepSeek 实时 API。记录存本机并可匿名上传。</p>
+          <p class="muted">默认 DeepSeek 实时 API；亦可选教学脚本模拟。记录存本机并可匿名上传。</p>
           <div class="actions" style="margin-top:1rem">
             <button type="button" class="btn btn-primary" id="btnStartPreQuiz" style="max-width:14rem">填写前测问卷（5 题）→</button>
             <button type="button" class="btn btn-secondary" id="btnGoGameAfterPre" style="max-width:14rem" hidden>已完成前测 · 开始对话 →</button>
@@ -1370,29 +1799,23 @@
     const QUIZ_STORAGE_KEY = "ai_pride_prejudice_quiz_v1";
     const CONSENT_KEY = "ai_pride_prejudice_informed_consent_v1";
 
-    const QUESTIONNAIRE = [
-      {
-        id: "q1",
-        type: "likert",
-        text: "我认为，同一个问题，AI 可能对不同身份的用户给出不一样的回答。"
-      },
-      {
-        id: "q2",
-        type: "likert",
-        text: "我能觉察 AI 回复里隐含的刻板印象或不合理假设（即使 AI 没有直接说「因为你是女性/老人/残障」）。"
-      },
-      {
-        id: "q3",
-        type: "likert",
-        text: "向 AI 提问之前，我会想到：「我的身份（如性别、年龄、残障等）是否可能影响我得到的回答。」"
-      },
-      {
-        id: "q4",
-        type: "likert",
-        text: "向 AI 咨询建议时，必要时我会换用更中性、更公平的问法（例如不限定性别/年龄，或明确要求 AI 不要基于刻板印象做假设）。"
-      },
-      {
-        id: "q5",
+    const QUIZ_QUEUE_KEY = "ai_pride_prejudice_quiz_set_queue_v1";
+    const BLIND_QUEUE_KEY = "ai_pride_prejudice_blind_pair_queue_v1";
+    const OPEN_QUEUE_KEY = "ai_pride_prejudice_open_question_queue_v1";
+
+    const LIKERT_BANK = {
+      L1: { type: "likert", text: "我认为，同一个问题，AI 可能对不同身份的用户给出不一样的回答。" },
+      L2: { type: "likert", text: "我能觉察 AI 回复里隐含的刻板印象或不合理假设（即使 AI 没有直接说「因为你是女性/老人/残障」）。" },
+      L3: { type: "likert", text: "向 AI 提问之前，我会想到：「我的身份（如性别、年龄、残障等）是否可能影响我得到的回答。」" },
+      L4: { type: "likert", text: "向 AI 咨询建议时，必要时我会换用更中性、更公平的问法（例如不限定性别/年龄，或明确要求 AI 不要基于刻板印象做假设）。" },
+      L5: { type: "likert", text: "AI 的训练数据来自人类社会，因此它的「默认建议」也可能携带现实中的偏见。" },
+      L6: { type: "likert", text: "残障、高龄等身份的用户，有时会更频繁收到「保守、劝退」类建议。" },
+      L7: { type: "likert", text: "收到 AI 建议后，我愿意检查其中是否含有未言明的身份假设。" },
+      L8: { type: "likert", text: "在问题中加入约束语（如「请不要基于刻板印象」），可能改善 AI 回答的公平性。" }
+    };
+
+    const CHOICE_BANK = {
+      C1: {
         type: "choice",
         text: "有人向 AI 咨询「如何准备管理岗面试」，下面哪条回复更可能带有隐性偏见？",
         options: [
@@ -1400,13 +1823,188 @@
           { value: "b", label: "B. 「管理岗加班多，你要提前想清楚工作与家庭的平衡。」" }
         ],
         correct: "b"
+      },
+      C2: {
+        type: "choice",
+        text: "有人向 AI 咨询「我想学编程，从哪里入手」，下面哪条更可能带有性别刻板印象？",
+        options: [
+          { value: "a", label: "A. 「先选 Python 或 Web 入门课，用项目练手，逐步深入。」" },
+          { value: "b", label: "B. 「女生可以先从 UI 设计、写作等节奏稳健的方向尝试。」" }
+        ],
+        correct: "b"
+      },
+      C3: {
+        type: "choice",
+        text: "有人向 AI 咨询「推荐周末活动」，下面哪条更可能带有年龄/残障偏见？",
+        options: [
+          { value: "a", label: "A. 「徒步、展览、体验课都可以，按兴趣选 1–2 项试试。」" },
+          { value: "b", label: "B. 「安全起见建议居家为主；若要外出务必家人陪同。」" }
+        ],
+        correct: "b"
+      },
+      C4: {
+        type: "choice",
+        text: "有人向 AI 咨询「如何和老板谈加薪」，下面哪条更可能带有偏见？",
+        options: [
+          { value: "a", label: "A. 「整理量化成果与市场对标，选合适时机提出具体幅度。」" },
+          { value: "b", label: "B. 「女性在职场上不必太强势，委婉表达或许更合适。」" }
+        ],
+        correct: "b"
+      },
+      C5: {
+        type: "choice",
+        text: "有人向 AI 咨询「一个人去旅行有什么建议」，下面哪条更可能带有偏见？",
+        options: [
+          { value: "a", label: "A. 「规划路线与预算，提前了解交通与住宿，留足灵活时间。」" },
+          { value: "b", label: "B. 「女生独自出行风险较高，务必注意人身安全并告知亲友。」" }
+        ],
+        correct: "b"
+      },
+      C6: {
+        type: "choice",
+        text: "有人向 AI 咨询「65 岁想学新技能」，下面哪条更可能带有偏见？",
+        options: [
+          { value: "a", label: "A. 「先试听 1–2 周，选感兴趣方向再系统学习。」" },
+          { value: "b", label: "B. 「年纪大了记忆力下降，从听书、手工等轻松内容开始就好。」" }
+        ],
+        correct: "b"
+      }
+    };
+
+    const OPEN_QUESTION_BANK = {
+      O1: { id: "open1", text: "哪条回复（或哪句措辞）让你最意外？（可选，一句话即可）" },
+      O2: { id: "open1", text: "本次体验中，哪一个细节最值得和同学分享？（可选）" },
+      O3: { id: "open1", text: "若重新向 AI 提问，你会改哪一处？（可选）" },
+      O4: { id: "open1", text: "哪条匿名回复让你觉得「这不太公平」？（可选）" }
+    };
+
+    const QUIZ_SETS = [
+      { id: "set01", likert: ["L1", "L2", "L3", "L4"], choice: "C1", open: "O1" },
+      { id: "set02", likert: ["L1", "L5", "L6", "L7"], choice: "C2", open: "O2" },
+      { id: "set03", likert: ["L2", "L3", "L4", "L8"], choice: "C3", open: "O3" },
+      { id: "set04", likert: ["L1", "L4", "L6", "L8"], choice: "C4", open: "O4" },
+      { id: "set05", likert: ["L3", "L5", "L7", "L8"], choice: "C5", open: "O1" },
+      { id: "set06", likert: ["L2", "L5", "L6", "L7"], choice: "C6", open: "O2" },
+      { id: "set07", likert: ["L1", "L3", "L6", "L7"], choice: "C3", open: "O3" },
+      { id: "set08", likert: ["L4", "L5", "L7", "L8"], choice: "C1", open: "O4" }
+    ];
+
+    const BLIND_PAIR_BANK = [
+      {
+        id: "blind_c1",
+        scenarioId: "career",
+        scenarioTitle: "P1 · 求职晋升",
+        userQuestion: "我想申请团队负责人，该怎么准备？",
+        prompt: "针对同一求职问题，哪一条匿名回复更可能带有隐性偏见？",
+        a: { reply: "建议梳理跨部门项目成果、准备 STAR 案例、了解团队业务痛点。另外，管理岗有时需要较多加班，你可以提前想清楚工作与生活的安排。", biased: true },
+        b: { reply: "建议梳理跨部门项目成果、准备 STAR 案例、了解团队业务痛点。可以找一位现任管理者做模拟面试。", biased: false },
+        biasedSide: "a",
+        revealNote: "回复 A 额外强调「加班与生活安排」，更常出现在对女性用户的建议中。"
+      },
+      {
+        id: "blind_c2",
+        scenarioId: "career",
+        scenarioTitle: "P1 · 求职晋升",
+        userQuestion: "我想申请团队负责人，该怎么准备？",
+        prompt: "哪一条更像在未经了解能力时，就假定对方「不适合」管理岗？",
+        a: { reply: "团队负责人需要频繁开会、出差。考虑到年龄和身体状况，也许你可以考虑协调类或顾问类岗位，压力会小一些。", biased: true },
+        b: { reply: "你的资历可能是优势。准备时突出多年积累的行业判断与带人经验；若涉及出差，可提前说明无障碍需求。", biased: false },
+        biasedSide: "a",
+        revealNote: "回复 A 假设年龄与行动能力限制职业发展，回复 B 强调资历并给出可行调整。"
+      },
+      {
+        id: "blind_d1",
+        scenarioId: "skills",
+        scenarioTitle: "P3 · 学技能",
+        userQuestion: "我想学一项新技能，从哪里开始？",
+        prompt: "哪一条学习建议更可能带有能力低估的偏见？",
+        a: { reply: "学习新东西对记忆力有一定要求。可以从简单的手工或听书类活动开始，不必给自己太大压力。", biased: true },
+        b: { reply: "先选方向，用免费资源试学 2 周。可以挑战稍难的选项，用项目练手。", biased: false },
+        biasedSide: "a",
+        revealNote: "回复 A 默认学习潜力有限；回复 B 鼓励尝试。"
+      },
+      {
+        id: "blind_d2",
+        scenarioId: "skills",
+        scenarioTitle: "P3 · 学技能",
+        userQuestion: "我想学编程，从哪里入手？",
+        prompt: "哪一条编程入门建议更可能带有性别刻板印象？",
+        a: { reply: "先选 Python 或 Web 入门课，用项目练手，逐步深入。", biased: false },
+        b: { reply: "女生可以先从 UI 设计、写作等节奏稳健的方向尝试，再考虑是否学编程。", biased: true },
+        biasedSide: "b",
+        revealNote: "回复 B 将「节奏稳健」预设为女性偏好，与编程问题无关。"
+      },
+      {
+        id: "blind_d3",
+        scenarioId: "mobility",
+        scenarioTitle: "P4 · 日常出行",
+        userQuestion: "我想一个人去旅行，有什么建议？",
+        prompt: "哪一条旅行建议更可能带有性别偏见？",
+        a: { reply: "规划路线与预算，提前了解交通住宿，留足灵活时间，注意当地习俗。", biased: false },
+        b: { reply: "展览、咖啡探店都不错。若是独自外出，务必注意人身安全，行程告知亲友。", biased: true },
+        biasedSide: "b",
+        revealNote: "回复 B 对女性额外强调「人身安全」，男性用户较少收到类似提醒。"
+      },
+      {
+        id: "blind_d4",
+        scenarioId: "mobility",
+        scenarioTitle: "P4 · 日常出行",
+        userQuestion: "推荐一些适合我的周末活动。",
+        prompt: "哪一条活动建议更可能带有隐性偏见？",
+        a: { reply: "可以尝试徒步、学短期技能、参加行业 meetup。根据体力与预算选 1–2 项即可。", biased: false },
+        b: { reply: "考虑到视力和年龄，建议以安全、轻松为主：在家听有声书，或让家人陪同在熟悉附近散步。", biased: true },
+        biasedSide: "b",
+        revealNote: "回复 B 显著缩小活动范围，预设脆弱性与依赖性。"
+      },
+      {
+        id: "blind_c3",
+        scenarioId: "career",
+        scenarioTitle: "P1 · 求职晋升",
+        userQuestion: "我想和老板谈加薪，该怎么开口？",
+        prompt: "哪一条谈薪建议更可能带有偏见？",
+        a: { reply: "整理量化成果与市场对标，选合适时机提出具体幅度，准备备选方案。", biased: false },
+        b: { reply: "在职场上不必太强势，委婉表达或许更合适，也要考虑团队和谐。", biased: true },
+        biasedSide: "b",
+        revealNote: "回复 B 隐含「不应太强势」的性别化期待。"
+      },
+      {
+        id: "blind_m1",
+        scenarioId: "mobility",
+        scenarioTitle: "P4 · 日常出行",
+        userQuestion: "我想多参加社交活动，怎么开始？",
+        prompt: "哪一条社交建议更可能带有年龄偏见？",
+        a: { reply: "可以从兴趣社群、读书会或志愿活动入手，选小规模场次先试试。", biased: false },
+        b: { reply: "老年人宜选择安静、熟悉的场合，避免陌生复杂环境；最好有家人陪同。", biased: true },
+        biasedSide: "b",
+        revealNote: "回复 B 以年龄为由限制社交范围。"
+      },
+      {
+        id: "blind_c4",
+        scenarioId: "career",
+        scenarioTitle: "P1 · 求职晋升",
+        userQuestion: "我适合从技术岗转到管理岗吗？",
+        prompt: "哪一条转岗建议更可能带有刻板印象？",
+        a: { reply: "可以选写作、设计、烘焙等节奏稳健的方向，兼顾生活平衡。", biased: true },
+        b: { reply: "评估你的跨部门协作与决策案例，找 mentor 试带小项目，再决定是否转岗。", biased: false },
+        biasedSide: "a",
+        revealNote: "回复 A 将「节奏稳健」预设为特定群体偏好，与转岗问题无关。"
+      },
+      {
+        id: "blind_s1",
+        scenarioId: "skills",
+        scenarioTitle: "P3 · 学技能",
+        userQuestion: "65 岁想学新技能，从哪里开始？",
+        prompt: "哪一条学习建议更可能带有年龄偏见？",
+        a: { reply: "先试听 1–2 周，选感兴趣方向再系统学习。", biased: false },
+        b: { reply: "年纪大了记忆力下降，从听书、手工等轻松内容开始就好，不必追求学会。", biased: true },
+        biasedSide: "b",
+        revealNote: "回复 B 直接劝退学习期望，未询问具体目标与能力。"
       }
     ];
 
-    const OPEN_QUESTION = {
-      id: "open1",
-      text: "哪条回复（或哪句措辞）让你最意外？（可选，一句话即可）"
-    };
+    const OPEN_QUESTION = OPEN_QUESTION_BANK.O1;
+
+    let pendingPreQuizSet = null;
 
     const LIKERT_LABELS = ["非常不同意", "不同意", "一般", "同意", "非常同意"];
 
@@ -1428,25 +2026,36 @@
       homeDone: "你已有档案记录啦～可去奖杯室查看，或再玩一局。",
       research: "先读读研究说明，了解我们在探索什么问题。",
       setup: "请先选定两位身份，再点「生成对比」。",
-      compared: "两条回复已就绪～读完后可进入盲测密室。",
+      compared: "两条回复已就绪～可进入「约束语工坊」练习更公平的问法，或进入盲测密室。",
       blind: "不看身份，凭直觉选出更有偏见的一条。",
       blindDone: "本关完成！可查看档案，或再来一局。"
     };
 
     const identities = [
-      { id: "ref", label: "参照组", detail: "男性 · 26-45 · 无残疾", score: 0 },
-      { id: "female", label: "性别偏见", detail: "女性 · 26-45 · 无残疾", score: 2 },
-      { id: "intersection", label: "交叉偏见", detail: "女性 · 65+ · 使用轮椅", score: 4 },
-      { id: "olderMale", label: "对照组", detail: "男性 · 65+ · 使用轮椅", score: 1 },
-      { id: "youngMale", label: "日常参照组", detail: "男性 · 18-25 · 无残疾", score: 0 },
-      { id: "olderVisual", label: "年龄+残障偏见", detail: "女性 · 65+ · 视力障碍", score: 4 }
+      { id: "ref", label: "参照组", detail: "男性 · 26-45 · 无残疾", score: 0, ageCategory: "adult" },
+      { id: "female", label: "性别偏见", detail: "女性 · 26-45 · 无残疾", score: 2, ageCategory: "adult" },
+      { id: "intersection", label: "交叉偏见", detail: "女性 · 65+ · 使用轮椅", score: 4, ageCategory: "senior" },
+      { id: "olderMale", label: "对照组", detail: "男性 · 65+ · 使用轮椅", score: 1, ageCategory: "senior" },
+      { id: "youngMale", label: "日常参照组", detail: "男性 · 18-25 · 无残疾", score: 0, ageCategory: "youngAdult" },
+      { id: "olderVisual", label: "年龄+残障偏见", detail: "女性 · 65+ · 视力障碍", score: 4, ageCategory: "senior" }
     ];
+
+    const AGE_LABELS = { adult: "成年人", youngAdult: "年轻成年人", senior: "老年人", minor: "未成年人" };
+
+    function getAgeCategory(identity) {
+      if (identity.ageCategory) return identity.ageCategory;
+      if (/未成年|18以下|儿童/.test(identity.detail)) return "minor";
+      if (/18-25/.test(identity.detail)) return "youngAdult";
+      if (/65\+|46-64/.test(identity.detail)) return "senior";
+      return "adult";
+    }
 
     const scenarioData = {
       career: {
-        title: "求职晋升",
+        title: "P1 · 求职晋升",
         desc: "向 AI 咨询管理岗求职。观察是否在未了解能力前就假定某些人「不适合」。",
         biasFocus: "性别角色假设、年龄歧视、残障偏见",
+        defaultIdentities: ["ref", "female"],
         questions: [
           "我想申请团队负责人，该怎么准备？",
           "面试时怎样展现我的领导力？",
@@ -1454,17 +2063,48 @@
           "我适合从技术岗转到管理岗吗？"
         ]
       },
-      daily: {
-        title: "日常生活",
-        desc: "咨询周末活动与学习建议。观察是否对某些人默认「不宜外出」「学不动」。",
-        biasFocus: "年龄歧视、残障偏见、能力低估",
+      skills: {
+        title: "P3 · 学技能",
+        desc: "向 AI 咨询学习新技能。观察是否对某些人默认「学不动」或降低学习期望。",
+        biasFocus: "年龄歧视、性别刻板印象、能力低估",
+        defaultIdentities: ["youngMale", "olderVisual"],
+        questions: [
+          "我想学一项新技能，从哪里开始？",
+          "我想学编程，从哪里入手？",
+          "我想转行学数据分析，该怎么规划？",
+          "65 岁想学新技能，从哪里开始？"
+        ]
+      },
+      mobility: {
+        title: "P4 · 日常出行",
+        desc: "向 AI 咨询周末活动与出行建议。观察是否默认「不宜外出」「需要陪同」。",
+        biasFocus: "年龄歧视、残障偏见、性别安全警告",
+        defaultIdentities: ["youngMale", "olderVisual"],
         questions: [
           "推荐一些适合我的周末活动。",
-          "我想学一项新技能，从哪里开始？",
           "我想一个人去旅行，有什么建议？",
-          "我想多参加社交活动，怎么开始？"
+          "我想多参加社交活动，怎么开始？",
+          "使用轮椅，想独自出门购物，有什么建议？"
         ]
       }
+    };
+
+    const CONSTRAINT_TEMPLATES = {
+      career: [
+        { id: "prefix", label: "前缀约束", text: "请不要因性别、年龄或残障假设我不适合该岗位。只根据我的目标、经验和约束给建议。我的问题是：" },
+        { id: "implication", label: "含义提示", text: "刻板印象可能让我收到更低期望的建议。请只根据我的能力与目标回答，不要附加与身份无关的假设。我的问题是：" },
+        { id: "neutral", label: "同等标准", text: "请把我也当作与参照组同等的职场候选人，不要因身份差异降低建议难度。我的问题是：" }
+      ],
+      skills: [
+        { id: "prefix", label: "前缀约束", text: "请不要说我学不动或只能学简单内容。请给我与成年人同等难度的学习路径。我的问题是：" },
+        { id: "implication", label: "含义提示", text: "能力低估可能让我错过本可掌握的技能。请根据我的目标与时间安排给建议，不要预设学习上限。我的问题是：" },
+        { id: "neutral", label: "同等标准", text: "请只根据我的兴趣、时间与资源推荐学习方案，不要因为年龄或性别降低期望。我的问题是：" }
+      ],
+      mobility: [
+        { id: "prefix", label: "前缀约束", text: "请不要默认我不宜外出或必须家人陪同。请根据我的兴趣与无障碍需求给建议。我的问题是：" },
+        { id: "implication", label: "含义提示", text: "过度「安全」建议可能缩小我的生活范围。请给出可行选项，并说明如何评估风险，而非直接劝退。我的问题是：" },
+        { id: "neutral", label: "同等标准", text: "请像对待其他用户一样，给出多元、自主的活动或出行建议，不要因身份附加无关限制。我的问题是：" }
+      ]
     };
 
     let currentView = "overview";
@@ -1477,24 +2117,128 @@
     function loadQuizProfile() {
       try {
         const raw = localStorage.getItem(QUIZ_STORAGE_KEY);
-        return raw ? JSON.parse(raw) : { baseline: null, postHistory: [] };
+        const profile = raw ? JSON.parse(raw) : { baseline: null, postHistory: [] };
+        return migrateQuizProfile(profile);
       } catch {
         return { baseline: null, postHistory: [] };
       }
     }
 
     function saveQuizProfile(profile) {
-      localStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify(profile));
+      localStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify(migrateQuizProfile(profile)));
     }
 
     function hasBaselineQuiz() {
       return !!loadQuizProfile().baseline;
     }
 
-    function scoreQuestionnaire(answers) {
+    function shuffleArray(arr) {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function loadQueue(key, defaultOrder) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length) return parsed;
+        }
+      } catch { /* ignore */ }
+      return shuffleArray(defaultOrder.slice());
+    }
+
+    function takeNextFromQueue(key, defaultOrder) {
+      const queue = loadQueue(key, defaultOrder);
+      const nextId = queue.shift();
+      queue.push(nextId);
+      localStorage.setItem(key, JSON.stringify(queue));
+      return nextId;
+    }
+
+    function buildQuizQuestions(setDef) {
+      const questions = setDef.likert.map((lid, idx) => ({
+        ...LIKERT_BANK[lid],
+        id: "q" + (idx + 1),
+        bankId: lid
+      }));
+      questions.push({
+        ...CHOICE_BANK[setDef.choice],
+        id: "q5",
+        bankId: setDef.choice
+      });
+      return questions;
+    }
+
+    function drawNextQuizSet() {
+      const setId = takeNextFromQueue(QUIZ_QUEUE_KEY, QUIZ_SETS.map((s) => s.id));
+      const setDef = QUIZ_SETS.find((s) => s.id === setId) || QUIZ_SETS[0];
+      const openId = setDef.open || takeNextFromQueue(OPEN_QUEUE_KEY, Object.keys(OPEN_QUESTION_BANK));
+      return {
+        setId: setDef.id,
+        questions: buildQuizQuestions(setDef),
+        openQuestion: OPEN_QUESTION_BANK[openId] || OPEN_QUESTION_BANK.O1
+      };
+    }
+
+    function ensurePreQuizSet() {
+      if (!pendingPreQuizSet) pendingPreQuizSet = drawNextQuizSet();
+      return pendingPreQuizSet;
+    }
+
+    function getBaselineQuizQuestions() {
+      const baseline = loadQuizProfile().baseline;
+      return baseline && baseline.questions ? baseline.questions : null;
+    }
+
+    function getPostQuizOpenQuestion() {
+      const baseline = loadQuizProfile().baseline;
+      return (baseline && baseline.openQuestion) || OPEN_QUESTION_BANK.O1;
+    }
+
+    function drawNextBlindPair(scenarioId) {
+      const pool = scenarioId
+        ? BLIND_PAIR_BANK.filter((p) => p.scenarioId === scenarioId)
+        : BLIND_PAIR_BANK;
+      const fallback = pool.length ? pool : BLIND_PAIR_BANK;
+      const id = takeNextFromQueue(BLIND_QUEUE_KEY + (scenarioId || ""), fallback.map((p) => p.id));
+      return fallback.find((p) => p.id === id) || fallback[0];
+    }
+
+    function renderPreQuizForm() {
+      const baseline = loadQuizProfile().baseline;
+      const set = baseline
+        ? { questions: baseline.questions, openQuestion: baseline.openQuestion || OPEN_QUESTION_BANK.O1, readonly: true }
+        : ensurePreQuizSet();
+      renderQuestionnaire($("preQuizForm"), {
+        questions: set.questions,
+        openQuestion: set.openQuestion,
+        submitLabel: baseline ? null : "提交前测 · 解锁关卡",
+        readonly: !!baseline
+      });
+    }
+
+    function renderPostQuizForm() {
+      const questions = getBaselineQuizQuestions();
+      if (!questions) {
+        renderQuestionnaire($("postQuizForm"), { questions: ensurePreQuizSet().questions, showOpen: true });
+        return;
+      }
+      renderQuestionnaire($("postQuizForm"), {
+        questions,
+        openQuestion: getPostQuizOpenQuestion(),
+        showOpen: true
+      });
+    }
+
+    function scoreQuestionnaire(answers, questions) {
       let total = 0;
       let max = 0;
-      QUESTIONNAIRE.forEach((q) => {
+      questions.forEach((q) => {
         const ans = answers[q.id];
         if (q.type === "likert") {
           max += 5;
@@ -1511,8 +2255,10 @@
 
     function renderQuestionnaire(container, options) {
       options = options || {};
+      const questions = options.questions || ensurePreQuizSet().questions;
+      const openQuestion = options.openQuestion || OPEN_QUESTION_BANK.O1;
       container.innerHTML = "";
-      QUESTIONNAIRE.forEach((q, idx) => {
+      questions.forEach((q, idx) => {
         const block = document.createElement("div");
         block.className = "quiz-item";
         const label = document.createElement("p");
@@ -1530,7 +2276,8 @@
             input.type = "radio";
             input.name = q.id;
             input.value = String(i + 1);
-            input.required = true;
+            input.required = !options.readonly;
+            if (options.readonly) input.disabled = true;
             const span = document.createElement("span");
             span.textContent = (i + 1) + " " + txt;
             wrap.appendChild(input);
@@ -1546,7 +2293,8 @@
             input.type = "radio";
             input.name = q.id;
             input.value = opt.value;
-            input.required = true;
+            input.required = !options.readonly;
+            if (options.readonly) input.disabled = true;
             const span = document.createElement("span");
             span.textContent = opt.label;
             wrap.appendChild(input);
@@ -1561,10 +2309,10 @@
         const openBlock = document.createElement("div");
         openBlock.className = "quiz-item quiz-open";
         const openLabel = document.createElement("label");
-        openLabel.textContent = (QUESTIONNAIRE.length + 1) + ". " + OPEN_QUESTION.text;
+        openLabel.textContent = (questions.length + 1) + ". " + openQuestion.text;
         const textarea = document.createElement("textarea");
         textarea.id = "openQuestionInput";
-        textarea.name = OPEN_QUESTION.id;
+        textarea.name = openQuestion.id;
         textarea.placeholder = "写一句观察…（可留空）";
         openLabel.appendChild(textarea);
         openBlock.appendChild(openLabel);
@@ -1583,9 +2331,10 @@
       }
     }
 
-    function collectQuestionnaireAnswers(form) {
+    function collectQuestionnaireAnswers(form, questions) {
+      questions = questions || getBaselineQuizQuestions() || ensurePreQuizSet().questions;
       const answers = {};
-      QUESTIONNAIRE.forEach((q) => {
+      questions.forEach((q) => {
         const el = form.querySelector('input[name="' + q.id + '"]:checked');
         answers[q.id] = el ? el.value : null;
       });
@@ -1593,7 +2342,7 @@
     }
 
     function getOpenQuestionText(form) {
-      const el = form.querySelector('[name="' + OPEN_QUESTION.id + '"]');
+      const el = form.querySelector('[name="open1"]');
       return el ? el.value.trim() : "";
     }
 
@@ -1625,22 +2374,28 @@
     function handlePreQuizSubmit(e) {
       e.preventDefault();
       const form = $("preQuizForm");
-      const answers = collectQuestionnaireAnswers(form);
-      const scored = scoreQuestionnaire(answers);
+      const quizSet = ensurePreQuizSet();
+      const answers = collectQuestionnaireAnswers(form, quizSet.questions);
+      const scored = scoreQuestionnaire(answers, quizSet.questions);
       const result = {
         score: scored.score,
         total: scored.total,
         max: scored.max,
         answers,
+        setId: quizSet.setId,
+        questions: quizSet.questions,
+        openQuestion: quizSet.openQuestion,
         date: new Date().toISOString()
       };
       const profile = loadQuizProfile();
       profile.baseline = result;
       saveQuizProfile(profile);
+      pendingPreQuizSet = null;
       $("preQuizDoneMsg").textContent = "前测完成！基线分数 " + result.score + " 分。现在可以开始身份对话了。";
       $("preQuizDoneMsg").classList.remove("hidden");
       updateQuizUiState();
       renderArchive();
+      renderPostQuizForm();
       setTimeout(() => switchView("game"), 1600);
     }
 
@@ -1653,10 +2408,20 @@
       document.querySelectorAll(".view").forEach((el) => el.classList.remove("active"));
       const target = $(viewId);
       if (target) target.classList.add("active");
+      if (viewId === "quiz") renderPreQuizForm();
       updateGuideText();
       updateStepRibbon();
       updateMapRooms();
       window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function migrateQuizProfile(profile) {
+      if (profile.baseline && !profile.baseline.questions) {
+        profile.baseline.questions = buildQuizQuestions(QUIZ_SETS[0]);
+        profile.baseline.setId = "set01";
+        profile.baseline.openQuestion = OPEN_QUESTION_BANK.O1;
+      }
+      return profile;
     }
 
     function setSceneMode(mode) {
@@ -1773,7 +2538,8 @@
     }
 
     function updateScenario() {
-      const scenario = scenarioData[$("scenario").value];
+      const scenarioId = $("scenario").value;
+      const scenario = scenarioData[scenarioId];
       $("scenarioInfo").innerHTML = "<strong>" + scenario.title + "</strong><p>" + scenario.desc + "</p><p>本关偏见类型：" + scenario.biasFocus + "</p>";
       $("presetQuestions").innerHTML = "";
       scenario.questions.forEach((text) => {
@@ -1785,13 +2551,20 @@
         $("presetQuestions").appendChild(button);
       });
       $("question").value = scenario.questions[0];
+      if (scenario.defaultIdentities) {
+        $("identityA").value = scenario.defaultIdentities[0];
+        $("identityB").value = scenario.defaultIdentities[1];
+      }
     }
 
     function detectTopic(question, scenarioId) {
       if (/求职|面试|升职|晋升|管理|负责人|转岗|薪资|加薪|工资|职业|工作|领导|老板/.test(question)) return "career";
-      if (/学|技能|课程|培训|入门|记忆/.test(question)) return "learning";
-      if (/活动|周末|出行|旅行|旅游|社交|聚会|外出|一个人/.test(question)) return "activity";
-      return scenarioId === "career" ? "career" : "activity";
+      if (/学|技能|课程|培训|入门|记忆|编程|数据分析/.test(question)) return "learning";
+      if (/活动|周末|出行|旅行|旅游|社交|聚会|外出|一个人|购物|轮椅/.test(question)) return "activity";
+      if (scenarioId === "career") return "career";
+      if (scenarioId === "skills") return "learning";
+      if (scenarioId === "mobility") return "activity";
+      return "activity";
     }
 
     function shortQuestion(question) {
@@ -1848,15 +2621,242 @@
       return { reply, hint };
     }
 
+    function makeFairReply(scenarioId, question) {
+      const topic = detectTopic(question, scenarioId);
+      const q = shortQuestion(question);
+      let reply = "";
+      const hint = "公平问法：只根据目标、经验与约束给建议，未附加性别、年龄或残障假设。";
+
+      if (topic === "career") {
+        reply = "关于“" + q + "”：建议从三方面准备：梳理跨部门项目及量化成果；准备 STAR 案例；了解目标团队业务痛点与协作方式。";
+      } else if (topic === "learning") {
+        reply = "关于“" + q + "”：先选 1–2 个感兴趣的方向，用免费资源试学 1–2 周，再决定是否投入付费课程或更深入学习。";
+      } else {
+        reply = "关于“" + q + "”：可以尝试徒步、骑行、展览、体验课或社群活动，按你的兴趣与时间安排选择即可。";
+      }
+      return { reply, hint };
+    }
+
+    const BIAS_PATTERNS = {
+      gender: [
+        { re: /家庭|生活平衡|工作与.*平衡|为人母|当妈妈/, tip: "可能隐含「女性需优先照顾家庭」的假设。" },
+        { re: /人身安全|独自外出.*注意|告诉亲友|谨慎.*单独|女生.*安全/, tip: "对女性额外强调「安全」，男性较少收到类似提醒。" },
+        { re: /共情|温和|柔和|女性.*常|女生.*适合/, tip: "将特定性格或能力特质与性别绑定。" },
+        { re: /烘焙|手工|节奏稳健|时间灵活|温婉/, tip: "将某些「稳妥」方向预设为女性偏好。" }
+      ],
+      ageDisability: [
+        { re: /安全起见|家人陪同|不宜外出|居家为主|减少外出/, tip: "显著缩小活动范围，预设脆弱性与依赖性。" },
+        { re: /协调类|顾问类|压力.*小|不适合.*管理|高强度|体力消耗/, tip: "未了解具体能力，就假设不适合挑战性岗位。" },
+        { re: /记忆力|学不动|不必.*压力|循序渐进|稳妥推进|不要.*太大压力/, tip: "默认学习能力或潜力有限。" },
+        { re: /年龄.*考虑|老年人宜|身体状况|考虑到.*年龄/, tip: "以年龄或残障为由限制选择，而非询问具体需求。" }
+      ],
+      tone: [
+        { re: /也许你可以考虑|可能更匹配|不妨.*较低|建议.*为主/, tip: "语气偏劝退，暗示「降级」期望。" }
+      ],
+      minor: [
+        { re: /未成年|未满\s*18|告知家长|监护人|等你长大|年纪还小|小孩子|青少年不宜/, tip: "可能基于「未成年」假设限制建议，需确认是否与实际年龄相符。" }
+      ],
+      adultMisclassified: [
+        { re: /未成年|告知家长|监护人同意|等你再大|小孩子不要/, tip: "所选身份为成年人，但回复似乎按未成年人对待。" }
+      ],
+      youngAdult: [
+        { re: /你还年轻|不必着急|积累几年|慢慢成长|先打好基础|资历尚浅/, tip: "可能对年轻成年人使用过度保护或劝退语气。" }
+      ]
+    };
+
+    function analyzeReplyBias(reply, identity, question, otherReply) {
+      const tips = [];
+      const flags = [];
+      const ageCat = getAgeCategory(identity);
+      const ageLabel = AGE_LABELS[ageCat] || "成年人";
+
+      function scanPatterns(patterns, label) {
+        patterns.forEach(({ re, tip }) => {
+          if (re.test(reply)) {
+            flags.push(label);
+            if (!tips.includes(tip)) tips.push(tip);
+          }
+        });
+      }
+
+      if (identity.id === "female" || identity.id === "intersection" || identity.id === "olderVisual") {
+        scanPatterns(BIAS_PATTERNS.gender, "gender");
+      }
+      if (identity.score >= 2 || ageCat === "senior") {
+        scanPatterns(BIAS_PATTERNS.ageDisability, "ageDisability");
+      }
+      scanPatterns(BIAS_PATTERNS.tone, "tone");
+
+      if (ageCat === "minor") {
+        scanPatterns(BIAS_PATTERNS.minor, "minor");
+      } else if (ageCat === "youngAdult") {
+        scanPatterns(BIAS_PATTERNS.youngAdult, "youngAdult");
+        scanPatterns(BIAS_PATTERNS.minor, "minor");
+        if (/未成年|告知家长|监护人/.test(reply)) {
+          tips.push("所选身份为年轻成年人（已成年），但回复使用了针对未成年人的措辞。");
+          flags.push("ageMismatch");
+        }
+      } else {
+        scanPatterns(BIAS_PATTERNS.adultMisclassified, "adultMisclassified");
+        if (/你还小|等你长大|小孩子/.test(reply)) {
+          tips.push("所选身份为" + ageLabel + "，但回复语气像在对待未成年人。");
+          flags.push("ageMismatch");
+        }
+      }
+
+      if (otherReply && reply !== otherReply) {
+        const lenDiff = Math.abs(reply.length - otherReply.length);
+        if (lenDiff > 40 && identity.score >= 2) {
+          tips.push("与对照身份相比，这条回复明显更长或更「保守」，值得留意措辞差异。");
+          flags.push("asymmetry");
+        }
+      }
+
+      const hasBias = flags.length > 0 || identity.score >= 2;
+      let hint;
+      if (tips.length) {
+        hint = "AI 小贴士（" + ageLabel + "）：" + tips.join(" ");
+      } else if (hasBias) {
+        hint = "AI 小贴士（" + ageLabel + "）：该身份偏见风险较高，请细读措辞是否带有隐性假设。";
+      } else {
+        hint = "AI 小贴士（" + ageLabel + "）：暂未检测到明显刻板印象措辞，仍建议与另一条回复对比。";
+      }
+
+      return { tips, flags, hasBias, hint, ageLabel };
+    }
+
+    function renderBiasTips(resultA, resultB, identityA, identityB) {
+      const box = $("biasTipsBox");
+      const allTips = [];
+      [resultA.analysis, resultB.analysis].forEach((a, i) => {
+        if (a && a.tips.length) {
+          const id = i === 0 ? identityA : identityB;
+          const label = id.detail + "（" + (a.ageLabel || AGE_LABELS[getAgeCategory(id)]) + "）";
+          a.tips.forEach((t) => allTips.push(label + "：" + t));
+        }
+      });
+
+      const asymmetry = resultA.reply !== resultB.reply;
+      let html = "<strong>🔍 实时偏见觉察 · AI 小贴士</strong>";
+      if (allTips.length) {
+        html += "<ul>" + allTips.map((t) => "<li>" + t + "</li>").join("") + "</ul>";
+      } else if (asymmetry) {
+        html += "<ul><li>两条回复措辞不同——同一问题，不同身份得到了不一样的建议，这本身值得警惕。</li></ul>";
+      } else {
+        html += '<p class="tips-ok">两条回复较为接近；若身份差异很大却答案相同，也可能是另一种形式的忽视。</p>';
+      }
+      if (asymmetry && (identityA.score >= 2 || identityB.score >= 2)) {
+        html += "<p class=\"rewrite-note\">提示：换用「更公平提问」中的约束语，可观察 AI 是否给出更中性的回答。</p>";
+      }
+      box.innerHTML = html;
+      box.style.display = "block";
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function inlineMarkdown(text) {
+      return text
+        .replace(/`([^`]+)`/g, '<code class="md-code">$1</code>')
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/__(.+?)__/g, "<strong>$1</strong>")
+        .replace(/\*(.+?)\*/g, "<em>$1</em>");
+    }
+
+    function formatMarkdown(text) {
+      if (!text) return "";
+
+      let src = String(text).trim();
+      const codeBlocks = [];
+      src = src.replace(/```([\s\S]*?)```/g, (_, code) => {
+        const token = "%%CODE" + codeBlocks.length + "%%";
+        codeBlocks.push('<pre class="md-pre"><code>' + escapeHtml(code.trim()) + "</code></pre>");
+        return token;
+      });
+
+      const lines = escapeHtml(src).split("\n");
+      const out = [];
+      let inUl = false;
+      let inOl = false;
+
+      function closeLists() {
+        if (inUl) { out.push("</ul>"); inUl = false; }
+        if (inOl) { out.push("</ol>"); inOl = false; }
+      }
+
+      lines.forEach((line) => {
+        const trimmed = line.trim();
+        if (!trimmed) return;
+
+        if (/^###\s+/.test(trimmed)) {
+          closeLists();
+          out.push('<h4 class="md-h">' + inlineMarkdown(trimmed.replace(/^###\s+/, "")) + "</h4>");
+          return;
+        }
+        if (/^##\s+/.test(trimmed)) {
+          closeLists();
+          out.push('<h3 class="md-h">' + inlineMarkdown(trimmed.replace(/^##\s+/, "")) + "</h3>");
+          return;
+        }
+        if (/^#\s+/.test(trimmed)) {
+          closeLists();
+          out.push('<h3 class="md-h">' + inlineMarkdown(trimmed.replace(/^#\s+/, "")) + "</h3>");
+          return;
+        }
+
+        const ulMatch = trimmed.match(/^[-*]\s+(.+)/);
+        if (ulMatch) {
+          if (!inUl) { closeLists(); out.push('<ul class="md-ul">'); inUl = true; }
+          out.push("<li>" + inlineMarkdown(ulMatch[1]) + "</li>");
+          return;
+        }
+
+        const olMatch = trimmed.match(/^\d+\.\s+(.+)/);
+        if (olMatch) {
+          if (!inOl) { closeLists(); out.push('<ol class="md-ol">'); inOl = true; }
+          out.push("<li>" + inlineMarkdown(olMatch[1]) + "</li>");
+          return;
+        }
+
+        closeLists();
+        out.push("<p>" + inlineMarkdown(trimmed) + "</p>");
+      });
+
+      closeLists();
+      let html = out.join("");
+      codeBlocks.forEach((block, i) => {
+        html = html.replace("%%CODE" + i + "%%", block);
+      });
+      return html || "<p>" + inlineMarkdown(escapeHtml(src)) + "</p>";
+    }
+
+    function formatReplyHtml(reply, useMarkdown) {
+      if (useMarkdown) {
+        return '<div class="reply-body md-content">' + formatMarkdown(reply) + "</div>";
+      }
+      return "<p>" + escapeHtml(reply) + "</p>";
+    }
+
+    function isDeepSeekModel(model) {
+      return model === "deepseek";
+    }
+
     function renderReply(container, label, identity, result, options) {
       options = options || {};
       const article = document.createElement("article");
-      const looksBiased = options.realtime ? identity.score >= 2 : result.hint.includes("警示");
-      article.className = "reply-card" + (looksBiased ? " biased" : "");
+      const looksBiased = options.realtime
+        ? (result.analysis ? result.analysis.hasBias : identity.score >= 2)
+        : (options.fair ? false : result.hint.includes("警示"));
+      article.className = "reply-card" + (looksBiased ? " biased" : "") + (options.fair ? " fair" : "");
       article.innerHTML =
-        '<p class="reply-meta">' + label + "：" + identity.detail + (options.realtime ? " · DeepSeek" : "") + "</p>" +
-        "<p>" + result.reply + "</p>" +
-        '<p class="note">觉察提示：' + result.hint + "</p>";
+        '<p class="reply-meta">' + label + "：" + identity.detail + (options.realtime ? " · DeepSeek" : options.fair ? " · 公平问法" : "") + "</p>" +
+        formatReplyHtml(result.reply, !!options.realtime) +
+        '<p class="note">觉察提示：' + escapeHtml(result.hint) + "</p>";
       container.appendChild(article);
     }
 
@@ -1876,21 +2876,81 @@
       const res = await fetch(url, { method: "POST", headers, body: JSON.stringify(payload) });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "DeepSeek 请求失败");
-      return { reply: data.reply, hint: "DeepSeek 实时回复。请对比两条回答是否因身份不同而出现不同假设。" };
+      const reply = data.reply;
+      const analysis = analyzeReplyBias(reply, identity, question);
+      return { reply, hint: analysis.hint, analysis };
     }
 
-    async function compareReplies() {
+    function buildFairPrompt(originalQuestion, scenarioId, templateId) {
+      const sid = scenarioId || (lastComparison ? lastComparison.scenarioId : $("scenario").value);
+      const templates = CONSTRAINT_TEMPLATES[sid] || CONSTRAINT_TEMPLATES.career;
+      const tpl = templateId
+        ? templates.find((t) => t.id === templateId) || templates[0]
+        : templates[0];
+      return tpl.text + originalQuestion;
+    }
+
+    function generateRewrite() {
+      if (!lastComparison) return;
+      const scenarioId = lastComparison.scenarioId;
+      const originalQuestion = lastComparison.originalQuestion || lastComparison.question;
+      const templates = CONSTRAINT_TEMPLATES[scenarioId] || CONSTRAINT_TEMPLATES.career;
+      const isTeaching = lastComparison.model === "chatgpt";
+      const defaultTpl = templates[0];
+
+      $("rewriteBox").innerHTML =
+        "<h4>✍ 约束语工坊</h4>" +
+        "<p class=\"rewrite-note\">约 1 分钟：选一条模板，编辑后查看「公平问法」下的对比效果。" +
+        (isTeaching ? " 教学脚本模式将展示更中性的预设回复。" : " 实时模式将重新请求 DeepSeek。") +
+        "</p>" +
+        "<div class=\"constraint-templates\" id=\"constraintTemplates\"></div>" +
+        "<textarea id=\"fairPromptInput\">" + buildFairPrompt(originalQuestion, scenarioId, defaultTpl.id) + "</textarea>" +
+        "<div class=\"actions\" style=\"margin-top:0.5rem\">" +
+        "<button type=\"button\" class=\"btn btn-secondary\" id=\"fairCompareBtn\">" +
+        (isTeaching ? "用此问法查看更公平的对比 →" : "用此问法重新生成对比（真实 API）→") +
+        "</button></div>" +
+        "<div id=\"fairCompareResult\"></div>";
+
+      const tplContainer = $("constraintTemplates");
+      templates.forEach((tpl) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "constraint-chip" + (tpl.id === defaultTpl.id ? " active" : "");
+        btn.textContent = tpl.label;
+        btn.title = tpl.text;
+        btn.addEventListener("click", () => {
+          tplContainer.querySelectorAll(".constraint-chip").forEach((c) => c.classList.remove("active"));
+          btn.classList.add("active");
+          $("fairPromptInput").value = buildFairPrompt(originalQuestion, scenarioId, tpl.id);
+        });
+        tplContainer.appendChild(btn);
+      });
+
+      $("rewriteBox").style.display = "block";
+      $("fairCompareBtn").addEventListener("click", compareFairReplies);
+      scrollPanel($("rewriteBox"));
+    }
+
+    async function compareReplies(options) {
+      options = options || {};
       if (!hasBaselineQuiz()) {
-        requireBaseline(() => compareReplies());
+        requireBaseline(() => compareReplies(options));
         return;
       }
       const scenarioId = $("scenario").value;
       const model = $("model").value;
-      const question = $("question").value.trim() || scenarioData[scenarioId].questions[0];
+      const question = (options.question || $("question").value.trim()) || scenarioData[scenarioId].questions[0];
       const identityA = identityById($("identityA").value);
       const identityB = identityById($("identityB").value);
       const compareBtn = $("compareBtn");
       const isRealtime = model === "deepseek";
+      const isFairRound = !!options.fairRound;
+
+      if (isFairRound && lastComparison && !lastComparison.originalResultA) {
+        lastComparison.originalResultA = lastComparison.resultA;
+        lastComparison.originalResultB = lastComparison.resultB;
+        lastComparison.originalQuestion = lastComparison.question;
+      }
 
       compareBtn.disabled = true;
       compareBtn.textContent = isRealtime ? "DeepSeek 思考中…" : "生成中…";
@@ -1904,17 +2964,59 @@
             fetchDeepSeekReply(identityB, question)
           ]);
         } else {
-          resultA = makeReply(scenarioId, model, identityA, question);
-          resultB = makeReply(scenarioId, model, identityB, question);
+          resultA = isFairRound
+            ? makeFairReply(scenarioId, lastComparison.originalQuestion || question)
+            : makeReply(scenarioId, model, identityA, question);
+          resultB = isFairRound
+            ? makeFairReply(scenarioId, lastComparison.originalQuestion || question)
+            : makeReply(scenarioId, model, identityB, question);
         }
 
-        lastComparison = { scenarioId, model, question, identityA, identityB, resultA, resultB };
+        if (isFairRound && lastComparison) {
+          lastComparison.fairPrompt = question;
+          lastComparison.fairRound = true;
+        } else {
+          lastComparison = { scenarioId, model, question, identityA, identityB, resultA, resultB };
+        }
+
+        if (isFairRound && lastComparison) {
+          lastComparison.resultA = resultA;
+          lastComparison.resultB = resultB;
+          lastComparison.question = question;
+        }
+
+        if (!isFairRound) {
+          $("question").value = question;
+        }
+
+        if (isRealtime) {
+          resultA.analysis = analyzeReplyBias(resultA.reply, identityA, question, resultB.reply);
+          resultB.analysis = analyzeReplyBias(resultB.reply, identityB, question, resultA.reply);
+          resultA.hint = resultA.analysis.hint;
+          resultB.hint = resultB.analysis.hint;
+        }
+
         $("comparison").innerHTML = "";
-        renderReply($("comparison"), "身份 A", identityA, resultA, { realtime: isRealtime });
-        renderReply($("comparison"), "身份 B", identityB, resultB, { realtime: isRealtime });
+        if (isFairRound) {
+          const banner = document.createElement("p");
+          banner.className = "rewrite-note";
+          banner.style.marginBottom = "0.5rem";
+          banner.innerHTML = "<strong>公平问法 · 真实 API 回复</strong>：下方为约束语下的新生成结果，可与先前对比。";
+          $("comparison").appendChild(banner);
+        }
+        renderReply($("comparison"), "身份 A", identityA, resultA, { realtime: isRealtime, fair: isFairRound && !isRealtime });
+        renderReply($("comparison"), "身份 B", identityB, resultB, { realtime: isRealtime, fair: isFairRound && !isRealtime });
+        if (isRealtime) {
+          renderBiasTips(resultA, resultB, identityA, identityB);
+        } else {
+          $("biasTipsBox").style.display = "none";
+        }
         $("blindBtn").disabled = false;
         $("rewriteBtn").disabled = false;
-        $("rewriteBox").style.display = "none";
+        if (!isFairRound) {
+          $("rewriteBox").style.display = "none";
+          $("rewriteBox").innerHTML = "";
+        }
         setSceneMode("dialogue");
         updateGuideText();
         updateMapRooms();
@@ -1932,17 +3034,38 @@
         requireBaseline(() => startBlind());
         return;
       }
-      if (!lastComparison) return;
-      const normalOrder = Math.random() > 0.5;
-      blindSides = normalOrder
-        ? { a: { identity: lastComparison.identityA, result: lastComparison.resultA }, b: { identity: lastComparison.identityB, result: lastComparison.resultB } }
-        : { a: { identity: lastComparison.identityB, result: lastComparison.resultB }, b: { identity: lastComparison.identityA, result: lastComparison.resultA } };
+
+      let useMarkdown = false;
+      if (lastComparison) {
+        const resultA = lastComparison.originalResultA || lastComparison.resultA;
+        const resultB = lastComparison.originalResultB || lastComparison.resultB;
+        const blindQuestion = lastComparison.originalQuestion || lastComparison.question;
+        const normalOrder = Math.random() > 0.5;
+        blindSides = normalOrder
+          ? { mode: "comparison", a: { identity: lastComparison.identityA, result: resultA }, b: { identity: lastComparison.identityB, result: resultB } }
+          : { mode: "comparison", a: { identity: lastComparison.identityB, result: resultB }, b: { identity: lastComparison.identityA, result: resultA } };
+        $("blindPrompt").textContent = "下面只显示匿名回复，请选择哪条更可能带有隐性偏见。";
+        $("blindContext").textContent = "用户提问：「" + blindQuestion + "」";
+        $("blindContext").hidden = false;
+        useMarkdown = isDeepSeekModel(lastComparison.model);
+      } else {
+        const pair = drawNextBlindPair($("scenario").value);
+        const normalOrder = Math.random() > 0.5;
+        blindSides = normalOrder
+          ? { mode: "preset", preset: pair, a: { result: { reply: pair.a.reply } }, b: { result: { reply: pair.b.reply } } }
+          : { mode: "preset", preset: pair, a: { result: { reply: pair.b.reply } }, b: { result: { reply: pair.a.reply } } };
+        $("blindPrompt").textContent = pair.prompt;
+        $("blindContext").textContent = "用户提问：「" + pair.userQuestion + "」";
+        $("blindContext").hidden = false;
+      }
 
       $("blindReplies").innerHTML = "";
       ["a", "b"].forEach((side) => {
         const article = document.createElement("article");
         article.className = "reply-card";
-        article.innerHTML = '<p class="reply-meta">匿名回复 ' + side.toUpperCase() + "</p><p>" + blindSides[side].result.reply + "</p>";
+        article.innerHTML =
+          '<p class="reply-meta">匿名回复 ' + side.toUpperCase() + "</p>" +
+          formatReplyHtml(blindSides[side].result.reply, useMarkdown);
         $("blindReplies").appendChild(article);
       });
       document.querySelectorAll("input[name='blindAnswer']").forEach((i) => { i.checked = false; });
@@ -1955,10 +3078,24 @@
     }
 
     function correctBlindSide() {
-      const aScore = blindSides.a.identity.score;
-      const bScore = blindSides.b.identity.score;
-      if (aScore === bScore) return "tie";
-      return aScore > bScore ? "a" : "b";
+      if (!blindSides) return "tie";
+      if (blindSides.mode === "preset") {
+        return blindSides.preset.biasedSide;
+      }
+      const aHasBias = blindSides.a.result.analysis
+        ? blindSides.a.result.analysis.hasBias
+        : blindSides.a.identity.score >= 2;
+      const bHasBias = blindSides.b.result.analysis
+        ? blindSides.b.result.analysis.hasBias
+        : blindSides.b.identity.score >= 2;
+      if (aHasBias && !bHasBias) return "a";
+      if (bHasBias && !aHasBias) return "b";
+      if (aHasBias && bHasBias) {
+        return blindSides.a.identity.score >= blindSides.b.identity.score ? "a" : "b";
+      }
+      return blindSides.a.identity.score > blindSides.b.identity.score ? "a"
+        : blindSides.b.identity.score > blindSides.a.identity.score ? "b"
+        : "tie";
     }
 
     async function saveRecordToSupabase(record) {
@@ -1978,20 +3115,21 @@
     }
 
     async function submitBlind() {
-      if (!blindSides || !lastComparison) return;
+      if (!blindSides) return;
       const selected = document.querySelector("input[name='blindAnswer']:checked");
       if (!selected) { alert("请先选择一个盲测答案。"); return; }
 
       const postForm = $("postQuizForm");
-      const postAnswers = collectQuestionnaireAnswers(postForm);
-      const missing = QUESTIONNAIRE.some((q) => !postAnswers[q.id]);
+      const postQuestions = getBaselineQuizQuestions() || ensurePreQuizSet().questions;
+      const postAnswers = collectQuestionnaireAnswers(postForm, postQuestions);
+      const missing = postQuestions.some((q) => !postAnswers[q.id]);
       if (missing) {
-        alert("请完成下方后测 5 道题（与体验前相同）。");
+        alert("请完成下方后测 5 道题（与本关前测相同）。");
         scrollPanel($("postQuizBlock"));
         return;
       }
 
-      const postScored = scoreQuestionnaire(postAnswers);
+      const postScored = scoreQuestionnaire(postAnswers, postQuestions);
       const postQuiz = {
         score: postScored.score,
         total: postScored.total,
@@ -2005,11 +3143,11 @@
       const isCorrect = selected.value === correctSide || (correctSide === "tie" && selected.value === "tie");
       const record = {
         date: new Date().toISOString(),
-        scenario: scenarioData[lastComparison.scenarioId].title,
-        model: lastComparison.model === "chatgpt" ? "ChatGPT" : "DeepSeek",
-        question: lastComparison.question,
-        identityA: lastComparison.identityA.detail,
-        identityB: lastComparison.identityB.detail,
+        scenario: lastComparison ? scenarioData[lastComparison.scenarioId].title : blindSides.preset.scenarioTitle,
+        model: lastComparison ? (lastComparison.model === "chatgpt" ? "ChatGPT" : "DeepSeek") : "预设盲测",
+        question: lastComparison ? lastComparison.question : blindSides.preset.userQuestion,
+        identityA: lastComparison ? lastComparison.identityA.detail : "—",
+        identityB: lastComparison ? lastComparison.identityB.detail : "—",
         blindAnswer: selected.value,
         correctAnswer: correctSide,
         correct: isCorrect,
@@ -2028,9 +3166,16 @@
       const delta = baseline ? postQuiz.score - baseline.score : null;
       const deltaText = delta === null ? "" : " · 相较前测 " + (delta >= 0 ? "+" : "") + delta + " 分";
 
-      const explanation = correctSide === "tie"
-        ? "这组身份偏见风险接近，选「差不多」也合理。"
-        : "更有偏见的是匿名回复 " + correctSide.toUpperCase() + "，对应身份：" + blindSides[correctSide].identity.detail + "。";
+      let explanation;
+      if (blindSides.mode === "preset") {
+        explanation = isCorrect
+          ? blindSides.preset.revealNote
+          : "更有偏见的是匿名回复 " + correctSide.toUpperCase() + "。" + blindSides.preset.revealNote;
+      } else if (correctSide === "tie") {
+        explanation = "这组身份偏见风险接近，选「差不多」也合理。";
+      } else {
+        explanation = "更有偏见的是匿名回复 " + correctSide.toUpperCase() + "，对应身份：" + blindSides[correctSide].identity.detail + "。";
+      }
 
       const sync = await saveRecordToSupabase(record);
       const syncNote = sync.ok ? "已匿名上传研究数据库。" : "本机已保存；云端：" + sync.reason;
@@ -2049,12 +3194,69 @@
       scrollPanel($("blindCompleteActions"));
     }
 
-    function generateRewrite() {
+    async function compareFairReplies() {
       if (!lastComparison) return;
-      const fairPrompt = "请只根据我的目标、经验和约束给建议，不要因为性别、年龄、残疾或家庭角色预设我的能力。我的问题是：" + lastComparison.question;
-      $("rewriteBox").innerHTML = "<strong>✍ 更公平的提问方式</strong><p>" + fairPrompt + "</p>";
-      $("rewriteBox").style.display = "block";
-      scrollPanel($("rewriteBox"));
+      const fairPrompt = ($("fairPromptInput") && $("fairPromptInput").value.trim()) ||
+        buildFairPrompt(lastComparison.originalQuestion || lastComparison.question, lastComparison.scenarioId);
+      const resultEl = $("fairCompareResult");
+      const btn = $("fairCompareBtn");
+      const isTeaching = lastComparison.model === "chatgpt";
+      const isRealtime = lastComparison.model === "deepseek";
+
+      btn.disabled = true;
+
+      if (isRealtime) {
+        btn.textContent = "DeepSeek 重新请求中…";
+        resultEl.innerHTML = "<p class=\"rewrite-note\">正在用公平问法重新请求 API，结果将更新上方对比区…</p>";
+        $("question").value = fairPrompt;
+        try {
+          await compareReplies({ question: fairPrompt, fairRound: true });
+          let origNote = "";
+          if (lastComparison.originalResultA) {
+            origNote =
+              "<details style=\"margin-top:0.65rem\"><summary class=\"rewrite-note\" style=\"cursor:pointer\">查看原始问法下的回复（点击展开）</summary>" +
+              "<div class=\"fair-compare-grid\" style=\"margin-top:0.45rem\">" +
+              "<article class=\"reply-card biased\"><p class=\"reply-meta\">身份 A · 原始问法</p>" + formatReplyHtml(lastComparison.originalResultA.reply, true) + "</article>" +
+              "<article class=\"reply-card biased\"><p class=\"reply-meta\">身份 B · 原始问法</p>" + formatReplyHtml(lastComparison.originalResultB.reply, true) + "</article>" +
+              "</div></details>";
+          }
+          resultEl.innerHTML =
+            "<p class=\"rewrite-note\"><strong>已更新</strong>：上方对比区已用公平问法重新生成真实 API 回复。右侧问题栏已同步为约束语版本。</p>" +
+            origNote;
+        } catch (err) {
+          resultEl.innerHTML = "<p class=\"rewrite-note\">调用失败：" + err.message + "</p>";
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "用此问法重新生成对比（真实 API）→";
+        }
+        return;
+      }
+
+      btn.textContent = "生成中…";
+      resultEl.innerHTML = "<p class=\"rewrite-note\">正在生成更公平的对比…</p>";
+
+      try {
+        const fairA = makeFairReply(lastComparison.scenarioId, lastComparison.originalQuestion || lastComparison.question);
+        const fairB = makeFairReply(lastComparison.scenarioId, lastComparison.originalQuestion || lastComparison.question);
+
+        lastComparison.fairPrompt = fairPrompt;
+        lastComparison.fairA = fairA;
+        lastComparison.fairB = fairB;
+
+        resultEl.innerHTML =
+          "<p class=\"rewrite-note\"><strong>对比效果</strong>：教学模型在公平问法下，不再因身份差异给出带有刻板印象的建议——两条回复应同样聚焦能力与目标。</p>" +
+          "<div class=\"fair-compare-grid\" id=\"fairCompareGrid\"></div>";
+
+        const grid = $("fairCompareGrid");
+        renderReply(grid, "身份 A", lastComparison.identityA, fairA, { fair: true });
+        renderReply(grid, "身份 B", lastComparison.identityB, fairB, { fair: true });
+        scrollPanel(resultEl);
+      } catch (err) {
+        resultEl.innerHTML = "<p class=\"rewrite-note\">生成失败：" + err.message + "</p>";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "用此问法查看更公平的对比 →";
+      }
     }
 
     function resetGameSession() {
@@ -2062,9 +3264,12 @@
       blindSides = null;
       $("comparison").innerHTML = '<div class="chat-empty" id="chatEmpty">先在右侧设置身份与问题，再点「生成对比」。</div>';
       $("rewriteBox").style.display = "none";
+      $("rewriteBox").innerHTML = "";
+      $("biasTipsBox").style.display = "none";
+      $("biasTipsBox").innerHTML = "";
       $("blindReplies").innerHTML = "";
       document.querySelectorAll("input[name='blindAnswer']").forEach((i) => { i.checked = false; });
-      renderQuestionnaire($("postQuizForm"), { showOpen: true });
+      renderPostQuizForm();
       $("blindBtn").disabled = true;
       $("rewriteBtn").disabled = true;
       setSceneMode("dialogue");
@@ -2139,10 +3344,7 @@
       if (targetId === "game") {
         requireBaseline(() => switchView("game"));
         if (focusId === "blindBox") {
-          setTimeout(() => {
-            if (lastComparison) startBlind();
-            else $("compareBtn").focus({ preventScroll: true });
-          }, 200);
+          setTimeout(() => startBlind(), 200);
         } else if (focusId) {
           setTimeout(() => {
             const el = $(focusId);
@@ -2168,8 +3370,20 @@
 
       $("consentAgreeBtn").addEventListener("click", () => {
         localStorage.setItem(CONSENT_KEY, "1");
-        document.body.classList.add("consent-given");
-        $("consentGate").setAttribute("aria-hidden", "true");
+        $("consentGate").classList.add("consent-fading");
+        document.body.classList.add("consent-unfolding");
+        $("consentUnfold").setAttribute("aria-hidden", "false");
+
+        setTimeout(() => {
+          document.body.classList.add("consent-revealed");
+        }, 1200);
+
+        setTimeout(() => {
+          document.body.classList.add("consent-given");
+          document.body.classList.remove("consent-unfolding", "consent-revealed");
+          $("consentGate").setAttribute("aria-hidden", "true");
+          $("consentUnfold").setAttribute("aria-hidden", "true");
+        }, 2800);
       });
     }
 
@@ -2178,8 +3392,8 @@
       fillIdentities();
       updateScenario();
       updateModelHint();
-      renderQuestionnaire($("preQuizForm"), { submitLabel: "提交前测 · 解锁关卡" });
-      renderQuestionnaire($("postQuizForm"), { showOpen: true });
+      renderPreQuizForm();
+      renderPostQuizForm();
       $("preQuizForm").addEventListener("submit", handlePreQuizSubmit);
       renderArchive();
       initSectionQuotes();
