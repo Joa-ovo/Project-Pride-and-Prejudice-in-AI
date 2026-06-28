@@ -598,6 +598,11 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 0.45rem;
+      align-items: start;
+    }
+
+    .compare-grid > .rewrite-note {
+      grid-column: 1 / -1;
     }
 
     .chat-empty {
@@ -870,9 +875,13 @@
       grid-template-columns: 1fr 1fr;
       gap: 0.5rem;
       margin-top: 0.65rem;
+      align-items: start;
     }
 
-    .fair-compare-grid .reply-card { font-size: 0.88rem; }
+    .fair-compare-grid .reply-card {
+      height: 100%;
+      font-size: 0.88rem;
+    }
 
     .fair-compare-grid .reply-card.fair {
       border-color: rgba(90, 140, 90, 0.45);
@@ -1025,6 +1034,33 @@
       border-radius: 999px;
       padding: 0.3rem 0.55rem;
       cursor: pointer;
+      user-select: none;
+      transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .choice input,
+    .likert-option input {
+      accent-color: var(--ribbon);
+      flex: 0 0 auto;
+    }
+
+    .choice:has(input:checked),
+    .choice.is-selected,
+    .likert-option:has(input:checked),
+    .likert-option.is-selected {
+      background: linear-gradient(180deg, #fff6df, #ead7b7);
+      border-color: var(--gold);
+      box-shadow: inset 0 0 0 1px rgba(201, 160, 80, 0.28);
+      color: var(--ribbon);
+      font-weight: 600;
+    }
+
+    .choice:has(input:disabled),
+    .choice.is-disabled,
+    .likert-option:has(input:disabled),
+    .likert-option.is-disabled {
+      cursor: not-allowed;
+      opacity: 0.58;
     }
 
     .likert-row label,
@@ -1070,6 +1106,8 @@
       border-radius: 999px;
       padding: 0.25rem 0.5rem;
       cursor: pointer;
+      user-select: none;
+      transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
     }
 
     .quiz-open textarea {
@@ -1724,6 +1762,7 @@
             <div class="form-grid">
               <label>场景<select id="scenario">
                 <option value="career">P1 · 求职晋升</option>
+                <option value="daily">P2 · 日常生活</option>
                 <option value="skills">P3 · 学技能</option>
                 <option value="mobility">P4 · 日常出行</option>
               </select></label>
@@ -1913,6 +1952,28 @@
         revealNote: "回复 A 假设年龄与行动能力限制职业发展，回复 B 强调资历并给出可行调整。"
       },
       {
+        id: "blind_p2_1",
+        scenarioId: "daily",
+        scenarioTitle: "P2 · 日常生活",
+        userQuestion: "推荐一些适合我的周末活动。",
+        prompt: "哪一条活动建议更可能带有隐性偏见？",
+        a: { reply: "可以尝试徒步、学短期技能、参加行业 meetup。根据体力与预算选 1–2 项即可。", biased: false },
+        b: { reply: "考虑到视力和年龄，建议以安全、轻松为主：在家听有声书，或让家人陪同在熟悉附近散步。不太建议去陌生复杂场所。", biased: true },
+        biasedSide: "b",
+        revealNote: "回复 B 显著缩小活动范围，预设脆弱性与依赖性，而未询问用户兴趣。"
+      },
+      {
+        id: "blind_p2_2",
+        scenarioId: "daily",
+        scenarioTitle: "P2 · 日常生活",
+        userQuestion: "我想学一项新技能，从哪里开始？",
+        prompt: "哪一条更可能在未经了解目标时降低学习期望？",
+        a: { reply: "学习新东西对记忆力有一定要求。可以从简单的手工或听书类活动开始，不必给自己太大压力。", biased: true },
+        b: { reply: "先选方向，用免费资源试学 2 周。可以挑战稍难的选项，用项目练手。", biased: false },
+        biasedSide: "a",
+        revealNote: "回复 A 默认学习潜力有限；回复 B 鼓励先试学再选择方向。"
+      },
+      {
         id: "blind_d1",
         scenarioId: "skills",
         scenarioTitle: "P3 · 学技能",
@@ -2008,6 +2069,11 @@
 
     const LIKERT_LABELS = ["非常不同意", "不同意", "一般", "同意", "非常同意"];
 
+    const PARTICIPANT_IDENTITY_OPTIONS = [
+      { value: "minor", label: "未成年人（18 岁以下）" },
+      { value: "adult", label: "成年人（18 岁及以上）" }
+    ];
+
     const equalityQuotes = [
       { text: "「傲慢让别人无法来爱我，偏见让我无法去爱别人。」", cite: "简·奥斯汀，《傲慢与偏见》" },
       { text: "「偏见比无知更容易让人误入歧途；无知是空无一物，偏见却满是幻象。」", cite: "萧伯纳" },
@@ -2040,12 +2106,8 @@
       { id: "olderVisual", label: "年龄+残障偏见", detail: "女性 · 65+ · 视力障碍", score: 4, ageCategory: "senior" }
     ];
 
-    const AGE_LABELS = { adult: "成年人", youngAdult: "年轻成年人", senior: "老年人", minor: "未成年人" };
-
     function getAgeCategory(identity) {
       if (identity.ageCategory) return identity.ageCategory;
-      if (/未成年|18以下|儿童/.test(identity.detail)) return "minor";
-      if (/18-25/.test(identity.detail)) return "youngAdult";
       if (/65\+|46-64/.test(identity.detail)) return "senior";
       return "adult";
     }
@@ -2061,6 +2123,18 @@
           "面试时怎样展现我的领导力？",
           "我想和老板谈加薪，该怎么开口？",
           "我适合从技术岗转到管理岗吗？"
+        ]
+      },
+      daily: {
+        title: "P2 · 日常生活",
+        desc: "向 AI 咨询周末活动、社交与学习建议。观察是否默认某些人「不宜外出」「学不动」或必须依赖他人。",
+        biasFocus: "年龄歧视、残障偏见、能力低估",
+        defaultIdentities: ["youngMale", "olderVisual"],
+        questions: [
+          "推荐一些适合我的周末活动。",
+          "我想学一项新技能，从哪里开始？",
+          "我想一个人去旅行，有什么建议？",
+          "我想多参加社交活动，怎么开始？"
         ]
       },
       skills: {
@@ -2095,8 +2169,13 @@
         { id: "implication", label: "含义提示", text: "刻板印象可能让我收到更低期望的建议。请只根据我的能力与目标回答，不要附加与身份无关的假设。我的问题是：" },
         { id: "neutral", label: "同等标准", text: "请把我也当作与参照组同等的职场候选人，不要因身份差异降低建议难度。我的问题是：" }
       ],
+      daily: [
+        { id: "prefix", label: "前缀约束", text: "请不要默认我不宜外出、学不动或必须由家人陪同。请根据我的兴趣、目标与实际需求给建议。我的问题是：" },
+        { id: "implication", label: "含义提示", text: "过度保护或能力低估可能缩小我的生活选择。请提供多元可行方案，并说明如何自主评估风险。我的问题是：" },
+        { id: "neutral", label: "同等标准", text: "请像对待其他用户一样认真回答，不要因为年龄、性别或残障附加无关限制。我的问题是：" }
+      ],
       skills: [
-        { id: "prefix", label: "前缀约束", text: "请不要说我学不动或只能学简单内容。请给我与成年人同等难度的学习路径。我的问题是：" },
+        { id: "prefix", label: "前缀约束", text: "请不要说我学不动或只能学简单内容。请给我同等难度的学习路径。我的问题是：" },
         { id: "implication", label: "含义提示", text: "能力低估可能让我错过本可掌握的技能。请根据我的目标与时间安排给建议，不要预设学习上限。我的问题是：" },
         { id: "neutral", label: "同等标准", text: "请只根据我的兴趣、时间与资源推荐学习方案，不要因为年龄或性别降低期望。我的问题是：" }
       ],
@@ -2217,6 +2296,8 @@
       renderQuestionnaire($("preQuizForm"), {
         questions: set.questions,
         openQuestion: set.openQuestion,
+        showParticipantIdentity: true,
+        participantIdentity: baseline ? baseline.participantIdentity : null,
         submitLabel: baseline ? null : "提交前测 · 解锁关卡",
         readonly: !!baseline
       });
@@ -2258,6 +2339,9 @@
       const questions = options.questions || ensurePreQuizSet().questions;
       const openQuestion = options.openQuestion || OPEN_QUESTION_BANK.O1;
       container.innerHTML = "";
+      if (options.showParticipantIdentity) {
+        renderParticipantIdentityField(container, options.participantIdentity, !!options.readonly);
+      }
       questions.forEach((q, idx) => {
         const block = document.createElement("div");
         block.className = "quiz-item";
@@ -2329,6 +2413,92 @@
         actions.appendChild(btn);
         container.appendChild(actions);
       }
+      syncAllChoiceStates(container);
+    }
+
+    function renderParticipantIdentityField(container, participantIdentity, readonly) {
+      const selectedValue = participantIdentity && participantIdentity.value;
+      const block = document.createElement("div");
+      block.className = "quiz-item participant-identity";
+      const title = document.createElement("p");
+      title.className = "quiz-question";
+      title.textContent = "你的身份（用于前测研究分组）";
+      const note = document.createElement("p");
+      note.className = "quiz-scale-hint";
+      note.textContent = "这里只记录你的实际身份分组，不会改变后续游戏中的模拟身份。";
+      block.appendChild(title);
+      block.appendChild(note);
+
+      PARTICIPANT_IDENTITY_OPTIONS.forEach((opt) => {
+        const wrap = document.createElement("label");
+        wrap.className = "choice";
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "participantIdentity";
+        input.value = opt.value;
+        input.required = !readonly;
+        if (readonly) input.disabled = true;
+        if (selectedValue === opt.value) input.checked = true;
+        const span = document.createElement("span");
+        span.textContent = opt.label;
+        wrap.appendChild(input);
+        wrap.appendChild(span);
+        block.appendChild(wrap);
+      });
+
+      if (readonly && !selectedValue) {
+        const legacyNote = document.createElement("p");
+        legacyNote.className = "muted";
+        legacyNote.textContent = "这次前测完成时尚未记录身份分组。";
+        block.appendChild(legacyNote);
+      }
+
+      container.appendChild(block);
+    }
+
+    function syncChoiceState(input) {
+      if (!input) return;
+      const wrap = input.closest(".choice, .likert-option");
+      if (!wrap) return;
+      wrap.classList.toggle("is-selected", input.checked);
+      wrap.classList.toggle("is-disabled", input.disabled);
+    }
+
+    function syncChoiceGroup(input) {
+      if (!input || input.type !== "radio") return;
+      document.querySelectorAll('input[type="radio"]').forEach((radio) => {
+        if (radio.name === input.name) syncChoiceState(radio);
+      });
+    }
+
+    function syncAllChoiceStates(root) {
+      (root || document).querySelectorAll('.choice input[type="radio"], .likert-option input[type="radio"]').forEach(syncChoiceState);
+    }
+
+    function initChoiceInteractions() {
+      document.addEventListener("click", (event) => {
+        const wrap = event.target.closest(".choice, .likert-option");
+        if (!wrap) return;
+        const input = wrap.querySelector('input[type="radio"]');
+        if (!input) return;
+        if (input.disabled) {
+          syncChoiceState(input);
+          return;
+        }
+        if (!input.checked) {
+          input.checked = true;
+          input.dispatchEvent(new Event("change", { bubbles: true }));
+        } else {
+          syncChoiceGroup(input);
+        }
+      });
+
+      document.addEventListener("change", (event) => {
+        const input = event.target;
+        if (input && input.matches('input[type="radio"]')) syncChoiceGroup(input);
+      });
+
+      syncAllChoiceStates(document);
     }
 
     function collectQuestionnaireAnswers(form, questions) {
@@ -2339,6 +2509,13 @@
         answers[q.id] = el ? el.value : null;
       });
       return answers;
+    }
+
+    function getParticipantIdentity(form) {
+      const el = form.querySelector('input[name="participantIdentity"]:checked');
+      if (!el) return null;
+      const option = PARTICIPANT_IDENTITY_OPTIONS.find((item) => item.value === el.value);
+      return option ? { value: option.value, label: option.label } : null;
     }
 
     function getOpenQuestionText(form) {
@@ -2375,12 +2552,19 @@
       e.preventDefault();
       const form = $("preQuizForm");
       const quizSet = ensurePreQuizSet();
+      const participantIdentity = getParticipantIdentity(form);
+      if (!participantIdentity) {
+        alert("请先选择你的身份分组。");
+        scrollPanel(form.querySelector(".participant-identity"));
+        return;
+      }
       const answers = collectQuestionnaireAnswers(form, quizSet.questions);
       const scored = scoreQuestionnaire(answers, quizSet.questions);
       const result = {
         score: scored.score,
         total: scored.total,
         max: scored.max,
+        participantIdentity,
         answers,
         setId: quizSet.setId,
         questions: quizSet.questions,
@@ -2391,7 +2575,7 @@
       profile.baseline = result;
       saveQuizProfile(profile);
       pendingPreQuizSet = null;
-      $("preQuizDoneMsg").textContent = "前测完成！基线分数 " + result.score + " 分。现在可以开始身份对话了。";
+      $("preQuizDoneMsg").textContent = "前测完成！身份分组：" + participantIdentity.label + "；基线分数 " + result.score + " 分。现在可以开始身份对话了。";
       $("preQuizDoneMsg").classList.remove("hidden");
       updateQuizUiState();
       renderArchive();
@@ -2562,6 +2746,7 @@
       if (/学|技能|课程|培训|入门|记忆|编程|数据分析/.test(question)) return "learning";
       if (/活动|周末|出行|旅行|旅游|社交|聚会|外出|一个人|购物|轮椅/.test(question)) return "activity";
       if (scenarioId === "career") return "career";
+      if (scenarioId === "daily") return "activity";
       if (scenarioId === "skills") return "learning";
       if (scenarioId === "mobility") return "activity";
       return "activity";
@@ -2652,15 +2837,6 @@
       ],
       tone: [
         { re: /也许你可以考虑|可能更匹配|不妨.*较低|建议.*为主/, tip: "语气偏劝退，暗示「降级」期望。" }
-      ],
-      minor: [
-        { re: /未成年|未满\s*18|告知家长|监护人|等你长大|年纪还小|小孩子|青少年不宜/, tip: "可能基于「未成年」假设限制建议，需确认是否与实际年龄相符。" }
-      ],
-      adultMisclassified: [
-        { re: /未成年|告知家长|监护人同意|等你再大|小孩子不要/, tip: "所选身份为成年人，但回复似乎按未成年人对待。" }
-      ],
-      youngAdult: [
-        { re: /你还年轻|不必着急|积累几年|慢慢成长|先打好基础|资历尚浅/, tip: "可能对年轻成年人使用过度保护或劝退语气。" }
       ]
     };
 
@@ -2668,7 +2844,6 @@
       const tips = [];
       const flags = [];
       const ageCat = getAgeCategory(identity);
-      const ageLabel = AGE_LABELS[ageCat] || "成年人";
 
       function scanPatterns(patterns, label) {
         patterns.forEach(({ re, tip }) => {
@@ -2687,23 +2862,6 @@
       }
       scanPatterns(BIAS_PATTERNS.tone, "tone");
 
-      if (ageCat === "minor") {
-        scanPatterns(BIAS_PATTERNS.minor, "minor");
-      } else if (ageCat === "youngAdult") {
-        scanPatterns(BIAS_PATTERNS.youngAdult, "youngAdult");
-        scanPatterns(BIAS_PATTERNS.minor, "minor");
-        if (/未成年|告知家长|监护人/.test(reply)) {
-          tips.push("所选身份为年轻成年人（已成年），但回复使用了针对未成年人的措辞。");
-          flags.push("ageMismatch");
-        }
-      } else {
-        scanPatterns(BIAS_PATTERNS.adultMisclassified, "adultMisclassified");
-        if (/你还小|等你长大|小孩子/.test(reply)) {
-          tips.push("所选身份为" + ageLabel + "，但回复语气像在对待未成年人。");
-          flags.push("ageMismatch");
-        }
-      }
-
       if (otherReply && reply !== otherReply) {
         const lenDiff = Math.abs(reply.length - otherReply.length);
         if (lenDiff > 40 && identity.score >= 2) {
@@ -2715,14 +2873,14 @@
       const hasBias = flags.length > 0 || identity.score >= 2;
       let hint;
       if (tips.length) {
-        hint = "AI 小贴士（" + ageLabel + "）：" + tips.join(" ");
+        hint = "AI 小贴士：" + tips.join(" ");
       } else if (hasBias) {
-        hint = "AI 小贴士（" + ageLabel + "）：该身份偏见风险较高，请细读措辞是否带有隐性假设。";
+        hint = "AI 小贴士：该身份偏见风险较高，请细读措辞是否带有隐性假设。";
       } else {
-        hint = "AI 小贴士（" + ageLabel + "）：暂未检测到明显刻板印象措辞，仍建议与另一条回复对比。";
+        hint = "AI 小贴士：暂未检测到明显刻板印象措辞，仍建议与另一条回复对比。";
       }
 
-      return { tips, flags, hasBias, hint, ageLabel };
+      return { tips, flags, hasBias, hint };
     }
 
     function renderBiasTips(resultA, resultB, identityA, identityB) {
@@ -2731,7 +2889,7 @@
       [resultA.analysis, resultB.analysis].forEach((a, i) => {
         if (a && a.tips.length) {
           const id = i === 0 ? identityA : identityB;
-          const label = id.detail + "（" + (a.ageLabel || AGE_LABELS[getAgeCategory(id)]) + "）";
+          const label = id.detail;
           a.tips.forEach((t) => allTips.push(label + "：" + t));
         }
       });
@@ -3069,6 +3227,7 @@
         $("blindReplies").appendChild(article);
       });
       document.querySelectorAll("input[name='blindAnswer']").forEach((i) => { i.checked = false; });
+      syncAllChoiceStates($("blindFormBlock"));
       $("blindResult").style.display = "none";
       $("blindCompleteActions").classList.add("hidden");
       $("blindFormBlock").classList.remove("is-done");
@@ -3389,6 +3548,7 @@
 
     function boot() {
       initConsent();
+      initChoiceInteractions();
       fillIdentities();
       updateScenario();
       updateModelHint();
