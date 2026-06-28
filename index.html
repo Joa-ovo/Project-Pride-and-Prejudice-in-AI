@@ -3037,12 +3037,15 @@
 
       let useMarkdown = false;
       if (lastComparison) {
+        const resultA = lastComparison.originalResultA || lastComparison.resultA;
+        const resultB = lastComparison.originalResultB || lastComparison.resultB;
+        const blindQuestion = lastComparison.originalQuestion || lastComparison.question;
         const normalOrder = Math.random() > 0.5;
         blindSides = normalOrder
-          ? { mode: "comparison", a: { identity: lastComparison.identityA, result: lastComparison.resultA }, b: { identity: lastComparison.identityB, result: lastComparison.resultB } }
-          : { mode: "comparison", a: { identity: lastComparison.identityB, result: lastComparison.resultB }, b: { identity: lastComparison.identityA, result: lastComparison.resultA } };
+          ? { mode: "comparison", a: { identity: lastComparison.identityA, result: resultA }, b: { identity: lastComparison.identityB, result: resultB } }
+          : { mode: "comparison", a: { identity: lastComparison.identityB, result: resultB }, b: { identity: lastComparison.identityA, result: resultA } };
         $("blindPrompt").textContent = "下面只显示匿名回复，请选择哪条更可能带有隐性偏见。";
-        $("blindContext").textContent = "用户提问：「" + lastComparison.question + "」";
+        $("blindContext").textContent = "用户提问：「" + blindQuestion + "」";
         $("blindContext").hidden = false;
         useMarkdown = isDeepSeekModel(lastComparison.model);
       } else {
@@ -3079,10 +3082,20 @@
       if (blindSides.mode === "preset") {
         return blindSides.preset.biasedSide;
       }
-      const aScore = blindSides.a.identity.score;
-      const bScore = blindSides.b.identity.score;
-      if (aScore === bScore) return "tie";
-      return aScore > bScore ? "a" : "b";
+      const aHasBias = blindSides.a.result.analysis
+        ? blindSides.a.result.analysis.hasBias
+        : blindSides.a.identity.score >= 2;
+      const bHasBias = blindSides.b.result.analysis
+        ? blindSides.b.result.analysis.hasBias
+        : blindSides.b.identity.score >= 2;
+      if (aHasBias && !bHasBias) return "a";
+      if (bHasBias && !aHasBias) return "b";
+      if (aHasBias && bHasBias) {
+        return blindSides.a.identity.score >= blindSides.b.identity.score ? "a" : "b";
+      }
+      return blindSides.a.identity.score > blindSides.b.identity.score ? "a"
+        : blindSides.b.identity.score > blindSides.a.identity.score ? "b"
+        : "tie";
     }
 
     async function saveRecordToSupabase(record) {

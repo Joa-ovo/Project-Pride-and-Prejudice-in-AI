@@ -25,7 +25,7 @@
 ## 项目内容
 
 - `index.html`：可运行的偏见觉察小游戏（单页部署入口）
-- `css/`、`js/`：样式与模块化逻辑（`data.js` 含场景脚本与问卷数据）
+- `css/`、`js/`：样式与模块化逻辑（生产入口 `index.html` 内联了场景/问卷/盲测数据；`js/data.js` 为同步参考副本）
 - `spec.md`：MVP 设计说明
 - `research/`：研究资料（`questions.md`、`sources.md`、`summary.md`、`data/`）
 - `research/idea.html`：早期概念页归档；请从 `index.html` 进入正式体验
