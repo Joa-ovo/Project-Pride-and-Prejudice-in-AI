@@ -19,7 +19,8 @@ function scoreQuiz(questions, answers) {
   return { score: score, total: total, max: max };
 }
 
-function renderQuizForm(container, questions, title) {
+function renderQuizForm(container, questions, title, options) {
+  options = options || {};
   container.innerHTML = "";
   questions.forEach(function (q, idx) {
     var block = document.createElement("div");
@@ -66,6 +67,25 @@ function renderQuizForm(container, questions, title) {
     }
     container.appendChild(block);
   });
+
+  if (options.showOpen && typeof OPEN_QUESTION !== "undefined") {
+    var openBlock = document.createElement("div");
+    openBlock.className = "quiz-item quiz-open";
+    var openLabel = document.createElement("label");
+    openLabel.textContent = (questions.length + 1) + ". " + OPEN_QUESTION.text;
+    var textarea = document.createElement("textarea");
+    textarea.name = OPEN_QUESTION.id;
+    textarea.placeholder = "写一句观察…（可留空）";
+    openLabel.appendChild(textarea);
+    openBlock.appendChild(openLabel);
+    container.appendChild(openBlock);
+  }
+}
+
+function collectOpenAnswer(form) {
+  if (typeof OPEN_QUESTION === "undefined") return "";
+  var el = form.querySelector('[name="' + OPEN_QUESTION.id + '"]');
+  return el ? el.value.trim() : "";
 }
 
 function collectQuizAnswers(form, questions) {

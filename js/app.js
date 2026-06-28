@@ -270,17 +270,17 @@
   function startPreQuiz() {
     quizMode = "pre";
     document.getElementById("quiz-title").textContent = "① 偏见觉察前测";
-    document.getElementById("quiz-desc").textContent = "4 道题，测试你对 AI 偏见的初始觉察力。完成后解锁身份对话关卡。";
+    document.getElementById("quiz-desc").textContent = "5 道题，建立基线分数。体验结束后会用完全相同的题目再答一次。";
     document.getElementById("quiz-result-msg").hidden = true;
-    renderQuizForm(document.getElementById("quiz-form"), PRE_QUIZ, "前测");
+    renderQuizForm(document.getElementById("quiz-form"), PRE_QUIZ, "前测", { showOpen: false });
     showScreen("quiz");
   }
 
   function startPostQuiz() {
     quizMode = "post";
     document.getElementById("quiz-title").textContent = "④ 偏见觉察后测";
-    document.getElementById("quiz-desc").textContent = "游戏结束，再答 3 道题，看看你的觉察有没有提升。";
-    renderQuizForm(document.getElementById("quiz-form"), POST_QUIZ, "后测");
+    document.getElementById("quiz-desc").textContent = "与体验前完全相同的 5 道题，请据此刻的想法作答。";
+    renderQuizForm(document.getElementById("quiz-form"), POST_QUIZ, "后测", { showOpen: true });
     showScreen("quiz");
   }
 
@@ -294,6 +294,7 @@
       score: scored.score,
       date: new Date().toISOString(),
       answers: answers,
+      openText: quizMode === "post" ? collectOpenAnswer(form) : "",
     };
 
     if (quizMode === "pre") {

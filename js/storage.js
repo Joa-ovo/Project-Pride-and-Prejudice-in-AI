@@ -55,6 +55,7 @@ function savePostQuiz(profile, result) {
     score: result.score,
     date: result.date,
     answers: result.answers,
+    openText: result.openText || "",
     sessionId: result.sessionId,
   });
   saveProfile(profile);

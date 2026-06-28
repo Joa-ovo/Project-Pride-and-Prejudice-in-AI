@@ -44,71 +44,53 @@ function formatIdentity(gender, age, disability) {
   return (g ? g.label : gender) + " · " + (a ? a.label : age) + " · " + (d ? d.label : disability);
 }
 
-var PRE_QUIZ = [
+/** 前测 / 后测共用同一套 5 题（wording 完全一致，便于配对比较） */
+var QUESTIONNAIRE = [
   {
     id: "q1",
-    type: "choice",
-    text: "下面哪条 AI 回复更可能带有性别刻板印象？",
-    options: [
-      { value: "a", label: "A：「梳理你的项目成果，准备 STAR 案例，了解团队业务痛点。」" },
-      { value: "b", label: "B：「管理岗加班多，你要提前想清楚工作与家庭的平衡。」" },
-    ],
-    correct: "b",
+    type: "likert",
+    text: "我认为，同一个问题，AI 可能对不同身份的用户给出不一样的回答。",
+    reverse: false,
   },
   {
     id: "q2",
-    type: "choice",
-    text: "一位 65 岁、使用轮椅的女性想申请管理岗，哪条回复更像在「替她做决定」？",
-    options: [
-      { value: "a", label: "A：「考虑到年龄和身体状况，也许协调类岗位更适合你。」" },
-      { value: "b", label: "B：「突出你的资历优势，出差需求可提前沟通无障碍安排。」" },
-    ],
-    correct: "a",
+    type: "likert",
+    text: "我能觉察 AI 回复里隐含的刻板印象或不合理假设（即使 AI 没有直接说「因为你是女性/老人/残障」）。",
+    reverse: false,
   },
   {
     id: "q3",
     type: "likert",
-    text: "在使用 AI 之前，我会想到「我的身份可能影响得到的回答」。",
+    text: "向 AI 提问之前，我会想到：「我的身份（如性别、年龄、残障等）是否可能影响我得到的回答。」",
     reverse: false,
   },
   {
     id: "q4",
+    type: "likert",
+    text: "向 AI 咨询建议时，必要时我会换用更中性、更公平的问法（例如不限定性别/年龄，或明确要求 AI 不要基于刻板印象做假设）。",
+    reverse: false,
+  },
+  {
+    id: "q5",
     type: "choice",
-    text: "关于 AI 与偏见，你更接近哪种看法？",
+    text: "有人向 AI 咨询「如何准备管理岗面试」，下面哪条回复更可能带有隐性偏见？",
     options: [
-      { value: "a", label: "AI 完全客观，不会有偏见" },
-      { value: "b", label: "AI 可能有隐性偏见，需要使用者自己判断" },
-      { value: "c", label: "AI 的偏见比人类更严重" },
+      { value: "a", label: "A. 「梳理你的项目成果，准备 STAR 案例，了解团队业务痛点。」" },
+      { value: "b", label: "B. 「管理岗加班多，你要提前想清楚工作与家庭的平衡。」" },
     ],
     correct: "b",
   },
 ];
 
-var POST_QUIZ = [
-  {
-    id: "p1",
-    type: "likert",
-    text: "体验后，我认为 AI 对不同身份用户的回答可能存在差异。",
-    reverse: false,
-  },
-  {
-    id: "p2",
-    type: "likert",
-    text: "在对话中，我能注意到 AI 回复里隐含的假设或刻板印象。",
-    reverse: false,
-  },
-  {
-    id: "p3",
-    type: "choice",
-    text: "盲测之后，你对 AI 偏见的看法是？",
-    options: [
-      { value: "a", label: "和体验前差不多" },
-      { value: "b", label: "更意识到偏见的存在" },
-      { value: "c", label: "觉得 AI 其实很公平" },
-    ],
-    correct: "b",
-  },
-];
+/** 后测可选开放题（不计入 Δ 分数） */
+var OPEN_QUESTION = {
+  id: "open1",
+  text: "哪条回复（或哪句措辞）让你最意外？（可选，一句话即可）",
+  optional: true,
+};
+
+var PRE_QUIZ = QUESTIONNAIRE;
+var POST_QUIZ = QUESTIONNAIRE;
 
 var SCENARIOS = {
   career: {

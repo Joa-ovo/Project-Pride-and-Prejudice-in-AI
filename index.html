@@ -309,6 +309,17 @@
       line-height: 1.45;
     }
 
+    .room-card.module-done {
+      border-color: rgba(90, 130, 70, 0.55);
+      background: linear-gradient(180deg, rgba(240, 248, 235, 0.95), rgba(230, 242, 220, 0.9));
+    }
+
+    .room-card.module-done .room-card-num::after {
+      content: " ✓";
+      color: #5a8246;
+      font-size: 0.85em;
+    }
+
     .home-cta {
       flex-shrink: 0;
       width: 100%;
@@ -812,21 +823,75 @@
     }
 
     .likert-row label,
-    .blind-feedback label {
+    .blind-feedback label,
+    .quiz-item label {
       display: block;
       font-size: 0.84rem;
       margin: 0.4rem 0;
     }
 
-    .blind-feedback {
-      margin-top: 0.5rem;
-      border: 1px dashed rgba(139, 105, 20, 0.3);
-      border-radius: 8px;
-      padding: 0.35rem;
-      font-size: 0.84rem;
+    .quiz-item {
+      margin: 0.85rem 0;
+      padding-bottom: 0.65rem;
+      border-bottom: 1px dashed rgba(139, 105, 20, 0.22);
     }
 
-    .blind-feedback summary { cursor: pointer; font-weight: 600; }
+    .quiz-question {
+      margin: 0 0 0.45rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .quiz-scale-hint {
+      font-size: 0.82rem;
+      color: var(--ink-muted);
+      margin: 0 0 0.75rem;
+    }
+
+    .likert-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+
+    .likert-option {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.8rem;
+      background: rgba(255, 255, 255, 0.55);
+      border: 1px solid rgba(139, 105, 20, 0.28);
+      border-radius: 999px;
+      padding: 0.25rem 0.5rem;
+      cursor: pointer;
+    }
+
+    .quiz-open textarea {
+      width: 100%;
+      min-height: 3.5rem;
+      margin-top: 0.35rem;
+      padding: 0.45rem;
+      border: 1px solid rgba(139, 105, 20, 0.35);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.65);
+      resize: vertical;
+    }
+
+    .post-quiz-block {
+      margin-top: 0.75rem;
+      padding: 0.65rem;
+      border: 1px solid rgba(139, 105, 20, 0.35);
+      border-radius: 10px;
+      background: rgba(255, 252, 245, 0.92);
+    }
+
+    .post-quiz-block h3 {
+      margin: 0 0 0.35rem;
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      color: var(--ribbon);
+    }
 
     .complete-actions {
       display: flex;
@@ -1089,7 +1154,7 @@
                 <div class="guide-tips-block" id="guideTipsBlock">
                 <p class="guide-bubble-label">学者小贴士</p>
                 <ul class="guide-tips" id="guideTipsHome">
-                  <li>先完成前测大厅，了解你的先入为主倾向</li>
+                  <li>先完成前测大厅的 5 题问卷，建立基线分数</li>
                   <li>在身份对话中换身份，对比 AI 回复差异</li>
                   <li>进入盲测密室，挑战你的判断力</li>
                   <li>最后查看档案奖杯室，见证你的成长</li>
@@ -1100,11 +1165,11 @@
 
             <div class="home-main">
               <div class="room-grid" aria-label="选择关卡">
-                <button type="button" class="room-card" data-jump="research">
+                <button type="button" class="room-card" data-jump="quiz">
                   <span class="room-card-deco" aria-hidden="true"></span>
                   <span class="room-card-num">①</span>
                   <strong>前测大厅</strong>
-                  <span class="room-card-desc">了解偏见 · 阅读引导</span>
+                  <span class="room-card-desc">5 题基线 · 研究前测</span>
                 </button>
                 <button type="button" class="room-card" data-jump="game">
                   <span class="room-card-deco" aria-hidden="true"></span>
@@ -1126,7 +1191,7 @@
                 </button>
               </div>
 
-              <button type="button" class="btn btn-primary home-cta" data-jump="game">开始第 1 关 →</button>
+              <button type="button" class="btn btn-primary home-cta" id="btnHomeStart">开始第 1 关 →</button>
             </div>
           </div>
 
@@ -1135,6 +1200,9 @@
             <div class="archive-stats">
               <div class="archive-stat"><span>已完成</span><strong id="statTotal">0</strong></div>
               <div class="archive-stat"><span>盲测正确</span><strong id="statCorrect">0</strong></div>
+              <div class="archive-stat"><span>前测基线</span><strong id="statPreScore">—</strong></div>
+              <div class="archive-stat"><span>最近后测</span><strong id="statPostScore">—</strong></div>
+              <div class="archive-stat"><span>变化 Δ</span><strong id="statDelta">—</strong></div>
             </div>
             <div class="hidden-stats" aria-hidden="true">
               <strong id="statChatGPT">0</strong><strong id="statDeepSeek">0</strong>
@@ -1202,27 +1270,14 @@
                     <label class="choice"><input type="radio" name="blindAnswer" value="b" /> B 更有偏见</label>
                     <label class="choice"><input type="radio" name="blindAnswer" value="tie" /> 差不多 / 不确定</label>
                   </div>
-                  <details class="blind-feedback">
-                    <summary>可选：后测问卷（可跳过）</summary>
-                    <div class="blind-feedback-body">
-                      <div class="likert-row">
-                        <label>下次提问前会考虑身份影响吗？
-                          <select id="likert">
-                            <option value="1">1 - 完全不会</option>
-                            <option value="2">2 - 不太会</option>
-                            <option value="3" selected>3 - 不确定</option>
-                            <option value="4">4 - 会</option>
-                            <option value="5">5 - 一定会</option>
-                          </select>
-                        </label>
-                      </div>
-                      <label>哪条回复让你最意外？（可选）
-                        <textarea id="surprise" placeholder="写一句观察…"></textarea>
-                      </label>
-                    </div>
-                  </details>
+                  <div class="post-quiz-block" id="postQuizBlock">
+                    <h3>④ 偏见觉察后测</h3>
+                    <p class="muted">与体验前<strong>完全相同</strong>的 5 道题，请据<strong>此刻</strong>的想法作答。</p>
+                    <p class="quiz-scale-hint">量表题：1 = 非常不同意，5 = 非常同意。</p>
+                    <form id="postQuizForm"></form>
+                  </div>
                   <div class="actions">
-                    <button type="button" class="btn btn-primary" id="submitBlindBtn">提交答案 · 查看结果</button>
+                    <button type="button" class="btn btn-primary" id="submitBlindBtn">提交盲测 + 后测 · 查看结果</button>
                   </div>
                 </div>
               </div>
@@ -1265,6 +1320,20 @@
       </div>
     </section>
 
+    <!-- PRE QUIZ -->
+    <section class="view" id="quiz">
+      <div class="parchment-sheet">
+        <div class="research-toolbar">
+          <button type="button" class="btn-parchment" data-jump="overview">← 返回扉页</button>
+        </div>
+        <h2 style="font-family:var(--font-serif);color:var(--ribbon);margin:0 0 0.35rem">① 偏见觉察前测</h2>
+        <p class="muted">5 道题，建立你的基线分数。体验结束后会用<strong>完全相同</strong>的题目再答一次，以便对比变化。</p>
+        <p class="quiz-scale-hint">量表题：1 = 非常不同意，2 = 不同意，3 = 一般，4 = 同意，5 = 非常同意。请据<strong>此刻</strong>的真实想法作答。</p>
+        <form id="preQuizForm"></form>
+        <p id="preQuizDoneMsg" class="hint hidden"></p>
+      </div>
+    </section>
+
     <!-- RESEARCH -->
     <section class="view" id="research">
       <div class="parchment-sheet">
@@ -1275,9 +1344,12 @@
           <h2>📜 前测大厅 · 研究说明</h2>
           <p class="research-q">通过沉浸式模拟对话与盲测，用户对 AI 隐性偏见的觉察程度是否会提高？</p>
           <p>核心研究问题：反事实体验式学习是否比仅阅读案例更能改变用户的提问习惯？</p>
-          <p>反馈嵌入流程：场景、身份、盲测表现与后测 Likert；档案可导出 JSON 供研究汇总。</p>
+          <p>反馈嵌入流程：前测 5 题 → 身份对话 → 盲测 → 后测（同一套 5 题 + 可选开放题）；档案可导出 JSON 供研究汇总。</p>
           <p class="muted">默认教学脚本模拟 AI 回复；可选 DeepSeek 实时 API。记录存本机并可匿名上传。</p>
-          <button type="button" class="btn btn-primary" data-jump="game" style="margin-top:1rem;max-width:14rem">开始身份对话 →</button>
+          <div class="actions" style="margin-top:1rem">
+            <button type="button" class="btn btn-primary" id="btnStartPreQuiz" style="max-width:14rem">填写前测问卷（5 题）→</button>
+            <button type="button" class="btn btn-secondary" id="btnGoGameAfterPre" style="max-width:14rem" hidden>已完成前测 · 开始对话 →</button>
+          </div>
         </div>
         <div class="daily-quote-bar" style="position:relative;width:100%;margin-top:1rem;padding:0 2rem 0 0" data-quote-group="research">
           <blockquote aria-live="polite"></blockquote>
@@ -1295,7 +1367,48 @@
   <script src="js/supabase-config.js"></script>
   <script>
     const STORAGE_KEY = "ai_pride_prejudice_single_file_records_v1";
+    const QUIZ_STORAGE_KEY = "ai_pride_prejudice_quiz_v1";
     const CONSENT_KEY = "ai_pride_prejudice_informed_consent_v1";
+
+    const QUESTIONNAIRE = [
+      {
+        id: "q1",
+        type: "likert",
+        text: "我认为，同一个问题，AI 可能对不同身份的用户给出不一样的回答。"
+      },
+      {
+        id: "q2",
+        type: "likert",
+        text: "我能觉察 AI 回复里隐含的刻板印象或不合理假设（即使 AI 没有直接说「因为你是女性/老人/残障」）。"
+      },
+      {
+        id: "q3",
+        type: "likert",
+        text: "向 AI 提问之前，我会想到：「我的身份（如性别、年龄、残障等）是否可能影响我得到的回答。」"
+      },
+      {
+        id: "q4",
+        type: "likert",
+        text: "向 AI 咨询建议时，必要时我会换用更中性、更公平的问法（例如不限定性别/年龄，或明确要求 AI 不要基于刻板印象做假设）。"
+      },
+      {
+        id: "q5",
+        type: "choice",
+        text: "有人向 AI 咨询「如何准备管理岗面试」，下面哪条回复更可能带有隐性偏见？",
+        options: [
+          { value: "a", label: "A. 「梳理你的项目成果，准备 STAR 案例，了解团队业务痛点。」" },
+          { value: "b", label: "B. 「管理岗加班多，你要提前想清楚工作与家庭的平衡。」" }
+        ],
+        correct: "b"
+      }
+    ];
+
+    const OPEN_QUESTION = {
+      id: "open1",
+      text: "哪条回复（或哪句措辞）让你最意外？（可选，一句话即可）"
+    };
+
+    const LIKERT_LABELS = ["非常不同意", "不同意", "一般", "同意", "非常同意"];
 
     const equalityQuotes = [
       { text: "「傲慢让别人无法来爱我，偏见让我无法去爱别人。」", cite: "简·奥斯汀，《傲慢与偏见》" },
@@ -1361,6 +1474,176 @@
 
     function $(id) { return document.getElementById(id); }
 
+    function loadQuizProfile() {
+      try {
+        const raw = localStorage.getItem(QUIZ_STORAGE_KEY);
+        return raw ? JSON.parse(raw) : { baseline: null, postHistory: [] };
+      } catch {
+        return { baseline: null, postHistory: [] };
+      }
+    }
+
+    function saveQuizProfile(profile) {
+      localStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify(profile));
+    }
+
+    function hasBaselineQuiz() {
+      return !!loadQuizProfile().baseline;
+    }
+
+    function scoreQuestionnaire(answers) {
+      let total = 0;
+      let max = 0;
+      QUESTIONNAIRE.forEach((q) => {
+        const ans = answers[q.id];
+        if (q.type === "likert") {
+          max += 5;
+          const val = parseInt(ans, 10) || 3;
+          total += val;
+        } else if (q.type === "choice") {
+          max += 1;
+          if (ans === q.correct) total += 1;
+        }
+      });
+      const score = max > 0 ? Math.round((total / max) * 100) : 0;
+      return { score, total, max };
+    }
+
+    function renderQuestionnaire(container, options) {
+      options = options || {};
+      container.innerHTML = "";
+      QUESTIONNAIRE.forEach((q, idx) => {
+        const block = document.createElement("div");
+        block.className = "quiz-item";
+        const label = document.createElement("p");
+        label.className = "quiz-question";
+        label.textContent = (idx + 1) + ". " + q.text;
+        block.appendChild(label);
+
+        if (q.type === "likert") {
+          const row = document.createElement("div");
+          row.className = "likert-row";
+          LIKERT_LABELS.forEach((txt, i) => {
+            const wrap = document.createElement("label");
+            wrap.className = "likert-option";
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.name = q.id;
+            input.value = String(i + 1);
+            input.required = true;
+            const span = document.createElement("span");
+            span.textContent = (i + 1) + " " + txt;
+            wrap.appendChild(input);
+            wrap.appendChild(span);
+            row.appendChild(wrap);
+          });
+          block.appendChild(row);
+        } else if (q.type === "choice") {
+          q.options.forEach((opt) => {
+            const wrap = document.createElement("label");
+            wrap.className = "choice";
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.name = q.id;
+            input.value = opt.value;
+            input.required = true;
+            const span = document.createElement("span");
+            span.textContent = opt.label;
+            wrap.appendChild(input);
+            wrap.appendChild(span);
+            block.appendChild(wrap);
+          });
+        }
+        container.appendChild(block);
+      });
+
+      if (options.showOpen) {
+        const openBlock = document.createElement("div");
+        openBlock.className = "quiz-item quiz-open";
+        const openLabel = document.createElement("label");
+        openLabel.textContent = (QUESTIONNAIRE.length + 1) + ". " + OPEN_QUESTION.text;
+        const textarea = document.createElement("textarea");
+        textarea.id = "openQuestionInput";
+        textarea.name = OPEN_QUESTION.id;
+        textarea.placeholder = "写一句观察…（可留空）";
+        openLabel.appendChild(textarea);
+        openBlock.appendChild(openLabel);
+        container.appendChild(openBlock);
+      }
+
+      if (options.submitLabel) {
+        const actions = document.createElement("div");
+        actions.className = "actions";
+        const btn = document.createElement("button");
+        btn.type = "submit";
+        btn.className = "btn btn-primary";
+        btn.textContent = options.submitLabel;
+        actions.appendChild(btn);
+        container.appendChild(actions);
+      }
+    }
+
+    function collectQuestionnaireAnswers(form) {
+      const answers = {};
+      QUESTIONNAIRE.forEach((q) => {
+        const el = form.querySelector('input[name="' + q.id + '"]:checked');
+        answers[q.id] = el ? el.value : null;
+      });
+      return answers;
+    }
+
+    function getOpenQuestionText(form) {
+      const el = form.querySelector('[name="' + OPEN_QUESTION.id + '"]');
+      return el ? el.value.trim() : "";
+    }
+
+    function getScoreDelta() {
+      const profile = loadQuizProfile();
+      if (!profile.baseline || !profile.postHistory.length) return null;
+      return profile.postHistory[0].score - profile.baseline.score;
+    }
+
+    function updateQuizUiState() {
+      const done = hasBaselineQuiz();
+      const btnPre = $("btnStartPreQuiz");
+      const btnGame = $("btnGoGameAfterPre");
+      if (btnPre) btnPre.hidden = done;
+      if (btnGame) btnGame.hidden = !done;
+      const preCard = document.querySelector('.room-card[data-jump="quiz"]');
+      if (preCard) preCard.classList.toggle("module-done", done);
+    }
+
+    function requireBaseline(next) {
+      if (hasBaselineQuiz()) {
+        next();
+        return;
+      }
+      alert("请先完成 ① 偏见觉察前测（5 题），再开始身份对话。");
+      switchView("quiz");
+    }
+
+    function handlePreQuizSubmit(e) {
+      e.preventDefault();
+      const form = $("preQuizForm");
+      const answers = collectQuestionnaireAnswers(form);
+      const scored = scoreQuestionnaire(answers);
+      const result = {
+        score: scored.score,
+        total: scored.total,
+        max: scored.max,
+        answers,
+        date: new Date().toISOString()
+      };
+      const profile = loadQuizProfile();
+      profile.baseline = result;
+      saveQuizProfile(profile);
+      $("preQuizDoneMsg").textContent = "前测完成！基线分数 " + result.score + " 分。现在可以开始身份对话了。";
+      $("preQuizDoneMsg").classList.remove("hidden");
+      updateQuizUiState();
+      renderArchive();
+      setTimeout(() => switchView("game"), 1600);
+    }
+
     function identityById(id) {
       return identities.find((item) => item.id === id) || identities[0];
     }
@@ -1424,7 +1707,7 @@
       const steps = document.querySelectorAll("#stepRibbon span");
       steps.forEach((s) => s.classList.remove("active", "done"));
       let active = 2;
-      if (currentView === "research") active = 1;
+      if (currentView === "quiz" || currentView === "research") active = 1;
       else if (currentView === "game") {
         if ($("gameFrame").classList.contains("blind-mode")) {
           active = $("blindCompleteActions").classList.contains("hidden") ? 3 : 4;
@@ -1597,6 +1880,10 @@
     }
 
     async function compareReplies() {
+      if (!hasBaselineQuiz()) {
+        requireBaseline(() => compareReplies());
+        return;
+      }
       const scenarioId = $("scenario").value;
       const model = $("model").value;
       const question = $("question").value.trim() || scenarioData[scenarioId].questions[0];
@@ -1641,6 +1928,10 @@
     }
 
     function startBlind() {
+      if (!hasBaselineQuiz()) {
+        requireBaseline(() => startBlind());
+        return;
+      }
       if (!lastComparison) return;
       const normalOrder = Math.random() > 0.5;
       blindSides = normalOrder
@@ -1672,11 +1963,16 @@
 
     async function saveRecordToSupabase(record) {
       if (!window.supabaseClient) return { ok: false, reason: "未连接 Supabase" };
+      const baseline = loadQuizProfile().baseline;
       const { error } = await window.supabaseClient.from("session_records").insert({
         scenario: record.scenario, model: record.model, question: record.question,
         identity_a: record.identityA, identity_b: record.identityB,
         blind_answer: record.blindAnswer, correct_answer: record.correctAnswer,
-        correct: record.correct, likert: record.likert, surprise: record.surprise || ""
+        correct: record.correct,
+        baseline_score: baseline ? baseline.score : null,
+        post_quiz_score: record.postQuiz ? record.postQuiz.score : null,
+        quiz_delta: record.postQuiz && baseline ? record.postQuiz.score - baseline.score : null,
+        surprise: record.postQuiz ? record.postQuiz.openText || "" : ""
       });
       return error ? { ok: false, reason: error.message } : { ok: true };
     }
@@ -1685,6 +1981,25 @@
       if (!blindSides || !lastComparison) return;
       const selected = document.querySelector("input[name='blindAnswer']:checked");
       if (!selected) { alert("请先选择一个盲测答案。"); return; }
+
+      const postForm = $("postQuizForm");
+      const postAnswers = collectQuestionnaireAnswers(postForm);
+      const missing = QUESTIONNAIRE.some((q) => !postAnswers[q.id]);
+      if (missing) {
+        alert("请完成下方后测 5 道题（与体验前相同）。");
+        scrollPanel($("postQuizBlock"));
+        return;
+      }
+
+      const postScored = scoreQuestionnaire(postAnswers);
+      const postQuiz = {
+        score: postScored.score,
+        total: postScored.total,
+        max: postScored.max,
+        answers: postAnswers,
+        openText: getOpenQuestionText(postForm),
+        date: new Date().toISOString()
+      };
 
       const correctSide = correctBlindSide();
       const isCorrect = selected.value === correctSide || (correctSide === "tie" && selected.value === "tie");
@@ -1698,13 +2013,20 @@
         blindAnswer: selected.value,
         correctAnswer: correctSide,
         correct: isCorrect,
-        likert: Number($("likert").value),
-        surprise: $("surprise").value.trim()
+        postQuiz
       };
 
       const records = loadRecords();
       records.unshift(record);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+
+      const quizProfile = loadQuizProfile();
+      quizProfile.postHistory.unshift(postQuiz);
+      saveQuizProfile(quizProfile);
+
+      const baseline = quizProfile.baseline;
+      const delta = baseline ? postQuiz.score - baseline.score : null;
+      const deltaText = delta === null ? "" : " · 相较前测 " + (delta >= 0 ? "+" : "") + delta + " 分";
 
       const explanation = correctSide === "tie"
         ? "这组身份偏见风险接近，选「差不多」也合理。"
@@ -1714,7 +2036,8 @@
       const syncNote = sync.ok ? "已匿名上传研究数据库。" : "本机已保存；云端：" + sync.reason;
 
       $("blindResult").innerHTML =
-        "<strong>" + (isCorrect ? "🎉 识别正确！第 4 关已解锁" : "这次没有选中标准答案。") + "</strong>" +
+        "<strong>" + (isCorrect ? "🎉 识别正确！本关已完成" : "这次没有选中标准答案。") + "</strong>" +
+        "<p>后测分数：" + postQuiz.score + " 分" + deltaText + "</p>" +
         "<p>" + explanation + "</p><p>" + syncNote + "</p>";
       $("blindResult").style.display = "block";
       $("blindFormBlock").classList.add("is-done");
@@ -1740,9 +2063,8 @@
       $("comparison").innerHTML = '<div class="chat-empty" id="chatEmpty">先在右侧设置身份与问题，再点「生成对比」。</div>';
       $("rewriteBox").style.display = "none";
       $("blindReplies").innerHTML = "";
-      $("surprise").value = "";
       document.querySelectorAll("input[name='blindAnswer']").forEach((i) => { i.checked = false; });
-      $("likert").value = "3";
+      renderQuestionnaire($("postQuizForm"), { showOpen: true });
       $("blindBtn").disabled = true;
       $("rewriteBtn").disabled = true;
       setSceneMode("dialogue");
@@ -1757,30 +2079,47 @@
 
     function renderArchive() {
       const records = loadRecords();
+      const quizProfile = loadQuizProfile();
+      const baseline = quizProfile.baseline;
+      const latestPost = quizProfile.postHistory[0] || null;
+      const delta = getScoreDelta();
+
       $("statTotal").textContent = records.length;
       $("statCorrect").textContent = records.filter((r) => r.correct).length;
       $("statChatGPT").textContent = records.filter((r) => r.model === "ChatGPT").length;
       $("statDeepSeek").textContent = records.filter((r) => r.model === "DeepSeek").length;
+      $("statPreScore").textContent = baseline ? baseline.score : "—";
+      $("statPostScore").textContent = latestPost ? latestPost.score : "—";
+      $("statDelta").textContent = delta === null ? "—" : (delta >= 0 ? "+" : "") + delta;
 
       $("historyList").innerHTML = "";
       if (!records.length) {
-        $("historyList").innerHTML = "<li>还没有记录。完成盲测后会出现在这里。</li>";
+        $("historyList").innerHTML = "<li>还没有记录。完成盲测 + 后测后会出现在这里。</li>";
         updateGuideText();
+        updateQuizUiState();
         return;
       }
       records.slice(0, 6).forEach((record) => {
         const li = document.createElement("li");
         const icon = record.correct ? "✅" : "❌";
+        const postScore = record.postQuiz ? record.postQuiz.score : "—";
         li.textContent = icon + " " + new Date(record.date).toLocaleString("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) +
-          " · " + record.scenario + " · 盲测" + (record.correct ? "正确" : "未中");
+          " · " + record.scenario + " · 后测 " + postScore;
         $("historyList").appendChild(li);
       });
       updateGuideText();
+      updateQuizUiState();
     }
 
     function exportRecords() {
-      const records = loadRecords();
-      const blob = new Blob([JSON.stringify(records, null, 2)], { type: "application/json" });
+      const payload = {
+        exportedAt: new Date().toISOString(),
+        baselineQuiz: loadQuizProfile().baseline,
+        postQuizHistory: loadQuizProfile().postHistory,
+        scoreDelta: getScoreDelta(),
+        sessions: loadRecords()
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
       link.download = "AI中的傲慢与偏见-档案-" + new Date().toISOString().slice(0, 10) + ".json";
@@ -1797,27 +2136,27 @@
       const focusId = button.dataset.focus;
       const scrollTarget = button.dataset.scroll;
 
+      if (targetId === "game") {
+        requireBaseline(() => switchView("game"));
+        if (focusId === "blindBox") {
+          setTimeout(() => {
+            if (lastComparison) startBlind();
+            else $("compareBtn").focus({ preventScroll: true });
+          }, 200);
+        } else if (focusId) {
+          setTimeout(() => {
+            const el = $(focusId);
+            if (el) scrollPanel(el);
+          }, 200);
+        }
+        return;
+      }
+
       if (targetId) switchView(targetId);
 
       if (scrollTarget === "archivePanel") {
         switchView("overview");
         setTimeout(() => $("archivePanel").scrollIntoView({ behavior: "smooth", block: "nearest" }), 200);
-        return;
-      }
-
-      if (targetId === "game" && focusId === "blindBox") {
-        setTimeout(() => {
-          if (lastComparison) startBlind();
-          else { switchView("game"); $("compareBtn").focus({ preventScroll: true }); }
-        }, 200);
-        return;
-      }
-
-      if (focusId && targetId === "game") {
-        setTimeout(() => {
-          const el = $(focusId);
-          if (el) scrollPanel(el);
-        }, 200);
       }
     }
 
@@ -1839,9 +2178,13 @@
       fillIdentities();
       updateScenario();
       updateModelHint();
+      renderQuestionnaire($("preQuizForm"), { submitLabel: "提交前测 · 解锁关卡" });
+      renderQuestionnaire($("postQuizForm"), { showOpen: true });
+      $("preQuizForm").addEventListener("submit", handlePreQuizSubmit);
       renderArchive();
       initSectionQuotes();
       updateGuideText();
+      updateQuizUiState();
 
       $("scenario").addEventListener("change", updateScenario);
       $("model").addEventListener("change", updateModelHint);
@@ -1850,6 +2193,9 @@
       $("rewriteBtn").addEventListener("click", generateRewrite);
       $("submitBlindBtn").addEventListener("click", submitBlind);
       $("exportBtn").addEventListener("click", exportRecords);
+      $("btnStartPreQuiz").addEventListener("click", () => switchView("quiz"));
+      $("btnGoGameAfterPre").addEventListener("click", () => requireBaseline(() => switchView("game")));
+      $("btnHomeStart").addEventListener("click", () => requireBaseline(() => switchView("game")));
       $("btnBackHome").addEventListener("click", () => switchView("overview"));
       $("btnExitBlind").addEventListener("click", () => {
         if (!$("blindCompleteActions").classList.contains("hidden")) switchView("overview");
