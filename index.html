@@ -910,6 +910,92 @@
       border-top: 1px solid rgba(139, 105, 20, 0.2);
     }
 
+    /* ── 知情同意第一屏 ── */
+    body:not(.consent-given) { overflow: hidden; }
+
+    body:not(.consent-given) .app { display: none; }
+
+    .consent-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(1rem, 4vw, 2rem);
+      background-color: var(--parchment);
+      background-image:
+        radial-gradient(ellipse 90% 70% at 50% 0%, rgba(255, 252, 240, 0.9), transparent 70%),
+        url("assets/images/vintage/parchment-bg.jpg");
+      background-size: cover;
+      background-position: center top;
+    }
+
+    body.consent-given .consent-gate { display: none; }
+
+    .consent-sheet {
+      width: min(32rem, 100%);
+      max-height: calc(100vh - 2rem);
+      overflow-y: auto;
+      text-align: center;
+      padding: clamp(1.25rem, 4vw, 2rem);
+    }
+
+    .consent-title {
+      margin: 0 0 0.35rem;
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 4vw, 1.85rem);
+      color: var(--ink);
+    }
+
+    .consent-lead {
+      margin: 0 0 1.25rem;
+      color: var(--ink-muted);
+      font-size: 0.95rem;
+    }
+
+    .consent-list {
+      list-style: none;
+      margin: 0 0 1.5rem;
+      padding: 0;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .consent-list li {
+      padding: 0.75rem 0.85rem;
+      background: rgba(255, 252, 244, 0.72);
+      border: 1px solid rgba(139, 105, 20, 0.22);
+      border-radius: var(--radius);
+    }
+
+    .consent-list strong {
+      display: block;
+      margin-bottom: 0.2rem;
+      color: var(--ink);
+      font-size: 1rem;
+    }
+
+    .consent-list span {
+      color: var(--ink-muted);
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
+    .consent-actions {
+      display: flex;
+      justify-content: center;
+    }
+
+    .consent-actions .btn-primary {
+      width: auto;
+      min-width: 9rem;
+      padding: 0.55rem 1.75rem;
+      font-size: 1rem;
+    }
+
     @media (max-width: 800px) {
       .view { min-height: calc(100vh - 3rem); }
       .parchment-sheet { min-height: calc(100vh - 3rem); padding: 1rem; }
@@ -954,6 +1040,34 @@
   </style>
 </head>
 <body>
+  <div class="consent-gate" id="consentGate" role="dialog" aria-modal="true" aria-labelledby="consentTitle">
+    <div class="parchment-sheet consent-sheet">
+      <h1 class="consent-title" id="consentTitle">参与说明</h1>
+      <p class="consent-lead">进入前请花半分钟读一下，确认后点「同意」即可开始。</p>
+      <ul class="consent-list">
+        <li>
+          <strong>匿名</strong>
+          <span>我们不会收集你的姓名、学号等能认出你是谁的信息。</span>
+        </li>
+        <li>
+          <strong>自愿</strong>
+          <span>参不参加完全由你决定，不填也不会有任何影响。</span>
+        </li>
+        <li>
+          <strong>随时可退出</strong>
+          <span>中途不想继续了，随时关掉页面离开就行。</span>
+        </li>
+        <li>
+          <strong>数据用途</strong>
+          <span>你的回答只用于本课堂研究，不会作别的用途。</span>
+        </li>
+      </ul>
+      <div class="consent-actions">
+        <button type="button" class="btn btn-primary" id="consentAgreeBtn">同意</button>
+      </div>
+    </div>
+  </div>
+
   <div class="app">
     <!-- HOME -->
     <section class="view active" id="overview">
@@ -1181,6 +1295,7 @@
   <script src="js/supabase-config.js"></script>
   <script>
     const STORAGE_KEY = "ai_pride_prejudice_single_file_records_v1";
+    const CONSENT_KEY = "ai_pride_prejudice_informed_consent_v1";
 
     const equalityQuotes = [
       { text: "「傲慢让别人无法来爱我，偏见让我无法去爱别人。」", cite: "简·奥斯汀，《傲慢与偏见》" },
@@ -1706,7 +1821,21 @@
       }
     }
 
+    function initConsent() {
+      if (localStorage.getItem(CONSENT_KEY) === "1") {
+        document.body.classList.add("consent-given");
+        return;
+      }
+
+      $("consentAgreeBtn").addEventListener("click", () => {
+        localStorage.setItem(CONSENT_KEY, "1");
+        document.body.classList.add("consent-given");
+        $("consentGate").setAttribute("aria-hidden", "true");
+      });
+    }
+
     function boot() {
+      initConsent();
       fillIdentities();
       updateScenario();
       updateModelHint();
