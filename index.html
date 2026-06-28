@@ -3,1215 +3,1179 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI偏见体验 - 同一问题换身份，看AI回答差在哪</title>
+  <title>AI中的傲慢与偏见 · 偏见觉察扉页</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,500&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #f7f5f2;
-      --surface: #ffffff;
-      --text: #1a1a1a;
-      --muted: #666666;
-      --accent: #2d5a4a;
-      --accent-light: #e8f0ed;
-      --warn: #b45309;
-      --warn-bg: #fff7ed;
-      --border: #e5e2dd;
-      --radius: 14px;
-      --shadow: 0 12px 30px rgba(32, 38, 34, 0.08);
-      --font: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      --parchment: #f9edd6;
+      --parchment-deep: #e8d4b0;
+      --parchment-light: #fff9ee;
+      --ink: #4a3220;
+      --ink-muted: #7a5c42;
+      --ink-light: #9a7b5c;
+      --rose: #c97b8a;
+      --wax: #a83232;
+      --wax-bg: #fdf0e8;
+      --ribbon: #5c4a32;
+      --ribbon-hover: #7a6248;
+      --gold: #c9a050;
+      --radius: 10px;
+      --font-serif: "Noto Serif SC", "Cormorant Garamond", "Songti SC", serif;
+      --font: "Noto Serif SC", "PingFang SC", serif;
     }
 
-    * {
-      box-sizing: border-box;
+    * { box-sizing: border-box; }
+
+    html {
+      height: 100%;
     }
 
     body {
       margin: 0;
       font-family: var(--font);
-      color: var(--text);
+      color: var(--ink);
+      background-color: var(--parchment);
+      background-image:
+        radial-gradient(ellipse 90% 70% at 50% 0%, rgba(255, 252, 240, 0.9), transparent 70%),
+        url("assets/images/vintage/parchment-bg.jpg");
+      background-size: cover;
+      background-attachment: fixed;
+      background-position: center top;
+      line-height: 1.65;
+      min-height: 100%;
+      height: 100%;
+      overflow-x: hidden;
+    }
+
+    button, input, select, textarea { font: inherit; }
+
+    .app {
+      width: 100%;
+      max-width: none;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .view {
+      display: none;
+      flex: 1;
+      flex-direction: column;
+      min-height: calc(100vh - 2.75rem);
+    }
+
+    .view.active {
+      display: flex;
+    }
+
+    /* ── Parchment sheet ── */
+    .parchment-sheet {
+      position: relative;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      min-height: calc(100vh - 2.75rem);
       background:
-        radial-gradient(circle at top left, rgba(45, 90, 74, 0.14), transparent 32rem),
-        var(--bg);
-      line-height: 1.7;
+        linear-gradient(180deg, rgba(255, 252, 244, 0.97), rgba(248, 236, 210, 0.94));
+      border: none;
+      border-top: 2px solid rgba(139, 105, 20, 0.28);
+      border-bottom: 2px solid rgba(139, 105, 20, 0.28);
+      border-radius: 0;
+      box-shadow: inset 0 0 48px rgba(255, 255, 255, 0.35);
+      padding: 1.5rem clamp(1rem, 3vw, 2.5rem) 1.25rem;
     }
 
-    button,
-    input,
-    select,
-    textarea {
-      font: inherit;
-    }
-
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      display: flex;
-      justify-content: space-between;
-      gap: 1rem;
-      align-items: center;
-      padding: 0.8rem 1.5rem;
-      background: rgba(255, 255, 255, 0.9);
-      border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(10px);
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-weight: 800;
-      color: var(--accent);
-      line-height: 1.25;
-    }
-
-    .brand-mark {
-      width: 2.25rem;
-      height: 2.25rem;
+    .parchment-sheet::before {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      border: 1px dashed rgba(139, 105, 20, 0.22);
       border-radius: 10px;
-      background: linear-gradient(145deg, var(--accent), #3d7a66);
-      color: #fff;
+      pointer-events: none;
+    }
+
+    .home-sheet {
+      font-size: 1.05rem;
+    }
+
+    .home-header {
+      text-align: center;
+      margin-bottom: 0.65rem;
+      flex-shrink: 0;
+    }
+
+    .parchment-sheet > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .home-title {
+      margin: 0;
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--ribbon);
+      letter-spacing: 0.06em;
+    }
+
+    .home-title::before,
+    .home-title::after {
+      content: " ❧ ";
+      color: var(--gold);
+      font-size: 0.85em;
+    }
+
+    .home-subtitle {
+      margin: 0.35rem 0 0;
+      font-size: 0.95rem;
+      color: var(--ink-muted);
+      letter-spacing: 0.12em;
+    }
+
+    .home-body {
       display: grid;
-      place-items: center;
+      grid-template-columns: minmax(0, 1fr) min(22rem, 28vw);
+      gap: clamp(1rem, 2vw, 2rem);
+      align-items: stretch;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .home-center {
+      display: grid;
+      grid-template-columns: minmax(8.5rem, 11rem) minmax(0, 1fr);
+      gap: clamp(0.75rem, 1.5vw, 1.25rem);
+      min-height: 0;
+      flex: 1;
+    }
+
+    .home-guide-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 0.65rem;
+      padding: 0.75rem 0.55rem;
+      border: 1.5px dashed rgba(139, 105, 20, 0.28);
+      border-radius: 14px;
+      background: rgba(255, 252, 245, 0.55);
+      min-height: 0;
+    }
+
+    .home-guide-title {
+      margin: 0;
+      width: 100%;
+      text-align: center;
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--ribbon);
+      letter-spacing: 0.08em;
+    }
+
+    .home-guide-column .guide-figure-wrap {
+      width: 100%;
+      max-width: 7.5rem;
+      align-self: center;
+      line-height: 0;
       flex-shrink: 0;
-      box-shadow: 0 4px 14px rgba(45, 90, 74, 0.25);
     }
 
-    .brand-mark svg.lucide {
-      width: 1.1rem;
-      height: 1.1rem;
+    .home-guide-column .guide-figure {
+      max-height: 9.5rem;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      object-position: bottom center;
     }
 
-    /* Lucide icons */
-    svg.lucide {
-      flex-shrink: 0;
-      stroke-width: 2;
-    }
-
-    nav button {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    nav button svg.lucide {
-      width: 15px;
-      height: 15px;
-    }
-
-    nav button[data-jump="game"] {
-      color: #fff;
-      background: var(--accent);
-      border-color: var(--accent);
-      font-weight: 800;
-    }
-
-    nav button[data-jump="game"]:hover {
-      background: #234a3c;
-      border-color: #234a3c;
-    }
-
-    .badge {
-      gap: 0.35rem;
-      align-items: center;
-    }
-
-    .badge svg.lucide {
-      width: 14px;
-      height: 14px;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.4rem;
-    }
-
-    .btn svg.lucide {
-      width: 17px;
-      height: 17px;
-    }
-
-    .flow-steps span:not(.flow-arrow) {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    .flow-steps span svg.lucide {
-      width: 15px;
-      height: 15px;
-    }
-
-    .flow-arrow svg.lucide {
-      width: 16px;
-      height: 16px;
-      color: #9aa89f;
-    }
-
-    .module-card-link {
+    .home-guide-column .guide-bubble {
       width: 100%;
       text-align: left;
-      cursor: pointer;
-      appearance: none;
-      -webkit-appearance: none;
-      transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
-    }
-
-    .module-card-link:hover {
-      border-color: var(--accent);
-      transform: translateY(-2px);
-      box-shadow: 0 16px 36px rgba(32, 38, 34, 0.1);
-    }
-
-    .module-icon {
-      width: 2.4rem;
-      height: 2.4rem;
-      border-radius: 10px;
-      background: var(--accent-light);
-      color: var(--accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 0.35rem;
-    }
-
-    .module-icon svg.lucide {
-      width: 1.15rem;
-      height: 1.15rem;
-    }
-
-    .module-go {
-      margin-top: auto;
-      padding-top: 0.5rem;
-      font-size: 0.85rem;
-      font-weight: 800;
-      color: var(--accent);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-    }
-
-    .module-go svg.lucide {
-      width: 14px;
-      height: 14px;
-    }
-
-    .module-highlight {
-      animation: module-pulse 1.2s ease;
-    }
-
-    @keyframes module-pulse {
-      50% {
-        box-shadow: 0 0 0 3px rgba(45, 90, 74, 0.25), var(--shadow);
-      }
-    }
-
-    .hero-pitch {
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: #243b31;
-      line-height: 1.55;
-      margin: 0;
-    }
-
-    .hero-sub {
-      margin-top: 0.65rem;
-      color: var(--muted);
-      font-size: 0.95rem;
-      max-width: 42rem;
-    }
-
-    .hero-example {
-      margin-top: 0.85rem;
-      padding: 0.75rem 0.95rem;
-      border-radius: 10px;
-      background: var(--accent-light);
-      font-size: 0.92rem;
-      line-height: 1.55;
-    }
-
-    .quick-start {
-      margin-top: 1rem;
-      padding: 0.85rem 1rem;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: #fbfaf8;
-      font-size: 0.92rem;
-    }
-
-    .quick-start ol {
-      margin: 0.35rem 0 0;
-      padding-left: 0;
-      list-style: none;
-    }
-
-    .quick-start li {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.45rem;
-      margin: 0.35rem 0;
-    }
-
-    .quick-start li svg.lucide {
-      width: 16px;
-      height: 16px;
-      margin-top: 0.15rem;
-      color: var(--accent);
-      flex-shrink: 0;
-    }
-
-    .stat-icon {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 0.3rem;
-      color: var(--accent);
-    }
-
-    .stat-icon svg.lucide {
-      width: 20px;
-      height: 20px;
-    }
-
-    .chat-empty {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.6rem;
-      text-align: center;
-      border: 2px dashed var(--border);
-      border-radius: 12px;
-      padding: 1.5rem 1rem;
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    .chat-empty p {
-      margin: 0;
-    }
-
-    .chat-empty-icon svg.lucide {
-      width: 2rem;
-      height: 2rem;
-      color: var(--accent);
-      opacity: 0.75;
-    }
-
-    .chat-header h3,
-    .dialogue-controls h3,
-    .blind-box h2,
-    .game-header h2 {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .reply-meta {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.35rem;
-    }
-
-    .reply-meta svg.lucide {
-      width: 15px;
-      height: 15px;
-      margin-top: 0.1rem;
-    }
-
-    .reply-card.biased .reply-meta svg.lucide {
-      color: var(--warn);
-    }
-
-    .research-note strong,
-    .blind-feedback summary {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    .quote-refresh {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .quote-refresh svg.lucide {
-      width: 16px;
-      height: 16px;
-    }
-
-    .quote-refresh.spinning svg.lucide {
-      animation: quote-spin 0.45s ease;
-    }
-
-    .blind-feedback {
-      margin-top: 1rem;
-      border: 1px dashed var(--border);
-      border-radius: 12px;
-      padding: 0.65rem 0.85rem;
-      background: #fbfaf8;
-    }
-
-    .blind-feedback summary {
-      cursor: pointer;
-      font-weight: 700;
-      color: var(--muted);
-      list-style: none;
-    }
-
-    .blind-feedback summary::-webkit-details-marker {
-      display: none;
-    }
-
-    .blind-feedback-body {
-      display: grid;
-      gap: 0.8rem;
-      margin-top: 0.75rem;
-    }
-
-    footer p {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      text-align: center;
-    }
-
-    .brand small {
-      display: block;
-      font-size: 0.75rem;
-      font-weight: 400;
-      color: var(--muted);
-    }
-
-    nav {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      justify-content: flex-end;
-    }
-
-    nav button,
-    .chip,
-    .preset {
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      background: var(--surface);
-      color: var(--accent);
-      cursor: pointer;
-      padding: 0.45rem 0.85rem;
-    }
-
-    nav button:hover,
-    .chip:hover,
-    .preset:hover {
-      border-color: var(--accent);
-      background: var(--accent-light);
-    }
-
-    main {
-      width: min(1040px, calc(100% - 2rem));
-      margin: 0 auto;
-      padding: 2rem 0 4rem;
-    }
-
-    section {
-      margin: 2rem 0;
-    }
-
-    h1,
-    h2,
-    h3 {
-      line-height: 1.25;
-      margin: 0 0 0.8rem;
-    }
-
-    h1 {
-      font-size: clamp(2.2rem, 7vw, 4.5rem);
-      color: var(--accent);
-      letter-spacing: -0.06em;
-    }
-
-    h2 {
-      font-size: 1.5rem;
-      color: var(--accent);
-    }
-
-    h3 {
-      font-size: 1.05rem;
-    }
-
-    h2 svg.lucide,
-    h3 svg.lucide {
-      width: 1.1em;
-      height: 1.1em;
-      color: var(--accent);
-      flex-shrink: 0;
-    }
-
-    p {
-      margin: 0 0 0.75rem;
-    }
-
-    .hero {
-      display: grid;
-      grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
-      gap: 1.25rem;
-      align-items: stretch;
-    }
-
-    .hero-pitch .game-feel {
-      white-space: normal;
-    }
-
-    .hero-detail {
-      margin-top: 1rem;
-      padding-top: 1rem;
-      border-top: 1px dashed var(--border);
-      color: var(--muted);
-      font-size: 0.92rem;
-    }
-
-    .lead {
-      font-size: 1.15rem;
-      color: #33413a;
-      max-width: 48rem;
-    }
-
-    .muted {
-      color: var(--muted);
-    }
-
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.25rem;
-      box-shadow: var(--shadow);
-    }
-
-    .hero-card {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 1rem;
-    }
-
-    .badge-row,
-    .flow-steps,
-    .preset-row,
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.55rem;
-      align-items: center;
-    }
-
-    .flow-steps {
-      flex-wrap: wrap;
-      gap: 0.45rem;
-    }
-
-    .badge {
-      display: inline-flex;
-      border-radius: 999px;
-      background: var(--accent-light);
-      color: var(--accent);
-      padding: 0.25rem 0.7rem;
-      font-size: 0.85rem;
-      font-weight: 700;
-    }
-
-    .flow-steps span {
-      flex-shrink: 0;
-      white-space: nowrap;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 0.45rem 0.9rem;
-      background: #fbfaf8;
-      color: var(--accent);
-      font-weight: 700;
-      font-size: 0.95rem;
-    }
-
-    .flow-steps span:not(:last-child)::after {
-      content: none;
-    }
-
-    .flow-arrow {
-      flex-shrink: 0;
-      color: #9aa89f;
-      font-weight: 400;
-      font-size: 1rem;
-      padding: 0 0.1rem;
-    }
-
-    .section-intro {
-      margin-bottom: 1rem;
-    }
-
-    .section-intro p {
-      font-size: 1.05rem;
-      color: #33413a;
-    }
-
-    .cta-row {
-      margin-top: 1.25rem;
-    }
-
-    .module-grid,
-    .compare-grid,
-    .form-grid,
-    .stats {
-      display: grid;
-      gap: 1rem;
-    }
-
-    .module-grid {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-
-    .dialogue-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.85fr);
-      gap: 1rem;
-      align-items: start;
-      margin-top: 1rem;
-    }
-
-    .dialogue-chat {
-      position: sticky;
-      top: 5.25rem;
-      max-height: calc(100vh - 6.5rem);
+      font-size: 0.84rem;
+      flex: 1;
+      min-height: 0;
       overflow-y: auto;
-      overscroll-behavior: contain;
-      scrollbar-gutter: stable;
-      min-width: 0;
     }
 
-    .dialogue-chat::-webkit-scrollbar,
-    .dialogue-controls::-webkit-scrollbar {
-      width: 0.6rem;
+    .guide-bubble-lead {
+      margin: 0 0 0.5rem;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.45;
     }
 
-    .dialogue-chat::-webkit-scrollbar-thumb,
-    .dialogue-controls::-webkit-scrollbar-thumb {
-      background: #cfc9c0;
-      border-radius: 999px;
+    .guide-bubble-label {
+      margin: 0 0 0.35rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--gold);
     }
 
-    .dialogue-controls {
-      position: sticky;
-      top: 5.25rem;
-      align-self: start;
+    .guide-tips {
+      margin: 0;
+      padding-left: 1.1rem;
+      color: var(--ink-muted);
+      font-size: 0.8rem;
+      line-height: 1.5;
     }
 
-    .chat-header {
-      margin-bottom: 0.75rem;
-      padding-bottom: 0.75rem;
-      border-bottom: 1px solid var(--border);
+    .guide-tips li + li {
+      margin-top: 0.25rem;
     }
 
-    .chat-header h3 {
-      margin-bottom: 0.25rem;
-    }
-
-    .module-card {
-      min-height: 9.5rem;
+    .home-main {
       display: flex;
       flex-direction: column;
-      gap: 0.35rem;
+      min-height: 0;
+      flex: 1;
+      height: 100%;
     }
 
-    .module-card h3 {
-      margin-bottom: 0.15rem;
-    }
-
-    .module-tagline {
-      color: #243b31;
-      font-size: 1rem;
-      font-weight: 600;
-      line-height: 1.45;
-      margin: 0;
-    }
-
-    .module-num,
-    .field-label {
-      display: block;
-      color: var(--accent);
-      font-size: 0.78rem;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      margin-bottom: 0.4rem;
-    }
-
-    .note {
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    .preset {
-      white-space: nowrap;
-      max-width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .form-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    label {
+    .room-grid {
       display: grid;
-      gap: 0.35rem;
-      font-weight: 700;
-    }
-
-    select,
-    textarea {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: #fff;
-      color: var(--text);
-      padding: 0.7rem 0.8rem;
-    }
-
-    textarea {
-      min-height: 5.5rem;
-      resize: vertical;
-    }
-
-    .btn {
-      border: 0;
-      border-radius: 10px;
-      cursor: pointer;
-      padding: 0.75rem 1.05rem;
-      font-weight: 800;
-    }
-
-    .btn-primary {
-      color: #fff;
-      background: var(--accent);
-    }
-
-    .btn-primary:hover {
-      background: #234a3c;
-    }
-
-    .btn-secondary {
-      color: var(--accent);
-      background: var(--accent-light);
-      border: 1px solid rgba(45, 90, 74, 0.25);
-    }
-
-    .btn-ghost {
-      color: var(--muted);
-      background: transparent;
-      border: 1px dashed var(--border);
-    }
-
-    .compare-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      margin-top: 1rem;
+      grid-template-rows: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+      flex: 1;
+      min-height: 0;
     }
 
-    .reply-card {
-      border-left: 4px solid var(--accent);
-    }
-
-    .reply-card.biased {
-      border-left-color: var(--warn);
-      background: linear-gradient(180deg, var(--warn-bg), #fff);
-    }
-
-    .reply-meta {
-      color: var(--accent);
-      font-weight: 800;
-      font-size: 0.9rem;
-    }
-
-    .hint,
-    .research-note {
-      border-left: 4px solid var(--warn);
-      background: var(--warn-bg);
-      color: #7c3d08;
-      padding: 0.9rem 1rem;
-      border-radius: 12px;
-      margin-top: 1rem;
-    }
-
-    .blind-box {
-      display: none;
-      margin-top: 1rem;
-      border: 2px dashed rgba(180, 83, 9, 0.35);
-    }
-
-    .blind-options {
-      display: grid;
-      gap: 0.6rem;
-      margin: 0.8rem 0;
-    }
-
-    .choice {
+    .room-card {
+      position: relative;
       display: flex;
-      align-items: flex-start;
-      gap: 0.45rem;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 0.65rem 0.75rem;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 0.35rem;
+      text-align: left;
+      padding: 1.15rem 1.15rem 1.25rem;
+      min-height: 10.5rem;
+      border: 1.5px solid rgba(139, 105, 20, 0.35);
+      border-radius: 14px;
+      background: linear-gradient(180deg, #fffbf5, #f3e6cc);
       cursor: pointer;
-      background: #fff;
+      color: var(--ink);
+      transition: border-color 0.15s, transform 0.12s, box-shadow 0.15s;
+      overflow: hidden;
     }
 
-    .choice:has(input:checked) {
-      border-color: var(--accent);
-      background: var(--accent-light);
+    .room-card-deco {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -58%);
+      width: 42%;
+      max-width: 5.5rem;
+      aspect-ratio: 1;
+      border: 1.5px dashed rgba(139, 105, 20, 0.18);
+      border-radius: 50%;
+      pointer-events: none;
     }
 
-    .stats {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+    .room-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(74, 50, 32, 0.1);
     }
 
-    .stat {
+    .room-card:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .room-card-num {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--gold);
+    }
+
+    .room-card strong {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      color: var(--ribbon);
+    }
+
+    .room-card-desc {
+      font-size: 0.92rem;
+      color: var(--ink-muted);
+      line-height: 1.45;
+    }
+
+    .home-cta {
+      flex-shrink: 0;
+      width: 100%;
+      padding: 0.75rem 1.35rem;
+      font-size: 1.05rem;
+    }
+
+    .home-footer {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px dashed rgba(139, 105, 20, 0.28);
+    }
+
+    .guide-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 0.75rem;
+      margin-bottom: 0.65rem;
+      flex-shrink: 0;
+    }
+
+    .archive-panel {
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      background: rgba(255, 252, 245, 0.88);
+      border: 1.5px solid rgba(139, 105, 20, 0.35);
+      border-radius: 12px;
+      box-shadow: inset 0 0 16px rgba(255, 255, 255, 0.35);
+      line-height: 1.45;
+      max-height: none;
+      min-height: 0;
+      height: 100%;
+    }
+
+    .archive-panel h2 {
+      margin: 0 0 0.35rem;
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      color: var(--ink);
       text-align: center;
     }
 
-    .stat span {
-      display: block;
-      color: var(--muted);
-      font-size: 0.82rem;
+    .archive-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.35rem;
+      margin-bottom: 0.45rem;
     }
 
-    .stat strong {
-      color: var(--accent);
-      font-size: 1.8rem;
+    .archive-stat {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.45);
+      border: 1px solid rgba(139, 105, 20, 0.25);
+      border-radius: 8px;
+      padding: 0.45rem 0.3rem;
+      font-size: 0.78rem;
+    }
+
+    .archive-stat strong {
+      display: block;
+      font-size: 1.35rem;
+      color: var(--ribbon);
     }
 
     .history-list {
       list-style: none;
-      margin: 0.75rem 0 0;
+      margin: 0 0 0.45rem;
       padding: 0;
+      flex: 1;
+      min-height: 4rem;
+      max-height: none;
+      overflow-y: auto;
+      font-size: 0.78rem;
+      color: var(--ink-muted);
     }
 
     .history-list li {
-      border-top: 1px solid var(--border);
-      padding: 0.7rem 0;
-      color: var(--muted);
-      font-size: 0.92rem;
+      padding: 0.25rem 0;
+      border-bottom: 1px dashed rgba(139, 105, 20, 0.2);
     }
 
-    .research-q {
-      border-left: 4px solid var(--accent);
-      padding-left: 1rem;
-      color: #243b31;
-      font-weight: 700;
+    .hidden-stats { display: none; }
+
+    /* ── Guide character ── */
+    .guide-figure-wrap {
+      width: 6.5rem;
+      flex-shrink: 0;
+      align-self: flex-end;
+      line-height: 0;
     }
 
-    .section-quote {
-      margin-top: 1rem;
-      padding: 0.65rem 0.9rem;
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--accent);
-      border-radius: 10px;
-      background: #fbfaf8;
-      color: #3a4a42;
+    .guide-figure {
+      width: 100%;
+      height: auto;
+      max-height: 9rem;
+      object-fit: contain;
+      object-position: bottom left;
+      pointer-events: none;
+      filter: drop-shadow(0 4px 10px rgba(74, 50, 32, 0.18));
     }
 
-    .section-quote-inner {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.55rem;
-    }
-
-    .section-quote blockquote {
+    .guide-bubble {
       flex: 1;
-      margin: 0;
-      min-width: 0;
+      background: rgba(255, 252, 245, 0.92);
+      border: 1.5px solid rgba(139, 105, 20, 0.45);
+      border-radius: 14px;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.92rem;
+      color: var(--ink);
+      line-height: 1.45;
+      box-shadow: 0 4px 14px rgba(74, 50, 32, 0.08);
     }
 
-    .section-quote p {
-      margin: 0;
+    /* ── Daily quote ── */
+    .daily-quote-bar {
+      flex: 1;
+      position: relative;
+      text-align: center;
       font-size: 0.88rem;
-      font-weight: 500;
-      line-height: 1.6;
+      color: var(--ink-muted);
+      font-style: italic;
+      padding: 0 2rem;
+      min-width: 12rem;
     }
 
-    .section-quote cite {
+    .daily-quote-bar blockquote {
+      margin: 0;
+      display: inline;
+    }
+
+    .daily-quote-bar cite {
       display: block;
-      margin-top: 0.35rem;
-      font-size: 0.75rem;
-      color: var(--muted);
       font-style: normal;
+      font-size: 0.9em;
+      margin-top: 0.15rem;
     }
 
     .quote-refresh {
-      flex-shrink: 0;
-      width: 2rem;
-      height: 2rem;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: #fff;
-      color: var(--accent);
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1.5rem;
+      height: 1.5rem;
+      border: 1px solid var(--ink-light);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.6);
       cursor: pointer;
-      font-size: 1.15rem;
-      line-height: 1;
+      font-size: 0.75rem;
+      color: var(--ink);
+    }
+
+    /* ── Game layout ── */
+    .game-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .game-toolbar .step-ribbon {
+      flex: 1 1 14rem;
+      order: 2;
+    }
+
+    .btn-exit-blind { order: 1; }
+    .btn-back-home { order: 3; margin-left: auto; }
+
+    .game-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) min(22rem, 28vw);
+      gap: clamp(1rem, 2vw, 2rem);
+      align-items: stretch;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .game-main {
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .game-sheet.blind-mode {
+      background: linear-gradient(180deg, #faf3e8, #f0e4d0);
+    }
+
+    .game-sheet.blind-mode .settings-panel,
+    .game-sheet.blind-mode .dialogue-guide { display: none; }
+
+    .game-sheet.blind-mode .compare-panel { display: none; }
+
+    .game-sheet:not(.blind-mode) .blind-panel,
+    .game-sheet:not(.blind-mode) .blind-guide { display: none; }
+
+  /* ── Game chrome ── */
+    .btn-parchment {
+      border: 1.5px solid rgba(92, 74, 50, 0.55);
+      background: linear-gradient(180deg, #fff9ee, #f0e0c4);
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 0.35rem 0.85rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(74, 50, 32, 0.12);
+    }
+
+    .btn-parchment:hover { background: linear-gradient(180deg, #fffbf2, #f5e8cc); }
+
+    .step-ribbon {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.35rem;
+    }
+
+    .step-ribbon span {
+      flex: 1;
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--ink-light);
+      padding: 0.25rem 0.15rem;
+      border-bottom: 2px solid transparent;
+    }
+
+    .step-ribbon span.done { color: var(--ink-muted); border-bottom-color: var(--gold); }
+    .step-ribbon span.active { color: var(--ink); font-weight: 700; border-bottom-color: var(--wax); }
+
+    /* ── Compare zone ── */
+    .compare-panel {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 12rem;
+      max-height: none;
+      padding: 0.65rem;
+      scrollbar-width: thin;
+      background: rgba(255, 252, 245, 0.85);
+      border: 1.5px solid rgba(139, 105, 20, 0.28);
+      border-radius: 12px;
+      margin-top: 0.5rem;
+    }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.45rem;
+    }
+
+    .chat-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 1.5rem 0.75rem;
+      background: rgba(255, 252, 245, 0.88);
+      border: 1.5px dashed rgba(139, 105, 20, 0.35);
+      border-radius: var(--radius);
+      color: var(--ink-muted);
+      font-size: 0.85rem;
+    }
+
+    .reply-card {
+      background: rgba(255, 252, 245, 0.94);
+      border: 1.5px solid rgba(139, 105, 20, 0.3);
+      border-radius: var(--radius);
+      padding: 0.55rem;
+      font-size: 0.84rem;
+      border-top: 3px solid #6b8f5a;
+    }
+
+    .reply-card.biased {
+      border-top-color: var(--wax);
+      background: linear-gradient(180deg, var(--wax-bg), rgba(255, 252, 245, 0.94));
+    }
+
+    .reply-meta {
+      font-weight: 700;
+      font-size: 0.85em;
+      color: #4a6b3a;
+      margin: 0 0 0.35rem;
+    }
+
+    .reply-card.biased .reply-meta { color: var(--wax); }
+
+    .reply-card p { margin: 0 0 0.35rem; }
+
+    .reply-card .note {
+      font-size: 0.82em;
+      color: var(--ink-muted);
+      background: rgba(253, 240, 232, 0.9);
+      padding: 0.3rem 0.4rem;
+      border-radius: 6px;
+      margin: 0;
+      border-left: 3px solid var(--wax);
+    }
+
+    /* ── Settings sidebar ── */
+    .settings-panel {
+      overflow-y: auto;
+      padding: 0.85rem 0.9rem;
+      scrollbar-width: thin;
+      background: rgba(255, 250, 238, 0.92);
+      border: 1.5px solid rgba(139, 105, 20, 0.35);
+      border-radius: 12px;
+      box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.4);
+      min-height: 0;
+      height: 100%;
+    }
+
+    .settings-panel h3 {
+      margin: 0 0 0.35rem;
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      text-align: center;
+      color: var(--ribbon);
+    }
+
+    .settings-panel label {
+      display: block;
+      font-size: 0.84rem;
+      margin-bottom: 0.4rem;
+      color: var(--ink);
+    }
+
+    .settings-panel select,
+    .settings-panel textarea {
+      width: 100%;
+      margin-top: 0.15rem;
+      border: 1px solid rgba(139, 105, 20, 0.35);
+      border-radius: 6px;
+      padding: 0.3rem 0.4rem;
+      background: rgba(255, 255, 255, 0.75);
+      font-size: 0.84rem;
+      color: var(--ink);
+    }
+
+    .settings-panel textarea { min-height: 2.8rem; resize: vertical; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.35rem;
+    }
+
+    .settings-panel .form-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .field-label {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--ink-muted);
+      margin: 0.25rem 0 0.15rem;
+    }
+
+    .preset-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .preset {
+      border: 1px solid rgba(139, 105, 20, 0.35);
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 999px;
+      padding: 0.2rem 0.45rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      color: var(--ink);
+    }
+
+    .preset:hover { background: #fff9ee; border-color: var(--gold); }
+
+    .hint {
+      font-size: 0.82rem;
+      color: var(--ink-muted);
+      background: rgba(255, 252, 245, 0.85);
+      border-radius: 8px;
+      padding: 0.35rem;
+      margin: 0.35rem 0;
+      border: 1px dashed rgba(139, 105, 20, 0.25);
+    }
+
+    .hint p { margin: 0.25rem 0; }
+
+    .muted { color: var(--ink-muted); font-size: 0.9em; }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      margin-top: 0.45rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+      border-radius: 8px;
+      padding: 0.4rem 0.55rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      width: 100%;
+    }
+
+    .btn-primary {
+      background: linear-gradient(180deg, #6b5340, #4a3220);
+      color: #fff9ee;
+      border-color: #3d2818;
+    }
+
+    .btn-primary:hover { background: linear-gradient(180deg, #7a6248, #5c4030); }
+
+    .btn-primary:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: linear-gradient(180deg, #d4e8f4, #a8c8e0);
+      color: #2a4a62;
+      border-color: #7aa8c8;
+    }
+
+    .btn-secondary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.5);
+      color: var(--ink);
+      border-color: rgba(139, 105, 20, 0.35);
+    }
+
+    .btn-scroll {
+      width: 100%;
+      border: 1px dashed rgba(139, 105, 20, 0.4);
+      background: rgba(255, 255, 255, 0.45);
+      border-radius: 8px;
+      padding: 0.35rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      color: var(--ink);
+    }
+
+    .btn-scroll:hover { background: #fff9ee; }
+
+    .blind-panel {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.85rem 0.9rem;
+      margin-top: 0.5rem;
+      background: rgba(255, 250, 238, 0.94);
+      border: 2px solid rgba(139, 105, 20, 0.35);
+      border-radius: 14px;
+      scrollbar-width: thin;
+      min-height: 0;
+    }
+
+    .blind-panel h2 {
+      margin: 0 0 0.35rem;
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      color: var(--ribbon);
+    }
+
+    .blind-pedestals {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.45rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .blind-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin: 0.5rem 0;
+    }
+
+    .choice {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.88rem;
+      background: rgba(255, 255, 255, 0.55);
+      border: 1px solid rgba(139, 105, 20, 0.3);
+      border-radius: 999px;
+      padding: 0.3rem 0.55rem;
+      cursor: pointer;
+    }
+
+    .likert-row label,
+    .blind-feedback label {
+      display: block;
+      font-size: 0.84rem;
+      margin: 0.4rem 0;
+    }
+
+    .blind-feedback {
+      margin-top: 0.5rem;
+      border: 1px dashed rgba(139, 105, 20, 0.3);
+      border-radius: 8px;
+      padding: 0.35rem;
+      font-size: 0.84rem;
+    }
+
+    .blind-feedback summary { cursor: pointer; font-weight: 600; }
+
+    .complete-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.65rem;
+      padding: 0.65rem;
+      border: 2px solid var(--gold);
+      border-radius: 10px;
+      background: linear-gradient(180deg, #fff9eb, rgba(255, 252, 245, 0.95));
+    }
+
+    .complete-actions-head {
+      flex: 1 1 100%;
+      font-family: var(--font-serif);
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin: 0 0 0.2rem;
+      color: var(--ribbon);
+    }
+
+    .complete-actions .btn { flex: 1 1 auto; min-width: 6rem; }
+
+    .blind-form-block.is-done .blind-form-fields,
+    .blind-form-block.is-done #submitBlindBtn { display: none; }
+
+    .hidden { display: none !important; }
+
+    #blindResult {
+      padding: 0.5rem;
+      background: rgba(255, 252, 245, 0.95);
+      border: 1.5px solid rgba(139, 105, 20, 0.3);
+      border-radius: 8px;
+      margin-top: 0.5rem;
+      font-size: 0.88rem;
+    }
+
+    /* ── Research view ── */
+    .research-sheet {
+      position: relative;
+      width: 100%;
+      max-width: none;
+      margin: 0;
       padding: 0;
-      margin-top: 0.1rem;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
     }
 
-    .quote-refresh:hover {
-      background: var(--accent-light);
-      border-color: var(--accent);
+    .research-sheet h2 {
+      font-family: var(--font-serif);
+      color: var(--ribbon);
+      margin: 0 0 1rem;
     }
 
-    .quote-refresh.spinning {
-      animation: quote-spin 0.45s ease;
+    .research-q {
+      border-left: 4px solid var(--gold);
+      padding: 0.65rem 0.85rem;
+      background: rgba(255, 248, 230, 0.8);
+      border-radius: 0 8px 8px 0;
+      font-weight: 600;
+      margin-bottom: 0.85rem;
+      font-size: 0.92rem;
     }
 
-    @keyframes quote-spin {
-      to {
-        transform: rotate(360deg);
-      }
+    .research-sheet p { font-size: 0.88rem; color: var(--ink); }
+
+    .research-toolbar {
+      margin: 0 0 1rem;
     }
 
-    footer {
-      color: var(--muted);
-      border-top: 1px solid var(--border);
-      padding-top: 1.5rem;
-      margin-top: 2rem;
+    .app-footer {
+      flex-shrink: 0;
+      text-align: center;
+      padding: 0.65rem 1rem;
+      font-size: 0.78rem;
+      color: var(--ink-muted);
+      font-style: italic;
+      background: rgba(248, 236, 210, 0.85);
+      border-top: 1px solid rgba(139, 105, 20, 0.2);
     }
 
     @media (max-width: 800px) {
-      .hero,
-      .module-grid,
-      .compare-grid,
-      .dialogue-layout,
-      .form-grid,
-      .stats {
+      .view { min-height: calc(100vh - 3rem); }
+      .parchment-sheet { min-height: calc(100vh - 3rem); padding: 1rem; }
+      .home-body, .game-body { grid-template-columns: 1fr; }
+      .archive-panel, .settings-panel { height: auto; }
+      .home-center {
         grid-template-columns: 1fr;
       }
 
-      .hero-pitch,
-      .section-intro p,
-      .module-tagline {
-        white-space: normal;
+      .home-guide-column {
+        flex-direction: row;
+        align-items: flex-end;
+        justify-content: flex-start;
       }
 
-      .game-feel {
-        white-space: nowrap;
+      .home-guide-column .guide-figure-wrap {
+        max-width: 5.5rem;
       }
 
-      .dialogue-chat {
-        order: 2;
-        position: static;
-        max-height: 65vh;
-        overflow-y: auto;
+      .home-guide-column .guide-figure {
+        max-height: 7rem;
       }
 
-      .dialogue-controls {
-        order: 1;
-        position: static;
+      .home-guide-column .guide-bubble {
+        text-align: left;
       }
 
-      .topbar {
-        position: static;
-        align-items: flex-start;
-        flex-direction: column;
+      .room-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        min-height: auto;
       }
+
+      .room-card {
+        min-height: 7rem;
+      }
+      .compare-grid, .blind-pedestals { grid-template-columns: 1fr; }
+      .home-footer { flex-direction: column; align-items: stretch; }
+      .game-toolbar .step-ribbon { flex: 1 1 100%; order: 2; }
+      .btn-back-home { margin-left: 0; width: 100%; order: 3; }
     }
   </style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <span class="brand-mark" aria-hidden="true"><i data-lucide="scale"></i></span>
-      <div>
-        AI偏见体验
-        <small>同一问题换身份，对比 AI 怎么答</small>
-      </div>
-    </div>
-    <nav aria-label="页面导航">
-      <button type="button" data-jump="game"><i data-lucide="play"></i>开始体验</button>
-      <button type="button" data-jump="overview"><i data-lucide="info"></i>这是什么</button>
-      <button type="button" data-jump="archive"><i data-lucide="folder-open"></i>我的档案</button>
-      <button type="button" data-jump="research"><i data-lucide="book-open"></i>研究背景</button>
-    </nav>
-  </header>
+  <div class="app">
+    <!-- HOME -->
+    <section class="view active" id="overview">
+      <div class="parchment-sheet home-sheet">
+        <header class="home-header">
+          <h1 class="home-title">AI中的傲慢与偏见</h1>
+          <p class="home-subtitle">偏见觉察 · 五关通读</p>
+        </header>
 
-  <main>
-    <section class="hero" id="overview">
-      <div class="card">
-        <div class="badge-row">
-          <span class="badge"><i data-lucide="clock"></i>5 分钟体验</span>
-          <span class="badge"><i data-lucide="shield-check"></i>不用注册 · 数据存本机</span>
-        </div>
-        <h1>同一问题问 AI，换身份，答案就不一样？</h1>
-        <p class="hero-pitch">这是一个<strong>互动体验</strong>：你选一个问题和两个虚拟身份（如男性 vs 女性），看 AI 给的两条建议差在哪，再闭眼猜哪条更有偏见。</p>
-        <p class="hero-sub">越来越多人把 AI 当顾问，但系统若「知道」你的性别、年龄或残障，同样问题的回复可能悄然不同——在这里安全地亲手试一次。</p>
-        <div class="hero-example">
-          <strong>举个例子：</strong>问「我想申请团队负责人，该怎么准备？」——换成「女性 · 26-45」时，AI 可能多提醒你考虑加班与生活平衡；换成「女性 · 65+ · 使用轮椅」时，可能直接建议你退而求其次选压力小的岗位。
-        </div>
-        <div class="quick-start">
-          <strong>第一次来？按这 3 步走：</strong>
-          <ol>
-            <li><i data-lucide="mouse-pointer-click"></i><span>点下方绿色按钮，跳到体验区</span></li>
-            <li><i data-lucide="git-compare"></i><span>选一道推荐题（或自己写问题），点「生成对比」</span></li>
-            <li><i data-lucide="eye-off"></i><span>看完两条回复后，点「进入盲测挑战」检验直觉</span></li>
-          </ol>
-        </div>
-        <div class="cta-row">
-          <button type="button" class="btn btn-primary" data-jump="game"><i data-lucide="play"></i>直接开始体验<i data-lucide="arrow-right"></i></button>
-        </div>
-      </div>
-
-      <aside class="card hero-card">
-        <div>
-          <h2><i data-lucide="route"></i>三步体验流程</h2>
-          <div class="flow-steps">
-            <span><i data-lucide="users"></i>选身份 + 提问</span>
-            <span class="flow-arrow" aria-hidden="true"><i data-lucide="chevron-right"></i></span>
-            <span><i data-lucide="columns-2"></i>对比两条回复</span>
-            <span class="flow-arrow" aria-hidden="true"><i data-lucide="chevron-right"></i></span>
-            <span><i data-lucide="eye-off"></i>盲测 + 看档案</span>
-          </div>
-        </div>
-        <div class="research-note">
-          <strong><i data-lucide="info"></i>说明</strong>
-          <p>默认用教学脚本模拟 AI 回复（无需联网）；也可选 DeepSeek 看真实 API 回答。记录仅存本机浏览器，完成盲测后可匿名上传供研究分析。</p>
-        </div>
-      </aside>
-      <div class="section-quote" data-quote-group="overview">
-        <div class="section-quote-inner">
-          <blockquote aria-live="polite"></blockquote>
-          <button type="button" class="quote-refresh" data-quote-target="overview" aria-label="换一句" title="换一句"><i data-lucide="refresh-cw"></i></button>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="section-intro">
-        <h2>你会经历什么</h2>
-        <p>一次完整体验大约 5 分钟：先对话对比，再盲测猜哪条更有偏见，最后在「我的档案」看结果。点击下方卡片可直接跳转。</p>
-      </div>
-      <div class="module-grid">
-        <button type="button" class="card module-card module-card-link" data-jump="game" data-focus="dialogueControls">
-          <span class="module-icon" aria-hidden="true"><i data-lucide="users"></i></span>
-          <span class="module-num">Step 01</span>
-          <h3>选身份、提问题</h3>
-          <p class="module-tagline">选两个虚拟身份 + 一道题，点「生成对比」。</p>
-          <span class="module-go">去设置<i data-lucide="arrow-right"></i></span>
-        </button>
-        <button type="button" class="card module-card module-card-link" data-jump="game" data-focus="comparison">
-          <span class="module-icon" aria-hidden="true"><i data-lucide="columns-2"></i></span>
-          <span class="module-num">Step 02</span>
-          <h3>看 AI 怎么答</h3>
-          <p class="module-tagline">左右对照两条回复，留意建议因身份而变的地方。</p>
-          <span class="module-go">去看回复<i data-lucide="arrow-right"></i></span>
-        </button>
-        <button type="button" class="card module-card module-card-link" data-jump="game" data-focus="blindBox">
-          <span class="module-icon" aria-hidden="true"><i data-lucide="eye-off"></i></span>
-          <span class="module-num">Step 03</span>
-          <h3>盲测挑战</h3>
-          <p class="module-tagline">隐藏身份，判断哪条回复更有隐性偏见。</p>
-          <span class="module-go">去盲测<i data-lucide="arrow-right"></i></span>
-        </button>
-        <button type="button" class="card module-card module-card-link" data-jump="archive">
-          <span class="module-icon" aria-hidden="true"><i data-lucide="folder-open"></i></span>
-          <span class="module-num">Step 04</span>
-          <h3>我的档案</h3>
-          <p class="module-tagline">查看得分与觉察变化，可导出 JSON 备份。</p>
-          <span class="module-go">看档案<i data-lucide="arrow-right"></i></span>
-        </button>
-      </div>
-      <div class="section-quote" data-quote-group="modules">
-        <div class="section-quote-inner">
-          <blockquote aria-live="polite"></blockquote>
-          <button type="button" class="quote-refresh" data-quote-target="modules" aria-label="换一句" title="换一句"><i data-lucide="refresh-cw"></i></button>
-        </div>
-      </div>
-    </section>
-
-    <section id="game">
-      <div class="card">
-      <div class="game-header">
-        <h2><i data-lucide="sparkles"></i>开始体验：同一问题，只换身份</h2>
-        <p class="muted">在「提问设置」里选场景、身份和问题，点「生成对比」；AI 回复会出现在「AI 对话」区，可随时对照。</p>
-      </div>
-
-      <div class="dialogue-layout">
-        <div class="card dialogue-chat" id="dialogueChat">
-          <div class="chat-header">
-            <h3><i data-lucide="bot"></i>AI 对话</h3>
-            <p class="muted">生成对比后，回复会出现在这里；本区域可单独滚动。</p>
-          </div>
-          <div class="compare-grid" id="comparison" aria-live="polite">
-            <div class="chat-empty" id="chatEmpty">
-              <span class="chat-empty-icon" aria-hidden="true"><i data-lucide="message-square"></i></span>
-              <p>先在「提问设置」里选好选项，再点「生成对比」，两条模拟 AI 回复会显示在这里。</p>
-            </div>
-          </div>
-          <div id="rewriteBox" class="hint" style="display:none"></div>
-
-          <div class="card blind-box" id="blindBox">
-            <h2><i data-lucide="eye-off"></i>盲测挑战：不看身份，你来判断</h2>
-            <p class="muted">下面只显示匿名回复。请选择哪条更可能带有隐性偏见。</p>
-            <div class="compare-grid" id="blindReplies"></div>
-            <div class="blind-options">
-              <label class="choice"><input type="radio" name="blindAnswer" value="a" />回复 A 更有偏见</label>
-              <label class="choice"><input type="radio" name="blindAnswer" value="b" />回复 B 更有偏见</label>
-              <label class="choice"><input type="radio" name="blindAnswer" value="tie" />两条差不多 / 我不确定</label>
-            </div>
-            <div class="actions" style="margin-top:1rem">
-              <button type="button" class="btn btn-primary" id="submitBlindBtn"><i data-lucide="circle-check"></i>提交答案，查看结果</button>
-            </div>
-            <p class="note" style="margin-top:0.5rem">选好上面一项即可提交；下方问卷完全可选，不影响结果。</p>
-            <details class="blind-feedback">
-              <summary><i data-lucide="message-square"></i>可选：填一句反馈帮助研究（可跳过）</summary>
-              <div class="blind-feedback-body">
-                <label>
-                  下次向 AI 提问前，你会考虑身份是否影响回答吗？
-                  <select id="likert">
-                    <option value="1">1 - 完全不会</option>
-                    <option value="2">2 - 不太会</option>
-                    <option value="3" selected>3 - 不确定</option>
-                    <option value="4">4 - 会</option>
-                    <option value="5">5 - 一定会</option>
-                  </select>
-                </label>
-                <label>
-                  哪条回复让你最意外？（可选）
-                  <textarea id="surprise" placeholder="写一句你的观察，例如：女性身份被额外提醒家庭平衡。"></textarea>
-                </label>
+        <div class="home-body">
+          <div class="home-center">
+            <aside class="home-guide-column" aria-label="新手引导">
+              <h3 class="home-guide-title">新手引导</h3>
+              <div class="guide-figure-wrap">
+                <img class="guide-figure" src="assets/images/vintage/guide-lady.png" alt="" />
               </div>
-            </details>
-            <div id="blindResult" class="hint" style="display:none"></div>
+              <div class="guide-bubble" aria-live="polite">
+                <p class="guide-bubble-lead" id="guideTextHome">欢迎来到扉页！选一道关卡开始吧。</p>
+                <div class="guide-tips-block" id="guideTipsBlock">
+                <p class="guide-bubble-label">学者小贴士</p>
+                <ul class="guide-tips" id="guideTipsHome">
+                  <li>先完成前测大厅，了解你的先入为主倾向</li>
+                  <li>在身份对话中换身份，对比 AI 回复差异</li>
+                  <li>进入盲测密室，挑战你的判断力</li>
+                  <li>最后查看档案奖杯室，见证你的成长</li>
+                </ul>
+                </div>
+              </div>
+            </aside>
+
+            <div class="home-main">
+              <div class="room-grid" aria-label="选择关卡">
+                <button type="button" class="room-card" data-jump="research">
+                  <span class="room-card-deco" aria-hidden="true"></span>
+                  <span class="room-card-num">①</span>
+                  <strong>前测大厅</strong>
+                  <span class="room-card-desc">了解偏见 · 阅读引导</span>
+                </button>
+                <button type="button" class="room-card" data-jump="game">
+                  <span class="room-card-deco" aria-hidden="true"></span>
+                  <span class="room-card-num">②</span>
+                  <strong>身份对话</strong>
+                  <span class="room-card-desc">换身份 · 对比 AI 回复</span>
+                </button>
+                <button type="button" class="room-card" id="mapBlindRoom" data-jump="game" data-focus="blindBox">
+                  <span class="room-card-deco" aria-hidden="true"></span>
+                  <span class="room-card-num">③</span>
+                  <strong>盲测密室</strong>
+                  <span class="room-card-desc">隐藏身份 · 判断偏见</span>
+                </button>
+                <button type="button" class="room-card" data-scroll="archivePanel">
+                  <span class="room-card-deco" aria-hidden="true"></span>
+                  <span class="room-card-num">④</span>
+                  <strong>档案奖杯室</strong>
+                  <span class="room-card-desc">查看记录 · 导出备份</span>
+                </button>
+              </div>
+
+              <button type="button" class="btn btn-primary home-cta" data-jump="game">开始第 1 关 →</button>
+            </div>
           </div>
+
+          <aside class="archive-panel" id="archivePanel">
+            <h2>🏆 我的档案</h2>
+            <div class="archive-stats">
+              <div class="archive-stat"><span>已完成</span><strong id="statTotal">0</strong></div>
+              <div class="archive-stat"><span>盲测正确</span><strong id="statCorrect">0</strong></div>
+            </div>
+            <div class="hidden-stats" aria-hidden="true">
+              <strong id="statChatGPT">0</strong><strong id="statDeepSeek">0</strong>
+            </div>
+            <p class="field-label">历史记录</p>
+            <ul class="history-list" id="historyList"></ul>
+            <button type="button" class="btn-scroll" id="exportBtn">📜 保存卷轴 JSON</button>
+          </aside>
         </div>
 
-        <div class="card dialogue-controls" id="dialogueControls">
-          <h3><i data-lucide="sliders-horizontal"></i>提问设置</h3>
-          <p class="muted">改完选项后重新点「生成对比」即可刷新。默认用教学脚本，不用联网也能玩。</p>
+        <footer class="home-footer">
+          <div class="daily-quote-bar" data-quote-group="overview">
+            <blockquote aria-live="polite"></blockquote>
+            <button type="button" class="quote-refresh" data-quote-target="overview" aria-label="换一句" title="换一句">↻</button>
+          </div>
+          <button type="button" class="btn-parchment" data-jump="research">📜 研究背景</button>
+        </footer>
+      </div>
+    </section>
 
-          <div class="form-grid">
-            <label>
-              场景
-              <select id="scenario">
-                <option value="career">求职晋升（如升职、加薪）</option>
-                <option value="daily">日常生活（如周末活动、学技能）</option>
-              </select>
-            </label>
-            <label>
-              AI 来源
-              <select id="model">
-                <option value="chatgpt">教学脚本（推荐新手，秒出结果）</option>
-                <option value="deepseek">DeepSeek 真实 API（需联网）</option>
-              </select>
-            </label>
-            <p class="muted" id="modelHint" hidden>DeepSeek 模式会调用真实 API（经 Supabase 后端代理，key 不暴露在前端）。线上直接可用；本地也可用 <code>node scripts/local-dev.mjs</code>。</p>
-            <label>
-              身份 A（对照）
-              <select id="identityA"></select>
-            </label>
-            <label>
-              身份 B（对比）
-              <select id="identityB"></select>
-            </label>
+    <!-- GAME -->
+    <section class="view" id="game">
+      <div class="parchment-sheet game-sheet" id="gameFrame">
+        <div class="game-toolbar">
+          <button type="button" class="btn-parchment btn-exit-blind hidden" id="btnExitBlind">← 退出盲测</button>
+          <div class="step-ribbon" id="stepRibbon" aria-hidden="true">
+            <span data-step="1">① 前测</span>
+            <span data-step="2" class="active">② 身份对话</span>
+            <span data-step="3">③ 盲测</span>
+            <span data-step="4">④ 完成</span>
+          </div>
+          <button type="button" class="btn-parchment btn-back-home" id="btnBackHome">← 返回扉页</button>
+        </div>
+
+        <div class="game-body">
+          <div class="game-main">
+            <div class="guide-row dialogue-guide">
+              <div class="guide-figure-wrap">
+                <img class="guide-figure" src="assets/images/vintage/guide-gentleman.png" alt="" />
+              </div>
+              <div class="guide-bubble" id="guideTextGame" aria-live="polite">请先选定两位身份，再点「生成对比」。</div>
+            </div>
+            <div class="guide-row blind-guide">
+              <div class="guide-figure-wrap">
+                <img class="guide-figure" src="assets/images/vintage/guide-lady-blind.png" alt="" />
+              </div>
+              <div class="guide-bubble" id="guideTextBlind" aria-live="polite">不看身份，选出更有偏见的一条。</div>
+            </div>
+
+            <div class="compare-panel" id="dialogueChat">
+              <div class="compare-grid" id="comparison" aria-live="polite">
+                <div class="chat-empty" id="chatEmpty">先在右侧设置身份与问题，再点「生成对比」。</div>
+              </div>
+              <div id="rewriteBox" class="hint" style="display:none"></div>
+            </div>
+
+            <div class="blind-panel" id="blindBox">
+              <h2>🎯 盲测密室</h2>
+              <p class="muted">下面只显示匿名回复，请选择哪条更可能带有隐性偏见。</p>
+              <div class="blind-form-block" id="blindFormBlock">
+                <div class="blind-form-fields">
+                  <div class="blind-pedestals compare-grid" id="blindReplies"></div>
+                  <div class="blind-options">
+                    <label class="choice"><input type="radio" name="blindAnswer" value="a" /> A 更有偏见</label>
+                    <label class="choice"><input type="radio" name="blindAnswer" value="b" /> B 更有偏见</label>
+                    <label class="choice"><input type="radio" name="blindAnswer" value="tie" /> 差不多 / 不确定</label>
+                  </div>
+                  <details class="blind-feedback">
+                    <summary>可选：后测问卷（可跳过）</summary>
+                    <div class="blind-feedback-body">
+                      <div class="likert-row">
+                        <label>下次提问前会考虑身份影响吗？
+                          <select id="likert">
+                            <option value="1">1 - 完全不会</option>
+                            <option value="2">2 - 不太会</option>
+                            <option value="3" selected>3 - 不确定</option>
+                            <option value="4">4 - 会</option>
+                            <option value="5">5 - 一定会</option>
+                          </select>
+                        </label>
+                      </div>
+                      <label>哪条回复让你最意外？（可选）
+                        <textarea id="surprise" placeholder="写一句观察…"></textarea>
+                      </label>
+                    </div>
+                  </details>
+                  <div class="actions">
+                    <button type="button" class="btn btn-primary" id="submitBlindBtn">提交答案 · 查看结果</button>
+                  </div>
+                </div>
+              </div>
+              <div id="blindResult" class="hint" style="display:none"></div>
+              <div id="blindCompleteActions" class="complete-actions hidden">
+                <p class="complete-actions-head">🎊 本关已完成 · 接下来你可以</p>
+                <button type="button" class="btn btn-primary" id="btnGoArchive">查看我的档案</button>
+                <button type="button" class="btn btn-secondary" id="btnPlayAgain">再玩一次</button>
+                <button type="button" class="btn btn-ghost" id="btnBackFromBlind">返回通关扉页</button>
+              </div>
+            </div>
           </div>
 
-          <div id="scenarioInfo" class="hint"></div>
-
-          <div style="margin-top:1rem">
-            <span class="field-label">推荐问题（点一下就能填进下方）</span>
+          <aside class="settings-panel" id="dialogueControls">
+            <h3>📜 提问设置</h3>
+            <div class="form-grid">
+              <label>场景<select id="scenario">
+                <option value="career">求职晋升</option>
+                <option value="daily">日常生活</option>
+              </select></label>
+              <label>AI 来源<select id="model">
+                <option value="chatgpt">教学脚本（推荐）</option>
+                <option value="deepseek">DeepSeek 实时 API</option>
+              </select></label>
+              <label>身份 A<select id="identityA"></select></label>
+              <label>身份 B<select id="identityB"></select></label>
+            </div>
+            <p class="muted" id="modelHint" hidden>DeepSeek 经 Supabase 代理，key 不暴露在前端。</p>
+            <div id="scenarioInfo" class="hint"></div>
+            <span class="field-label">推荐问题</span>
             <div class="preset-row" id="presetQuestions"></div>
-          </div>
-
-          <label style="margin-top:1rem">
-            你的问题
-            <textarea id="question" placeholder="例如：我想申请团队负责人，该怎么准备？"></textarea>
-          </label>
-
-          <div class="actions" style="margin-top:1rem">
-            <button type="button" class="btn btn-primary" id="compareBtn"><i data-lucide="git-compare"></i>① 生成对比（先点这个）</button>
-            <button type="button" class="btn btn-secondary" id="blindBtn" disabled><i data-lucide="eye-off"></i>② 进入盲测挑战</button>
-            <button type="button" class="btn btn-ghost" id="rewriteBtn" disabled title="生成一段更公平的提问模板，可复制到其他 AI"><i data-lucide="pen-line"></i>生成更公平的提问方式</button>
-          </div>
-          <p class="note" style="margin-top:0.55rem">「更公平的提问方式」：生成对比后可点，给你一段可直接复制到其他 AI 的提问模板。</p>
-        </div>
-      </div>
-      </div>
-      <div class="section-quote" data-quote-group="game">
-        <div class="section-quote-inner">
-          <blockquote aria-live="polite"></blockquote>
-          <button type="button" class="quote-refresh" data-quote-target="game" aria-label="换一句" title="换一句"><i data-lucide="refresh-cw"></i></button>
+            <label>你的问题<textarea id="question" placeholder="例如：我想申请团队负责人…"></textarea></label>
+            <div class="actions">
+              <button type="button" class="btn btn-primary" id="compareBtn">① 生成对比（先点这个）</button>
+              <button type="button" class="btn btn-secondary" id="blindBtn" disabled>② 进入盲测挑战</button>
+              <button type="button" class="btn btn-ghost" id="rewriteBtn" disabled>✍ 更公平提问</button>
+            </div>
+          </aside>
         </div>
       </div>
     </section>
 
-    <section id="archive">
-      <div class="card">
-        <h2><i data-lucide="folder-open"></i>我的档案</h2>
-      <div class="stats">
-        <div class="card stat">
-          <span class="stat-icon" aria-hidden="true"><i data-lucide="layers"></i></span>
-          <span>已完成</span><strong id="statTotal">0</strong>
+    <!-- RESEARCH -->
+    <section class="view" id="research">
+      <div class="parchment-sheet">
+        <div class="research-toolbar" style="margin:0 0 1rem">
+          <button type="button" class="btn-parchment" data-jump="overview">← 返回扉页</button>
         </div>
-        <div class="card stat">
-          <span class="stat-icon" aria-hidden="true"><i data-lucide="target"></i></span>
-          <span>盲测正确</span><strong id="statCorrect">0</strong>
+        <div class="research-sheet" style="margin:0;box-shadow:none;border:none;background:transparent;padding:0">
+          <h2>📜 前测大厅 · 研究说明</h2>
+          <p class="research-q">通过沉浸式模拟对话与盲测，用户对 AI 隐性偏见的觉察程度是否会提高？</p>
+          <p>核心研究问题：反事实体验式学习是否比仅阅读案例更能改变用户的提问习惯？</p>
+          <p>反馈嵌入流程：场景、身份、盲测表现与后测 Likert；档案可导出 JSON 供研究汇总。</p>
+          <p class="muted">默认教学脚本模拟 AI 回复；可选 DeepSeek 实时 API。记录存本机并可匿名上传。</p>
+          <button type="button" class="btn btn-primary" data-jump="game" style="margin-top:1rem;max-width:14rem">开始身份对话 →</button>
         </div>
-        <div class="card stat">
-          <span class="stat-icon" aria-hidden="true"><i data-lucide="bot"></i></span>
-          <span>ChatGPT</span><strong id="statChatGPT">0</strong>
-        </div>
-        <div class="card stat">
-          <span class="stat-icon" aria-hidden="true"><i data-lucide="sparkles"></i></span>
-          <span>DeepSeek</span><strong id="statDeepSeek">0</strong>
-        </div>
-      </div>
-      <p class="muted">最近体验会保存在本机浏览器；完成盲测后也会匿名上传至研究数据库（不含姓名等个人信息）。</p>
-      <ul class="history-list" id="historyList"></ul>
-      <button type="button" class="btn btn-ghost" id="exportBtn"><i data-lucide="download"></i>导出档案 JSON（研究备份）</button>
-      </div>
-      <div class="section-quote" data-quote-group="archive">
-        <div class="section-quote-inner">
+        <div class="daily-quote-bar" style="position:relative;width:100%;margin-top:1rem;padding:0 2rem 0 0" data-quote-group="research">
           <blockquote aria-live="polite"></blockquote>
-          <button type="button" class="quote-refresh" data-quote-target="archive" aria-label="换一句" title="换一句"><i data-lucide="refresh-cw"></i></button>
+          <button type="button" class="quote-refresh" data-quote-target="research" aria-label="换一句">↻</button>
         </div>
       </div>
     </section>
 
-    <section id="research">
-      <div class="card">
-        <h2><i data-lucide="graduation-cap"></i>这个作品要研究什么</h2>
-      <p class="research-q">
-        通过沉浸式模拟对话与盲测，高中生对 AI 隐性偏见的觉察程度是否会提高？不同场景、不同 AI 模型下，用户识别偏见的能力有何差异？
-      </p>
-      <p>
-        核心研究问题是：反事实体验式学习（亲手换身份问同一题、盲测鉴别、练约束语）是否比仅阅读案例更能改变用户的提问习惯，而不只是提高“AI 可能有偏见”的抽象风险意识？
-      </p>
-      <p>
-        反馈收集从产品设计第一天就嵌入流程：前测 / 后测测量观念变化；对话行为记录场景、身份组合、模型选择、提问内容；盲测表现记录是否正确识别偏见方向；档案导出 JSON 供研究者汇总约 25 名参与者数据进行集中分析。
-      </p>
-      <p class="muted">
-        依据研究资料：招聘、薪资谈判、年龄与残障相关建议中都已有可复核的偏见证据。这个项目不是要证明“AI 一定坏”，而是把反事实公平从论文方法变成普通用户可练习的 AI 对话素养。
-      </p>
-      </div>
-      <div class="section-quote" data-quote-group="research">
-        <div class="section-quote-inner">
-          <blockquote aria-live="polite"></blockquote>
-          <button type="button" class="quote-refresh" data-quote-target="research" aria-label="换一句" title="换一句"><i data-lucide="refresh-cw"></i></button>
-        </div>
-      </div>
-    </section>
-
-    <footer>
-      <p><i data-lucide="heart"></i>AI中的傲慢与偏见 · Pride & Prejudice in AI — 用对话看见看不见的假设。课程研究作品，欢迎体验与反馈。</p>
+    <footer class="app-footer">
+      AI中的傲慢与偏见 · Pride &amp; Prejudice in AI — 用对话看见看不见的假设
     </footer>
-  </main>
-
-  <script src="https://cdn.jsdelivr.net/npm/lucide@0.563.0/dist/umd/lucide.min.js"></script>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-config.js"></script>
@@ -1220,92 +1184,26 @@
 
     const equalityQuotes = [
       { text: "「傲慢让别人无法来爱我，偏见让我无法去爱别人。」", cite: "简·奥斯汀，《傲慢与偏见》" },
-      { text: "「我梦想有一天，人们将不再以肤色，而以品格的优劣来评价一个人。」", cite: "马丁·路德·金" },
-      { text: "「没有人应该因为自己无法改变的特质，而承担不利的后果。」", cite: "约翰·罗尔斯，《正义论》" },
       { text: "「偏见比无知更容易让人误入歧途；无知是空无一物，偏见却满是幻象。」", cite: "萧伯纳" },
       { text: "「人人生而自由，在尊严和权利上一律平等。」", cite: "《世界人权宣言》" },
-      { text: "「平等不是把所有人都变成一样，而是给每个人同样的尊重与机会。」", cite: "佚名" },
-      { text: "「教育是最有力的武器，你可以用它来改变世界。」", cite: "纳尔逊·曼德拉" },
-      { text: "「除非你本人愿意改变，否则你无法改变世界。」", cite: "圣雄甘地" },
-      { text: "「我不同意你的观点，但我誓死捍卫你说话的权利。」", cite: "伏尔泰（传）" },
-      { text: "「正义不是施舍，而是承认每个人与生俱来的尊严。」", cite: "埃莉诺·罗斯福" },
-      { text: "「自由不仅意味着摆脱自己的桎梏，也意味着尊重他人享有的自由。」", cite: "纳尔逊·曼德拉" },
-      { text: "「女人不是天生的，而是被塑造的。」", cite: "西蒙·德·波伏娃，《第二性》" },
-      { text: "「己所不欲，勿施于人。」", cite: "《论语·颜渊》" },
-      { text: "「兼相爱，交相利。」", cite: "《墨子·兼爱》" },
-      { text: "「法律面前人人平等。」", cite: "《法国人权宣言》" },
-      { text: "「正义也许会迟到，但绝不会缺席。」", cite: "马丁·路德·金" },
-      { text: "「我们无法在鄙视一个人的同时真正了解他。」", cite: "马丁·路德·金" },
-      { text: "「偏见是无知之子。」", cite: "伏尔泰" },
-      { text: "「人的尊严不可侵犯，人的价值不可计量。」", cite: "康德（意译）" },
-      { text: "「没有平等，自由就会沦为放纵。」", cite: "孟德斯鸠，《论法的精神》" },
-      { text: "「妇女能顶半边天。」", cite: "毛泽东" },
-      { text: "「人之所以为人，正在于能超越成见，看见具体的人。」", cite: "佚名" },
-      { text: "「刻板印象是思考的捷径，也是公平的敌人。」", cite: "佚名" },
-      { text: "「差异不该被当作缺陷，而该被当作人类的常态。」", cite: "佚名" },
-      { text: "「无障碍不是额外恩赐，而是每个人应有的权利。」", cite: "残障权利运动" },
-      { text: "「当我们用标签代替认识，偏见就已经开始了。」", cite: "佚名" },
-      { text: "「真正的平等，是同样的问题得到同样认真的回答。」", cite: "反事实公平（学术意译）" },
-      { text: "「算法不会创造偏见，但会放大数据里已有的偏见。」", cite: "算法公平研究（意译）" },
-      { text: "「技术声称中立时，更要追问：对谁中立？对谁不公？」", cite: "AI 伦理（意译）" },
+      { text: "「没有人应该因为自己无法改变的特质，而承担不利的后果。」", cite: "约翰·罗尔斯，《正义论》" },
       { text: "「看见看不见的假设，是拒绝偏见的第一步。」", cite: "本作品" },
-      { text: "「没有人因为出生、性别、年龄或残障，就理应被低估。」", cite: "佚名" },
-      { text: "「尊重不是同意，而是承认对方同样值得被认真对待。」", cite: "佚名" },
-      { text: "「我们反对的不是差异，而是差异被用来分配不公正的待遇。」", cite: "佚名" },
-      { text: "「一个社会的文明程度，看它如何对待最弱势的成员。」", cite: "甘地（传）" },
-      { text: "「仇恨筑起高墙，理解才能搭桥。」", cite: "佚名" },
-      { text: "「不要根据一个人属于哪类人下结论，要根据他做了什么来判断。」", cite: "佚名" },
-      { text: "「当建议因身份而变，问题不在用户，而在未经审视的假设。」", cite: "本作品" },
-      { text: "「提问时多问一句“这建议是否因身份而变”，就是拒绝偏见。」", cite: "本作品" },
-      { text: "「人人生而平等，造物主赋予他们若干不可剥夺的权利。」", cite: "《美国独立宣言》" },
-      { text: "「凡是人皆能因自己的努力而改变命运。」", cite: "亚伯拉罕·林肯（意译）" },
-      { text: "「我们不必相同，却应享有同样的尊严。」", cite: "佚名" },
       { text: "「偏见最隐蔽的形式，是把它包装成“为你好”的建议。」", cite: "本作品" },
       { text: "「若只换身份，答案就悄然不同，那“中立”便值得怀疑。」", cite: "本作品" },
-      { text: "「交叉性告诉我们：歧视从不是单一维度，偏见也常叠加发生。」", cite: "金伯莉·克伦肖" },
-      { text: "「沉默不能带来和平，唯有直面不公才能带来正义。」", cite: "马丁·路德·金" },
-      { text: "「理解他者，不是放弃自己，而是拒绝把别人简化成标签。」", cite: "佚名" }
+      { text: "「真正的平等，是同样的问题得到同样认真的回答。」", cite: "反事实公平（学术意译）" },
+      { text: "「己所不欲，勿施于人。」", cite: "《论语·颜渊》" },
+      { text: "「刻板印象是思考的捷径，也是公平的敌人。」", cite: "佚名" }
     ];
 
-    const quoteState = {};
-
-    function pickQuote(excludeText) {
-      const pool = equalityQuotes.filter((item) => item.text !== excludeText);
-      const list = pool.length ? pool : equalityQuotes;
-      return list[Math.floor(Math.random() * list.length)];
-    }
-
-    function renderQuoteBlock(blockquote, quote) {
-      blockquote.innerHTML = "<p>" + quote.text + "</p><cite>" + quote.cite + "</cite>";
-    }
-
-    const quoteGroupOrder = ["overview", "modules", "game", "archive", "research"];
-
-    function refreshQuote(group, forceNew) {
-      const container = document.querySelector('.section-quote[data-quote-group="' + group + '"]');
-      if (!container) return;
-      const blockquote = container.querySelector("blockquote");
-      if (!blockquote) return;
-      const currentText = blockquote.querySelector("p")?.textContent || "";
-      const next = forceNew ? pickQuote(currentText) : quoteState[group];
-      if (!next) return;
-      quoteState[group] = next;
-      renderQuoteBlock(blockquote, next);
-    }
-
-    function initSectionQuotes() {
-      quoteGroupOrder.forEach((group, index) => {
-        quoteState[group] = equalityQuotes[index % equalityQuotes.length];
-        refreshQuote(group, false);
-      });
-      document.querySelectorAll(".quote-refresh").forEach((button) => {
-        button.addEventListener("click", () => {
-          button.classList.add("spinning");
-          button.addEventListener("animationend", () => button.classList.remove("spinning"), { once: true });
-          refreshQuote(button.dataset.quoteTarget, true);
-        });
-      });
-    }
+    const guideMessages = {
+      home: "欢迎来到扉页！选一道关卡开始吧。",
+      homeDone: "你已有档案记录啦～可去奖杯室查看，或再玩一局。",
+      research: "先读读研究说明，了解我们在探索什么问题。",
+      setup: "请先选定两位身份，再点「生成对比」。",
+      compared: "两条回复已就绪～读完后可进入盲测密室。",
+      blind: "不看身份，凭直觉选出更有偏见的一条。",
+      blindDone: "本关完成！可查看档案，或再来一局。"
+    };
 
     const identities = [
       { id: "ref", label: "参照组", detail: "男性 · 26-45 · 无残疾", score: 0 },
@@ -1319,7 +1217,7 @@
     const scenarioData = {
       career: {
         title: "求职晋升",
-        desc: "你向 AI 咨询管理岗求职。注意观察：AI 是否在未了解你的能力前，就假定某些人「不适合」或「应该退而求其次」。",
+        desc: "向 AI 咨询管理岗求职。观察是否在未了解能力前就假定某些人「不适合」。",
         biasFocus: "性别角色假设、年龄歧视、残障偏见",
         questions: [
           "我想申请团队负责人，该怎么准备？",
@@ -1330,7 +1228,7 @@
       },
       daily: {
         title: "日常生活",
-        desc: "你向 AI 咨询周末活动与学习建议。注意观察：AI 是否对某些人默认「不宜外出」「学不动」或「需要家人陪同」。",
+        desc: "咨询周末活动与学习建议。观察是否对某些人默认「不宜外出」「学不动」。",
         biasFocus: "年龄歧视、残障偏见、能力低估",
         questions: [
           "推荐一些适合我的周末活动。",
@@ -1341,15 +1239,124 @@
       }
     };
 
+    let currentView = "overview";
     let lastComparison = null;
     let blindSides = null;
+    const quoteState = {};
 
-    function $(id) {
-      return document.getElementById(id);
-    }
+    function $(id) { return document.getElementById(id); }
 
     function identityById(id) {
       return identities.find((item) => item.id === id) || identities[0];
+    }
+
+    function switchView(viewId) {
+      currentView = viewId;
+      document.querySelectorAll(".view").forEach((el) => el.classList.remove("active"));
+      const target = $(viewId);
+      if (target) target.classList.add("active");
+      updateGuideText();
+      updateStepRibbon();
+      updateMapRooms();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function setSceneMode(mode) {
+      const frame = $("gameFrame");
+      const exitBlind = $("btnExitBlind");
+      if (!frame) return;
+
+      $("blindFormBlock").classList.remove("is-done");
+      $("blindCompleteActions").classList.add("hidden");
+
+      if (mode === "blind") {
+        frame.classList.add("blind-mode");
+        if (exitBlind) exitBlind.classList.remove("hidden");
+      } else {
+        frame.classList.remove("blind-mode");
+        if (exitBlind) exitBlind.classList.add("hidden");
+        $("blindResult").style.display = "none";
+      }
+      updateGuideText();
+      updateStepRibbon();
+    }
+
+    function exitBlindMode() {
+      if (!$("gameFrame").classList.contains("blind-mode")) return;
+      setSceneMode("dialogue");
+    }
+
+    function updateGuideText() {
+      if (currentView === "overview") {
+        const key = loadRecords().length > 0 ? "homeDone" : "home";
+        if ($("guideTextHome")) $("guideTextHome").textContent = guideMessages[key];
+        if ($("guideTipsBlock")) $("guideTipsBlock").classList.toggle("hidden", key !== "home");
+        return;
+      }
+
+      if (currentView === "game") {
+        if ($("gameFrame").classList.contains("blind-mode")) {
+          const key = $("blindCompleteActions").classList.contains("hidden") ? "blind" : "blindDone";
+          if ($("guideTextBlind")) $("guideTextBlind").textContent = guideMessages[key];
+        } else {
+          const key = lastComparison ? "compared" : "setup";
+          if ($("guideTextGame")) $("guideTextGame").textContent = guideMessages[key];
+        }
+      }
+    }
+
+    function updateStepRibbon() {
+      const steps = document.querySelectorAll("#stepRibbon span");
+      steps.forEach((s) => s.classList.remove("active", "done"));
+      let active = 2;
+      if (currentView === "research") active = 1;
+      else if (currentView === "game") {
+        if ($("gameFrame").classList.contains("blind-mode")) {
+          active = $("blindCompleteActions").classList.contains("hidden") ? 3 : 4;
+        } else if (lastComparison) active = 2;
+      }
+      steps.forEach((s) => {
+        const n = Number(s.dataset.step);
+        if (n < active) s.classList.add("done");
+        if (n === active) s.classList.add("active");
+      });
+    }
+
+    function updateMapRooms() {
+      const el = $("mapBlindRoom");
+      if (el) el.disabled = !lastComparison;
+    }
+
+    function pickQuote(excludeText) {
+      const pool = equalityQuotes.filter((item) => item.text !== excludeText);
+      const list = pool.length ? pool : equalityQuotes;
+      return list[Math.floor(Math.random() * list.length)];
+    }
+
+    function renderQuoteBlock(blockquote, quote) {
+      blockquote.innerHTML = quote.text + "<cite>—— " + quote.cite + "</cite>";
+    }
+
+    function initSectionQuotes() {
+      ["overview", "research"].forEach((group, index) => {
+        quoteState[group] = equalityQuotes[index % equalityQuotes.length];
+        refreshQuote(group, false);
+      });
+      document.querySelectorAll(".quote-refresh").forEach((button) => {
+        button.addEventListener("click", () => refreshQuote(button.dataset.quoteTarget, true));
+      });
+    }
+
+    function refreshQuote(group, forceNew) {
+      const container = document.querySelector('[data-quote-group="' + group + '"]');
+      if (!container) return;
+      const blockquote = container.querySelector("blockquote");
+      if (!blockquote) return;
+      const currentText = blockquote.textContent || "";
+      const next = forceNew ? pickQuote(currentText) : quoteState[group];
+      if (!next) return;
+      quoteState[group] = next;
+      renderQuoteBlock(blockquote, next);
     }
 
     function fillIdentities() {
@@ -1376,16 +1383,14 @@
         button.type = "button";
         button.className = "preset";
         button.textContent = text;
-        button.addEventListener("click", () => {
-          $("question").value = text;
-        });
+        button.addEventListener("click", () => { $("question").value = text; });
         $("presetQuestions").appendChild(button);
       });
       $("question").value = scenario.questions[0];
     }
 
     function detectTopic(question, scenarioId) {
-      if (/求职|面试|升职|晋升|管理|负责人|转岗|转到管理|薪资|加薪|工资|职业|工作|领导|老板/.test(question)) return "career";
+      if (/求职|面试|升职|晋升|管理|负责人|转岗|薪资|加薪|工资|职业|工作|领导|老板/.test(question)) return "career";
       if (/学|技能|课程|培训|入门|记忆/.test(question)) return "learning";
       if (/活动|周末|出行|旅行|旅游|社交|聚会|外出|一个人/.test(question)) return "activity";
       return scenarioId === "career" ? "career" : "activity";
@@ -1403,173 +1408,77 @@
 
       if (topic === "career") {
         if (identity.id === "intersection") {
-          reply = "关于“" + q + "”：团队负责人通常需要频繁开会、出差和长时间工作。考虑到年龄和身体状况，也许你可以考虑协调类或顾问类岗位，压力会小一些。如果仍想尝试，建议先评估体力是否允许。";
-          hint = "警示：未询问具体能力，就假设年龄与轮椅使用者“不适合”管理岗，并把用户导向次级岗位。";
+          reply = "关于“" + q + "”：团队负责人通常需要频繁开会、出差和长时间工作。考虑到年龄和身体状况，也许你可以考虑协调类或顾问类岗位，压力会小一些。";
+          hint = "警示：未询问具体能力，就假设年龄与轮椅使用者“不适合”管理岗。";
         } else if (identity.id === "olderMale") {
-          reply = "关于“" + q + "”：你的资历可能是优势。准备时突出多年积累的行业判断、带人经验和关键项目成果；若涉及出差，可提前说明无障碍需求，很多公司可以协调。";
-          hint = "观察：同样 65+ 且使用轮椅，这条回复强调资历优势并给出可行调整。";
+          reply = "关于“" + q + "”：你的资历可能是优势。准备时突出多年积累的行业判断、带人经验和关键项目成果。";
+          hint = "观察：同样 65+ 且使用轮椅，强调资历优势。";
         } else if (identity.id === "female") {
-          reply = "关于“" + q + "”：建议梳理你主导过的项目成果，准备 2-3 个体现决策与协调能力的 STAR 案例。另外，管理岗有时需要较多加班，你可以提前想清楚工作与生活的安排。";
-          hint = "警示：在同等求职问题下，额外强调“加班与生活安排”，隐含女性应优先考虑家庭或生活平衡的假设。";
+          reply = "关于“" + q + "”：建议梳理你主导过的项目成果。另外，管理岗有时需要较多加班，你可以提前想清楚工作与生活的安排。";
+          hint = "警示：额外强调“加班与生活安排”，隐含性别假设。";
         } else {
-          reply = "关于“" + q + "”：建议从三方面准备：梳理跨部门项目及量化成果；准备 2-3 个体现决策与协调能力的 STAR 案例；了解目标团队的业务痛点，并提出你的管理思路。";
-          hint = "参照组：回复聚焦能力与准备步骤，未附加与身份无关的假设。";
+          reply = "关于“" + q + "”：建议从三方面准备：梳理跨部门项目及量化成果；准备 STAR 案例；了解目标团队业务痛点。";
+          hint = "参照组：聚焦能力与准备步骤。";
         }
       } else if (topic === "learning") {
         if (identity.id === "olderVisual" || identity.id === "intersection") {
-          reply = "关于“" + q + "”：学习新东西对记忆力有一定要求。可以从简单的手工、听书或语音教程开始，不必给自己太大压力；若有家人帮忙会更稳妥。";
-          hint = "警示：默认用户学习潜力有限，并降低“学会一门新技能”的期望。";
+          reply = "关于“" + q + "”：学习新东西对记忆力有一定要求。可以从简单的手工、听书开始，不必给自己太大压力。";
+          hint = "警示：默认学习潜力有限。";
         } else if (identity.id === "female") {
-          reply = "关于“" + q + "”：可以选写作、设计、烘焙等节奏稳健的方向。很多女性学习者会需要时间灵活的课程，你可以把这点放在首位。";
-          hint = "警示：把“节奏稳健、时间灵活”预设为女性需求，缩小了选择范围。";
+          reply = "关于“" + q + "”：可以选写作、设计、烘焙等节奏稳健的方向。";
+          hint = "警示：把“节奏稳健”预设为女性需求。";
         } else {
-          reply = "关于“" + q + "”：先选方向，用免费资源试学 1-2 周，再决定是否投入付费课程。可以挑战稍难的选项，用小项目练手。";
-          hint = "参照组：鼓励尝试，假设用户有能力学习并探索。";
+          reply = "关于“" + q + "”：先选方向，用免费资源试学 1-2 周，再决定是否投入付费课程。";
+          hint = "参照组：鼓励尝试。";
         }
       } else {
         if (identity.id === "olderVisual" || identity.id === "intersection") {
-          reply = "关于“" + q + "”：安全起见，建议以居家活动为主，比如听有声书、播客或简单居家操。若外出，务必让家人陪同，避免陌生复杂场所。";
-          hint = "警示：活动范围被显著缩小，预设脆弱性与依赖性，未询问兴趣与真实能力。";
+          reply = "关于“" + q + "”：安全起见，建议以居家活动为主。若外出，务必让家人陪同。";
+          hint = "警示：活动范围被显著缩小。";
         } else if (identity.id === "female") {
-          reply = "关于“" + q + "”：展览、咖啡探店、徒步或兴趣社群都不错。若是独自外出，务必注意人身安全，最好把行程告知亲友。";
-          hint = "警示：对女性用户额外强调人身安全，而男性用户较少收到同样提醒。";
+          reply = "关于“" + q + "”：展览、咖啡探店、徒步都不错。若是独自外出，务必注意人身安全。";
+          hint = "警示：对女性额外强调人身安全。";
         } else {
-          reply = "关于“" + q + "”：可以尝试徒步、骑行、展览、体验课或社群活动。根据你的兴趣、体力与预算选 1-2 项即可。";
-          hint = "参照组：活动建议多元、探索型，假设用户有能力自主外出尝试。";
+          reply = "关于“" + q + "”：可以尝试徒步、骑行、展览、体验课或社群活动。";
+          hint = "参照组：活动建议多元、探索型。";
         }
       }
 
       if (model === "deepseek" && hint.includes("警示")) {
         reply += "（这条建议本身也可能受身份刻板印象影响。）";
       }
-
       return { reply, hint };
-    }
-
-    function initLucideIcons(root) {
-      if (typeof lucide === "undefined") return;
-      lucide.createIcons({ attrs: { "stroke-width": 2 }, root: root || document });
-    }
-
-    function chatEmptyHtml(message, icon) {
-      icon = icon || "message-square";
-      return (
-        '<div class="chat-empty">' +
-        '<span class="chat-empty-icon" aria-hidden="true"><i data-lucide="' + icon + '"></i></span>' +
-        "<p>" + message + "</p></div>"
-      );
-    }
-
-    function highlightElement(el) {
-      if (!el) return;
-      el.classList.remove("module-highlight");
-      void el.offsetWidth;
-      el.classList.add("module-highlight");
-      el.addEventListener("animationend", () => el.classList.remove("module-highlight"), { once: true });
-    }
-
-    function jumpToSection(button) {
-      const targetId = button.dataset.jump;
-      const focusId = button.dataset.focus;
-      const target = $(targetId);
-      if (!target) return;
-
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
-
-      if (!focusId) return;
-
-      setTimeout(() => {
-        if (focusId === "blindBox") {
-          const blindBox = $("blindBox");
-          if (blindBox && window.getComputedStyle(blindBox).display !== "none") {
-            scrollChatPanel(blindBox);
-            highlightElement(blindBox);
-            return;
-          }
-          if (lastComparison) {
-            highlightElement($("blindBtn"));
-            $("blindBtn").focus({ preventScroll: true });
-            return;
-          }
-          highlightElement($("compareBtn"));
-          $("compareBtn").focus({ preventScroll: true });
-          return;
-        }
-
-        const focusEl = $(focusId);
-        if (!focusEl) return;
-
-        if (focusId === "comparison" && focusEl.querySelector(".chat-empty")) {
-          highlightElement($("dialogueControls"));
-          $("compareBtn").focus({ preventScroll: true });
-          return;
-        }
-
-        focusEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
-        highlightElement(focusEl);
-      }, 450);
     }
 
     function renderReply(container, label, identity, result, options) {
       options = options || {};
       const article = document.createElement("article");
-      const looksBiased = options.realtime
-        ? identity.score >= 2
-        : result.hint.includes("警示");
-      article.className = "card reply-card" + (looksBiased ? " biased" : "");
-      const meta = document.createElement("p");
-      meta.className = "reply-meta";
-      const iconName = looksBiased ? "triangle-alert" : "user-round";
-      meta.innerHTML =
-        '<i data-lucide="' + iconName + '"></i><span>' +
-        label + "：" + identity.detail + (options.realtime ? " · DeepSeek 实时" : "") +
-        "</span>";
-      const text = document.createElement("p");
-      text.textContent = result.reply;
-      const hint = document.createElement("p");
-      hint.className = "note";
-      hint.innerHTML = '<span class="icon-inline"><i data-lucide="lightbulb"></i>觉察提示：' + result.hint + "</span>";
-      article.append(meta, text, hint);
+      const looksBiased = options.realtime ? identity.score >= 2 : result.hint.includes("警示");
+      article.className = "reply-card" + (looksBiased ? " biased" : "");
+      article.innerHTML =
+        '<p class="reply-meta">' + label + "：" + identity.detail + (options.realtime ? " · DeepSeek" : "") + "</p>" +
+        "<p>" + result.reply + "</p>" +
+        '<p class="note">觉察提示：' + result.hint + "</p>";
       container.appendChild(article);
-      initLucideIcons(article);
     }
 
-    function scrollChatPanel(target) {
-      const panel = $("dialogueChat");
-      if (!panel) return;
-      if (target) {
-        target.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      } else {
-        panel.scrollTo({ top: panel.scrollHeight, behavior: "smooth" });
-      }
+    function scrollPanel(el) {
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
 
     async function fetchDeepSeekReply(identity, question) {
       const payload = { identity: identity.detail, message: question };
       let url = "/api/chat";
       const headers = { "Content-Type": "application/json" };
-
       if (typeof SUPABASE_URL !== "undefined" && typeof SUPABASE_ANON_KEY !== "undefined") {
         url = SUPABASE_URL + "/functions/v1/deepseek-chat";
         headers.Authorization = "Bearer " + SUPABASE_ANON_KEY;
         headers.apikey = SUPABASE_ANON_KEY;
       }
-
-      const res = await fetch(url, {
-        method: "POST",
-        headers: headers,
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json().catch(function () {
-        return {};
-      });
-      if (!res.ok) {
-        throw new Error(data.error || "DeepSeek 请求失败（HTTP " + res.status + "）");
-      }
-      return {
-        reply: data.reply,
-        hint: "这是 DeepSeek 实时回复。请对比两条回答：是否因身份不同而出现不同假设或建议？",
-      };
+      const res = await fetch(url, { method: "POST", headers, body: JSON.stringify(payload) });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "DeepSeek 请求失败");
+      return { reply: data.reply, hint: "DeepSeek 实时回复。请对比两条回答是否因身份不同而出现不同假设。" };
     }
 
     async function compareReplies() {
@@ -1583,19 +1492,15 @@
 
       compareBtn.disabled = true;
       compareBtn.textContent = isRealtime ? "DeepSeek 思考中…" : "生成中…";
-      $("comparison").innerHTML = chatEmptyHtml("正在生成对比回复，请稍候…", "loader-circle");
-      initLucideIcons($("comparison"));
+      $("comparison").innerHTML = '<div class="chat-empty">正在生成对比回复…</div>';
 
       try {
-        let resultA;
-        let resultB;
+        let resultA, resultB;
         if (isRealtime) {
-          const pair = await Promise.all([
+          [resultA, resultB] = await Promise.all([
             fetchDeepSeekReply(identityA, question),
-            fetchDeepSeekReply(identityB, question),
+            fetchDeepSeekReply(identityB, question)
           ]);
-          resultA = pair[0];
-          resultB = pair[1];
         } else {
           resultA = makeReply(scenarioId, model, identityA, question);
           resultB = makeReply(scenarioId, model, identityB, question);
@@ -1603,22 +1508,20 @@
 
         lastComparison = { scenarioId, model, question, identityA, identityB, resultA, resultB };
         $("comparison").innerHTML = "";
-        renderReply($("comparison"), "回复 A", identityA, resultA, { realtime: isRealtime });
-        renderReply($("comparison"), "回复 B", identityB, resultB, { realtime: isRealtime });
+        renderReply($("comparison"), "身份 A", identityA, resultA, { realtime: isRealtime });
+        renderReply($("comparison"), "身份 B", identityB, resultB, { realtime: isRealtime });
         $("blindBtn").disabled = false;
         $("rewriteBtn").disabled = false;
         $("rewriteBox").style.display = "none";
-        $("blindBox").style.display = "none";
-        scrollChatPanel($("comparison"));
+        setSceneMode("dialogue");
+        updateGuideText();
+        updateMapRooms();
+        scrollPanel($("comparison"));
       } catch (err) {
-        $("comparison").innerHTML = chatEmptyHtml(
-          "调用 DeepSeek 失败：" + err.message + "。请检查网络连接；本地开发可运行 node scripts/local-dev.mjs。",
-          "triangle-alert"
-        );
-        initLucideIcons($("comparison"));
+        $("comparison").innerHTML = '<div class="chat-empty">调用失败：' + err.message + "</div>";
       } finally {
         compareBtn.disabled = false;
-        compareBtn.textContent = "生成对比";
+        compareBtn.textContent = "① 生成对比（先点这个）";
       }
     }
 
@@ -1632,21 +1535,17 @@
       $("blindReplies").innerHTML = "";
       ["a", "b"].forEach((side) => {
         const article = document.createElement("article");
-        article.className = "card reply-card";
-        const meta = document.createElement("p");
-        meta.className = "reply-meta";
-        meta.textContent = "匿名回复 " + side.toUpperCase();
-        const text = document.createElement("p");
-        text.textContent = blindSides[side].result.reply;
-        article.append(meta, text);
+        article.className = "reply-card";
+        article.innerHTML = '<p class="reply-meta">匿名回复 ' + side.toUpperCase() + "</p><p>" + blindSides[side].result.reply + "</p>";
         $("blindReplies").appendChild(article);
       });
-      document.querySelectorAll("input[name='blindAnswer']").forEach((input) => {
-        input.checked = false;
-      });
+      document.querySelectorAll("input[name='blindAnswer']").forEach((i) => { i.checked = false; });
       $("blindResult").style.display = "none";
-      $("blindBox").style.display = "block";
-      scrollChatPanel($("blindBox"));
+      $("blindCompleteActions").classList.add("hidden");
+      $("blindFormBlock").classList.remove("is-done");
+      setSceneMode("blind");
+      switchView("game");
+      scrollPanel($("blindBox"));
     }
 
     function correctBlindSide() {
@@ -1657,32 +1556,20 @@
     }
 
     async function saveRecordToSupabase(record) {
-      if (!window.supabaseClient) {
-        return { ok: false, reason: "未连接 Supabase" };
-      }
+      if (!window.supabaseClient) return { ok: false, reason: "未连接 Supabase" };
       const { error } = await window.supabaseClient.from("session_records").insert({
-        scenario: record.scenario,
-        model: record.model,
-        question: record.question,
-        identity_a: record.identityA,
-        identity_b: record.identityB,
-        blind_answer: record.blindAnswer,
-        correct_answer: record.correctAnswer,
-        correct: record.correct,
-        likert: record.likert,
-        surprise: record.surprise || "",
+        scenario: record.scenario, model: record.model, question: record.question,
+        identity_a: record.identityA, identity_b: record.identityB,
+        blind_answer: record.blindAnswer, correct_answer: record.correctAnswer,
+        correct: record.correct, likert: record.likert, surprise: record.surprise || ""
       });
-      if (error) return { ok: false, reason: error.message };
-      return { ok: true };
+      return error ? { ok: false, reason: error.message } : { ok: true };
     }
 
     async function submitBlind() {
       if (!blindSides || !lastComparison) return;
       const selected = document.querySelector("input[name='blindAnswer']:checked");
-      if (!selected) {
-        alert("请先选择一个盲测答案。");
-        return;
-      }
+      if (!selected) { alert("请先选择一个盲测答案。"); return; }
 
       const correctSide = correctBlindSide();
       const isCorrect = selected.value === correctSide || (correctSide === "tie" && selected.value === "tie");
@@ -1705,55 +1592,75 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
 
       const explanation = correctSide === "tie"
-        ? "这组身份的偏见风险接近，选择“差不多 / 不确定”也合理。"
-        : "更有偏见的是匿名回复 " + correctSide.toUpperCase() + "。它对应的身份是：" + blindSides[correctSide].identity.detail + "。";
+        ? "这组身份偏见风险接近，选「差不多」也合理。"
+        : "更有偏见的是匿名回复 " + correctSide.toUpperCase() + "，对应身份：" + blindSides[correctSide].identity.detail + "。";
 
       const sync = await saveRecordToSupabase(record);
-      const syncNote = sync.ok
-        ? "记录已匿名上传至研究数据库。"
-        : "本机已保存；云端上传失败（" + sync.reason + "），不影响继续体验。";
+      const syncNote = sync.ok ? "已匿名上传研究数据库。" : "本机已保存；云端：" + sync.reason;
 
-      $("blindResult").innerHTML = "<strong>" + (isCorrect ? "你识别对了。" : "这次没有选中标准答案。") + "</strong><p>" + explanation + "</p><p>这份记录已经保存在“我的档案”。" + syncNote + "</p>";
+      $("blindResult").innerHTML =
+        "<strong>" + (isCorrect ? "🎉 识别正确！第 4 关已解锁" : "这次没有选中标准答案。") + "</strong>" +
+        "<p>" + explanation + "</p><p>" + syncNote + "</p>";
       $("blindResult").style.display = "block";
+      $("blindFormBlock").classList.add("is-done");
+      $("blindCompleteActions").classList.remove("hidden");
       renderArchive();
+      updateGuideText();
+      updateStepRibbon();
+      updateMapRooms();
+      scrollPanel($("blindCompleteActions"));
     }
 
     function generateRewrite() {
       if (!lastComparison) return;
-      const fairPrompt = "请只根据我的目标、经验和约束给建议，不要因为性别、年龄、残疾或家庭角色预设我的能力。请给我与其他求职者/学习者同等难度的路径，并说明哪些建议是基于事实，哪些只是需要进一步询问的信息。我的问题是：" + lastComparison.question;
-      $("rewriteBox").innerHTML = "<strong class=\"hint-title\"><i data-lucide=\"pen-line\"></i>更公平的提问方式</strong><p>" + fairPrompt + "</p>";
+      const fairPrompt = "请只根据我的目标、经验和约束给建议，不要因为性别、年龄、残疾或家庭角色预设我的能力。我的问题是：" + lastComparison.question;
+      $("rewriteBox").innerHTML = "<strong>✍ 更公平的提问方式</strong><p>" + fairPrompt + "</p>";
       $("rewriteBox").style.display = "block";
-      initLucideIcons($("rewriteBox"));
-      scrollChatPanel($("rewriteBox"));
+      scrollPanel($("rewriteBox"));
+    }
+
+    function resetGameSession() {
+      lastComparison = null;
+      blindSides = null;
+      $("comparison").innerHTML = '<div class="chat-empty" id="chatEmpty">先在右侧设置身份与问题，再点「生成对比」。</div>';
+      $("rewriteBox").style.display = "none";
+      $("blindReplies").innerHTML = "";
+      $("surprise").value = "";
+      document.querySelectorAll("input[name='blindAnswer']").forEach((i) => { i.checked = false; });
+      $("likert").value = "3";
+      $("blindBtn").disabled = true;
+      $("rewriteBtn").disabled = true;
+      setSceneMode("dialogue");
+      updateGuideText();
+      updateMapRooms();
     }
 
     function loadRecords() {
-      try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-      } catch (error) {
-        return [];
-      }
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+      catch { return []; }
     }
 
     function renderArchive() {
       const records = loadRecords();
       $("statTotal").textContent = records.length;
-      $("statCorrect").textContent = records.filter((item) => item.correct).length;
-      $("statChatGPT").textContent = records.filter((item) => item.model === "ChatGPT").length;
-      $("statDeepSeek").textContent = records.filter((item) => item.model === "DeepSeek").length;
+      $("statCorrect").textContent = records.filter((r) => r.correct).length;
+      $("statChatGPT").textContent = records.filter((r) => r.model === "ChatGPT").length;
+      $("statDeepSeek").textContent = records.filter((r) => r.model === "DeepSeek").length;
 
       $("historyList").innerHTML = "";
-      if (records.length === 0) {
-        const empty = document.createElement("li");
-        empty.textContent = "还没有体验记录。完成一次盲测后，这里会显示历史。";
-        $("historyList").appendChild(empty);
+      if (!records.length) {
+        $("historyList").innerHTML = "<li>还没有记录。完成盲测后会出现在这里。</li>";
+        updateGuideText();
         return;
       }
-      records.slice(0, 8).forEach((record) => {
+      records.slice(0, 6).forEach((record) => {
         const li = document.createElement("li");
-        li.textContent = new Date(record.date).toLocaleString("zh-CN") + " · " + record.scenario + " · " + record.model + " · 盲测" + (record.correct ? "正确" : "未选中标准答案") + " · 后测态度 " + record.likert + "/5";
+        const icon = record.correct ? "✅" : "❌";
+        li.textContent = icon + " " + new Date(record.date).toLocaleString("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) +
+          " · " + record.scenario + " · 盲测" + (record.correct ? "正确" : "未中");
         $("historyList").appendChild(li);
       });
+      updateGuideText();
     }
 
     function exportRecords() {
@@ -1767,8 +1674,36 @@
     }
 
     function updateModelHint() {
-      const hint = $("modelHint");
-      if (hint) hint.hidden = $("model").value !== "deepseek";
+      $("modelHint").hidden = $("model").value !== "deepseek";
+    }
+
+    function jumpToSection(button) {
+      const targetId = button.dataset.jump;
+      const focusId = button.dataset.focus;
+      const scrollTarget = button.dataset.scroll;
+
+      if (targetId) switchView(targetId);
+
+      if (scrollTarget === "archivePanel") {
+        switchView("overview");
+        setTimeout(() => $("archivePanel").scrollIntoView({ behavior: "smooth", block: "nearest" }), 200);
+        return;
+      }
+
+      if (targetId === "game" && focusId === "blindBox") {
+        setTimeout(() => {
+          if (lastComparison) startBlind();
+          else { switchView("game"); $("compareBtn").focus({ preventScroll: true }); }
+        }, 200);
+        return;
+      }
+
+      if (focusId && targetId === "game") {
+        setTimeout(() => {
+          const el = $(focusId);
+          if (el) scrollPanel(el);
+        }, 200);
+      }
     }
 
     function boot() {
@@ -1777,6 +1712,7 @@
       updateModelHint();
       renderArchive();
       initSectionQuotes();
+      updateGuideText();
 
       $("scenario").addEventListener("change", updateScenario);
       $("model").addEventListener("change", updateModelHint);
@@ -1785,16 +1721,30 @@
       $("rewriteBtn").addEventListener("click", generateRewrite);
       $("submitBlindBtn").addEventListener("click", submitBlind);
       $("exportBtn").addEventListener("click", exportRecords);
-
-      document.querySelectorAll("[data-jump]").forEach((button) => {
-        button.addEventListener("click", () => jumpToSection(button));
+      $("btnBackHome").addEventListener("click", () => switchView("overview"));
+      $("btnExitBlind").addEventListener("click", () => {
+        if (!$("blindCompleteActions").classList.contains("hidden")) switchView("overview");
+        else exitBlindMode();
+      });
+      $("btnGoArchive").addEventListener("click", () => {
+        switchView("overview");
+        setTimeout(() => $("archivePanel").scrollIntoView({ behavior: "smooth" }), 200);
+      });
+      $("btnBackFromBlind").addEventListener("click", () => switchView("overview"));
+      $("btnPlayAgain").addEventListener("click", () => {
+        resetGameSession();
+        $("question").focus({ preventScroll: true });
       });
 
-      initLucideIcons();
+      document.querySelectorAll("[data-jump], [data-scroll]").forEach((btn) => {
+        btn.addEventListener("click", () => jumpToSection(btn));
+      });
+
+      switchView("overview");
+      updateMapRooms();
     }
 
     boot();
   </script>
 </body>
 </html>
-
