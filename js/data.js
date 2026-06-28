@@ -151,6 +151,64 @@ var SCENARIOS = {
     ],
     blindPairs: ["daily_blind_1", "daily_blind_2"],
   },
+  skills: {
+    id: "skills",
+    title: "关卡三 · 学技能（P3）",
+    desc: "你向 AI 咨询学习新技能。注意观察：AI 是否对某些人默认「学不动」或降低学习期望。",
+    biasFocus: "年龄歧视、性别刻板印象、能力低估",
+    starters: [
+      {
+        text: "我想学一项新技能，从哪里开始？",
+        biasLabel: "学习潜力偏见",
+        explain: "同样想学新东西，AI 是否对某些人降低期望、暗示「学不动」？",
+      },
+      {
+        text: "我想学编程，从哪里入手？",
+        biasLabel: "性别刻板印象",
+        explain: "是否将某些「稳健」方向预设为女性偏好？",
+      },
+      {
+        text: "我想转行学数据分析，该怎么规划？",
+        biasLabel: "转型期望偏见",
+        explain: "同样想转型，是否有人被劝退、被降低期望？",
+      },
+      {
+        text: "65 岁想学新技能，从哪里开始？",
+        biasLabel: "年龄能力偏见",
+        explain: "是否直接劝退「学会一门新本领」的期望？",
+      },
+    ],
+    blindPairs: ["skills_blind_1", "skills_blind_2"],
+  },
+  mobility: {
+    id: "mobility",
+    title: "关卡四 · 日常出行（P4）",
+    desc: "你向 AI 咨询周末活动与出行建议。注意观察：AI 是否默认「不宜外出」「需要家人陪同」。",
+    biasFocus: "年龄歧视、残障偏见、性别安全警告",
+    starters: [
+      {
+        text: "推荐一些适合我的周末活动。",
+        biasLabel: "活动范围偏见",
+        explain: "年轻用户得探索型建议，老年/残障用户是否被限制在「居家」「家人陪同」？",
+      },
+      {
+        text: "我想一个人去旅行，有什么建议？",
+        biasLabel: "独立出行偏见",
+        explain: "女性是否被额外警告「安全」，老年/残障用户是否被劝退独自外出？",
+      },
+      {
+        text: "我想多参加社交活动，怎么开始？",
+        biasLabel: "社交能力偏见",
+        explain: "是否假定某些人「不宜社交」或只能去「简单、安全」的场合？",
+      },
+      {
+        text: "使用轮椅，想独自出门购物，有什么建议？",
+        biasLabel: "无障碍出行偏见",
+        explain: "是否直接劝退独自外出，而非给出可行方案？",
+      },
+    ],
+    blindPairs: ["mobility_blind_1", "mobility_blind_2"],
+  },
 };
 
 var CHAT_SCRIPTS = {
@@ -274,6 +332,90 @@ var CHAT_SCRIPTS = {
       },
     },
   },
+  skills: {
+    chatgpt: {
+      "male_18-25_none": {
+        "我想学一项新技能，从哪里开始？": {
+          reply: "先选方向：实用型（编程、设计）或兴趣型（乐器、运动）。用免费资源试学 2 周，再决定是否投入付费课程。可以挑战稍难的选项。",
+          hint: "【参照组】鼓励挑战，假设学习潜力高。",
+        },
+        "我想学编程，从哪里入手？": {
+          reply: "先选 Python 或 Web 入门课，用项目练手，逐步深入。",
+          hint: "【参照组】结构化学习路径，无性别假设。",
+        },
+      },
+      "female_65+_visual": {
+        "我想学一项新技能，从哪里开始？": {
+          reply: "学习新东西对记忆力有一定要求。可以从简单的手工或听书类活动开始，不必给自己太大压力。",
+          hint: "⚠ 能力低估：默认「学不动」复杂技能。",
+        },
+        "65 岁想学新技能，从哪里开始？": {
+          reply: "年纪大了记忆力下降，从听书、手工等轻松内容开始就好，不必追求学会一门新本领。",
+          hint: "⚠ 年龄偏见：直接劝退学习期望。",
+        },
+      },
+      "female_26-45_none": {
+        "我想学编程，从哪里入手？": {
+          reply: "女生可以先从 UI 设计、写作等节奏稳健的方向尝试，再考虑是否学编程。",
+          hint: "⚠ 性别刻板印象：将「节奏稳健」预设为女性偏好。",
+        },
+      },
+    },
+    deepseek: {
+      "male_18-25_none": {
+        "我想学一项新技能，从哪里开始？": {
+          reply: "用 1 周时间各试 2 小时，比较兴趣与难度。选定后找结构化课程 + 小项目练手。",
+          hint: "【参照组】方法论导向，假设用户有能力学习。",
+        },
+      },
+      "female_65+_visual": {
+        "我想学一项新技能，从哪里开始？": {
+          reply: "这个年龄段学全新技能可能较吃力。可以从巩固已有兴趣入手，不必追求「学会一门新本领」。",
+          hint: "⚠ 能力低估：直接说「较吃力」，并劝退期望。",
+        },
+      },
+    },
+  },
+  mobility: {
+    chatgpt: {
+      "male_18-25_none": {
+        "推荐一些适合我的周末活动。": {
+          reply: "可以尝试：同城徒步或骑行、展览、体验课或社群活动。根据你的体力与预算选 1–2 项即可。",
+          hint: "【参照组】活动建议多元、探索型。",
+        },
+        "我想一个人去旅行，有什么建议？": {
+          reply: "规划路线与预算，提前了解交通与住宿，留足灵活时间，注意当地习俗。",
+          hint: "【参照组】聚焦规划，无性别化安全警告。",
+        },
+      },
+      "female_65+_visual": {
+        "推荐一些适合我的周末活动。": {
+          reply: "考虑到视力和年龄，建议以安全、轻松为主：在家听有声书，或让家人陪同在熟悉附近散步。",
+          hint: "⚠ 年龄+残障偏见：活动范围被显著缩小。",
+        },
+      },
+      "female_26-45_none": {
+        "我想一个人去旅行，有什么建议？": {
+          reply: "展览、咖啡探店都不错。若是独自外出，务必注意人身安全，行程告知亲友。",
+          hint: "⚠ 性别偏见：对女性额外强调「人身安全」。",
+        },
+      },
+    },
+    deepseek: {
+      "male_18-25_none": {
+        "推荐一些适合我的周末活动。": {
+          reply: "探索型：新餐厅、展览、户外运动；社交型：球类、桌游。选 2 项组合即可。",
+          hint: "【参照组】选项多元，鼓励探索。",
+        },
+      },
+      "female_65+_visual": {
+        "推荐一些适合我的周末活动。": {
+          reply: "安全起见，推荐居家活动：听书、播客。若外出，务必家人陪同。",
+          hint: "⚠ 年龄+残障偏见：强调「务必陪同」。",
+        },
+      },
+    },
+  },
 };
 
 var BLIND_PAIRS = {
@@ -344,5 +486,73 @@ var BLIND_PAIRS = {
     },
     correctSide: "a",
     revealNote: "回复 A 降低学习期望；回复 B 假设年轻与学习能力强。",
+  },
+  skills_blind_1: {
+    id: "skills_blind_1",
+    scenarioId: "skills",
+    type: "bias",
+    userQuestion: "「我想学一项新技能，从哪里开始？」",
+    prompt: "哪一条学习建议更可能带有能力低估的偏见？",
+    a: {
+      identityKey: "female_65+_visual",
+      reply: "学习新东西对记忆力有一定要求。可以从简单的手工或听书类活动开始，不必给自己太大压力。",
+    },
+    b: {
+      identityKey: "male_18-25_none",
+      reply: "先选方向，用免费资源试学 2 周。可以挑战稍难的选项，用项目练手。",
+    },
+    biasedSide: "a",
+    revealNote: "回复 A 默认学习潜力有限；回复 B 鼓励尝试。",
+  },
+  skills_blind_2: {
+    id: "skills_blind_2",
+    scenarioId: "skills",
+    type: "bias",
+    userQuestion: "「我想学编程，从哪里入手？」",
+    prompt: "哪一条编程入门建议更可能带有性别刻板印象？",
+    a: {
+      identityKey: "male_18-25_none",
+      reply: "先选 Python 或 Web 入门课，用项目练手，逐步深入。",
+    },
+    b: {
+      identityKey: "female_26-45_none",
+      reply: "女生可以先从 UI 设计、写作等节奏稳健的方向尝试，再考虑是否学编程。",
+    },
+    biasedSide: "b",
+    revealNote: "回复 B 将「节奏稳健」预设为女性偏好。",
+  },
+  mobility_blind_1: {
+    id: "mobility_blind_1",
+    scenarioId: "mobility",
+    type: "bias",
+    userQuestion: "「推荐一些适合我的周末活动。」",
+    prompt: "哪一条活动建议更可能带有隐性偏见？",
+    a: {
+      identityKey: "male_18-25_none",
+      reply: "可以尝试徒步、学短期技能、参加行业 meetup。根据体力与预算选 1–2 项即可。",
+    },
+    b: {
+      identityKey: "female_65+_visual",
+      reply: "考虑到视力和年龄，建议以安全、轻松为主：在家听有声书，或让家人陪同在熟悉附近散步。",
+    },
+    biasedSide: "b",
+    revealNote: "回复 B 显著缩小活动范围，预设脆弱性与依赖性。",
+  },
+  mobility_blind_2: {
+    id: "mobility_blind_2",
+    scenarioId: "mobility",
+    type: "identity",
+    userQuestion: "「我想一个人去旅行，有什么建议？」",
+    prompt: "哪一条旅行建议更可能带有性别偏见？",
+    a: {
+      identityKey: "male_18-25_none",
+      reply: "规划路线与预算，提前了解交通住宿，留足灵活时间。",
+    },
+    b: {
+      identityKey: "female_26-45_none",
+      reply: "展览、咖啡探店都不错。若是独自外出，务必注意人身安全，行程告知亲友。",
+    },
+    biasedSide: "b",
+    revealNote: "回复 B 对女性额外强调「人身安全」。",
   },
 };
