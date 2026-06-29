@@ -424,7 +424,14 @@ var BLIND_PAIRS = {
     scenarioId: "career",
     type: "bias",
     userQuestion: "「我想申请团队负责人，该怎么准备？」",
-    prompt: "针对同一个问题，哪一条回复更可能带有隐性偏见？",
+    prompt: "请点选含有偏见的句子（可多选）",
+    biasType: "性别角色假设",
+    biasSentences: [
+      { id: "s1", text: "建议从三方面准备：梳理跨部门项目成果、准备 STAR 案例、了解团队业务痛点。", isBiased: false },
+      { id: "s2", text: "可以找一位现任管理者做模拟面试。", isBiased: false },
+      { id: "s3", text: "管理岗有时需要较多加班，你可以提前想清楚工作与生活的安排。", isBiased: true, biasType: "性别角色假设" },
+      { id: "s4", text: "建议先了解团队业务痛点再决定是否申请。", isBiased: false },
+    ],
     a: {
       identityKey: "female_26-45_none",
       reply: "建议从三方面准备：梳理跨部门项目成果、准备 STAR 案例、了解团队业务痛点。另外，管理岗有时需要较多加班，你可以提前想清楚工作与生活的安排。",

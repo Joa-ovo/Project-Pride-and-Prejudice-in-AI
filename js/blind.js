@@ -6,6 +6,17 @@ function getBlindPairsForScenario(scenarioId) {
   return scenario.blindPairs.map(function (id) { return BLIND_PAIRS[id]; }).filter(Boolean);
 }
 
+function getCorrectBiasSentenceIds(sentences) {
+  return sentences.filter(function (s) { return s.isBiased; }).map(function (s) { return s.id; });
+}
+
+function gradeBiasSentenceAnswer(sentences, selectedIds) {
+  var correctIds = getCorrectBiasSentenceIds(sentences);
+  if (!correctIds.length) return { correct: null, correctIds: correctIds };
+  var hasOverlap = selectedIds.some(function (id) { return correctIds.indexOf(id) !== -1; });
+  return { correct: hasOverlap, correctIds: correctIds };
+}
+
 function renderBlindQuestion(container, pair, index, total) {
   container.innerHTML = "";
 
@@ -21,8 +32,31 @@ function renderBlindQuestion(container, pair, index, total) {
 
   var prompt = document.createElement("h3");
   prompt.className = "blind-question";
-  prompt.textContent = pair.prompt;
+  prompt.textContent = pair.type === "bias"
+    ? "请点选含有偏见的句子（可多选）"
+    : pair.prompt;
   container.appendChild(prompt);
+
+  if (pair.type === "bias" && pair.biasSentences && pair.biasSentences.length) {
+    var list = document.createElement("div");
+    list.className = "blind-sentence-list";
+    list.id = "blind-options-area";
+    pair.biasSentences.forEach(function (sentence, idx) {
+      var lbl = document.createElement("label");
+      lbl.className = "blind-sentence-choice";
+      var inp = document.createElement("input");
+      inp.type = "checkbox";
+      inp.name = "blind-sentence";
+      inp.value = sentence.id;
+      var span = document.createElement("span");
+      span.textContent = (idx + 1) + ". " + sentence.text;
+      lbl.appendChild(inp);
+      lbl.appendChild(span);
+      list.appendChild(lbl);
+    });
+    container.appendChild(list);
+    return;
+  }
 
   var compare = document.createElement("div");
   compare.className = "blind-compare";
@@ -90,6 +124,10 @@ function renderBlindQuestion(container, pair, index, total) {
 }
 
 function gradeBlindAnswer(pair, userAnswer) {
+  if (pair.type === "bias" && pair.biasSentences && pair.biasSentences.length) {
+    var selectedIds = Array.isArray(userAnswer) ? userAnswer : [userAnswer];
+    return gradeBiasSentenceAnswer(pair.biasSentences, selectedIds);
+  }
   if (pair.type === "bias") {
     if (userAnswer === "tie" || userAnswer === "unsure") return { correct: null, feedback: "你选择「差不多/不确定」。揭晓后可对照分析。" };
     var correct = userAnswer === pair.biasedSide;
@@ -99,10 +137,10 @@ function gradeBlindAnswer(pair, userAnswer) {
     };
   }
   if (userAnswer === "unsure") return { correct: null, feedback: "揭晓后可对照身份标签。" };
-  var correct = userAnswer === pair.correctSide;
+  var correctSide = userAnswer === pair.correctSide;
   return {
-    correct: correct,
-    feedback: correct ? "你猜对了对应的身份倾向。" : "揭晓后对照两条回复的差异。",
+    correct: correctSide,
+    feedback: correctSide ? "你猜对了对应的身份倾向。" : "揭晓后对照两条回复的差异。",
   };
 }
 
@@ -115,8 +153,18 @@ function renderBlindReveal(container, pair, userAnswer, grade) {
 
   var result = document.createElement("p");
   result.className = "blind-grade";
-  result.textContent = grade.feedback;
+  result.textContent = grade.feedback || (grade.correct ? "你识别出了偏见句。" : "对照标准答案看看差异。");
   container.appendChild(result);
+
+  if (pair.type === "bias" && pair.biasSentences && pair.biasSentences.length) {
+    var biased = pair.biasSentences.filter(function (s) { return s.isBiased; });
+    biased.forEach(function (sentence) {
+      var hit = document.createElement("p");
+      hit.className = "reveal-bias-hit";
+      hit.innerHTML = "偏见句：「" + escapeHtml(sentence.text) + "」→ <strong>" + escapeHtml(sentence.biasType || pair.biasType || "隐性偏见") + "</strong>";
+      container.appendChild(hit);
+    });
+  }
 
   var reveal = document.createElement("div");
   reveal.className = "blind-reveal-grid";

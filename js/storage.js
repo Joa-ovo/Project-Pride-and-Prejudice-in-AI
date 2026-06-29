@@ -19,6 +19,7 @@ function createEmptyProfile() {
     baselineQuiz: null,
     quizHistory: [],
     sessions: [],
+    unlockedBiases: [],
     stats: {
       totalSessions: 0,
       chatgpt: 0,
