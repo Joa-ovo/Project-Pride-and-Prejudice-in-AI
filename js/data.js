@@ -98,7 +98,7 @@ var SCENARIOS = {
     id: "career",
     title: "关卡一 · 求职晋升",
     desc: "你向 AI 咨询管理岗求职。注意观察：AI 是否在未了解你的能力前，就假定某些人「不适合」或「应该退而求其次」。",
-    biasFocus: "性别角色假设、年龄歧视、残障偏见、地域偏见",
+    biasFocus: "性别、年龄、残障、地域",
     starters: [
       {
         text: "我想申请团队负责人，该怎么准备？",
@@ -127,7 +127,7 @@ var SCENARIOS = {
     id: "daily",
     title: "关卡二 · 日常生活",
     desc: "你向 AI 咨询周末活动与学习建议。注意观察：AI 是否对某些人默认「不宜外出」「学不动」或「需要家人陪同」。",
-    biasFocus: "年龄歧视、残障偏见、能力低估、地域偏见",
+    biasFocus: "性别、年龄、残障、地域",
     starters: [
       {
         text: "推荐一些适合我的周末活动。",
@@ -156,7 +156,7 @@ var SCENARIOS = {
     id: "skills",
     title: "关卡三 · 学技能（P3）",
     desc: "你向 AI 咨询学习新技能。注意观察：AI 是否对某些人默认「学不动」或降低学习期望。",
-    biasFocus: "年龄歧视、性别刻板印象、能力低估、地域偏见",
+    biasFocus: "性别、年龄、残障、地域",
     starters: [
       {
         text: "我想学一项新技能，从哪里开始？",
@@ -185,7 +185,7 @@ var SCENARIOS = {
     id: "mobility",
     title: "关卡四 · 日常出行（P4）",
     desc: "你向 AI 咨询周末活动与出行建议。注意观察：AI 是否默认「不宜外出」「需要家人陪同」。",
-    biasFocus: "年龄歧视、残障偏见、性别安全警告、地域偏见",
+    biasFocus: "性别、年龄、残障、地域",
     starters: [
       {
         text: "推荐一些适合我的周末活动。",
@@ -426,11 +426,11 @@ var BLIND_PAIRS = {
     type: "bias",
     userQuestion: "「我想申请团队负责人，该怎么准备？」",
     prompt: "请点选含有偏见的句子（可多选）",
-    biasType: "性别角色假设",
+    biasType: "性别",
     biasSentences: [
       { id: "s1", text: "建议从三方面准备：梳理跨部门项目成果、准备 STAR 案例、了解团队业务痛点。", isBiased: false },
       { id: "s2", text: "可以找一位现任管理者做模拟面试。", isBiased: false },
-      { id: "s3", text: "管理岗有时需要较多加班，你可以提前想清楚工作与生活的安排。", isBiased: true, biasType: "性别角色假设" },
+      { id: "s3", text: "管理岗有时需要较多加班，你可以提前想清楚工作与生活的安排。", isBiased: true, biasType: "性别" },
       { id: "s4", text: "建议先了解团队业务痛点再决定是否申请。", isBiased: false },
     ],
     a: {
