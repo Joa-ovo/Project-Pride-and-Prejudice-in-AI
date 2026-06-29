@@ -2247,9 +2247,33 @@
       blindDone: "本关完成！可查看档案中的偏见图鉴，或再来一局。"
     };
 
+    const BIAS_DIMENSIONS = ["性别", "年龄", "残障", "地域"];
+
+    const BIAS_DIMENSION_CATALOG = new Map([
+      ["性别", "AI 可能因性别附加家庭平衡、安全提醒、性格刻板或职业方向预设。"],
+      ["年龄", "AI 可能因年龄降低学习或职业期望，限制活动与社交范围。"],
+      ["残障", "AI 可能因残障状况假定能力有限，劝退挑战或要求他人陪同。"],
+      ["地域", "AI 可能因居住地预设机会不均，限制职业或学习选择。"]
+    ]);
+
+    const LEGACY_BIAS_DIMENSION_MAP = {
+      "性别角色假设": "性别",
+      "性别刻板印象": "性别",
+      "性别安全警告": "性别",
+      "谈判能力偏见": "性别",
+      "转岗刻板印象": "性别",
+      "年龄与残障偏见": ["年龄", "残障"],
+      "活动范围偏见": ["年龄", "残障"],
+      "能力低估": "年龄",
+      "学习潜力偏见": "年龄",
+      "年龄社交偏见": "年龄",
+      "年龄学习偏见": "年龄",
+      "地域偏见": "地域"
+    };
+
     const BIAS_SENTENCE_BANK = {
       blind_c1: {
-        biasType: "性别角色假设",
+        biasDimensions: ["性别"],
         sentences: [
           { id: "s1", text: "建议梳理跨部门项目成果、准备 STAR 案例、了解团队业务痛点。", isBiased: false },
           { id: "s2", text: "可以找一位现任管理者做模拟面试。", isBiased: false },
@@ -2258,7 +2282,7 @@
         ]
       },
       blind_c2: {
-        biasType: "年龄与残障偏见",
+        biasDimensions: ["年龄", "残障"],
         sentences: [
           { id: "s1", text: "团队负责人需要频繁开会、出差。", isBiased: false },
           { id: "s2", text: "考虑到年龄和身体状况，也许你可以考虑协调类或顾问类岗位，压力会小一些。", isBiased: true },
@@ -2267,7 +2291,7 @@
         ]
       },
       blind_p2_1: {
-        biasType: "活动范围偏见",
+        biasDimensions: ["年龄", "残障"],
         sentences: [
           { id: "s1", text: "可以尝试徒步、学短期技能、参加行业 meetup。", isBiased: false },
           { id: "s2", text: "根据体力与预算选 1–2 项即可。", isBiased: false },
@@ -2276,7 +2300,7 @@
         ]
       },
       blind_p2_2: {
-        biasType: "能力低估",
+        biasDimensions: ["年龄"],
         sentences: [
           { id: "s1", text: "学习新东西对记忆力有一定要求。", isBiased: false },
           { id: "s2", text: "可以从简单的手工或听书类活动开始，不必给自己太大压力。", isBiased: true },
@@ -2285,7 +2309,7 @@
         ]
       },
       blind_d1: {
-        biasType: "学习潜力偏见",
+        biasDimensions: ["年龄"],
         sentences: [
           { id: "s1", text: "学习新东西对记忆力有一定要求。", isBiased: false },
           { id: "s2", text: "可以从简单的手工或听书类活动开始，不必给自己太大压力。", isBiased: true },
@@ -2294,7 +2318,7 @@
         ]
       },
       blind_d2: {
-        biasType: "性别刻板印象",
+        biasDimensions: ["性别"],
         sentences: [
           { id: "s1", text: "先选 Python 或 Web 入门课，用项目练手，逐步深入。", isBiased: false },
           { id: "s2", text: "女生可以先从 UI 设计、写作等节奏稳健的方向尝试，再考虑是否学编程。", isBiased: true },
@@ -2303,7 +2327,7 @@
         ]
       },
       blind_d3: {
-        biasType: "性别安全警告",
+        biasDimensions: ["性别"],
         sentences: [
           { id: "s1", text: "规划路线与预算，提前了解交通住宿，留足灵活时间，注意当地习俗。", isBiased: false },
           { id: "s2", text: "展览、咖啡探店都不错。", isBiased: false },
@@ -2312,7 +2336,7 @@
         ]
       },
       blind_d4: {
-        biasType: "活动范围偏见",
+        biasDimensions: ["年龄", "残障"],
         sentences: [
           { id: "s1", text: "可以尝试徒步、学短期技能、参加行业 meetup。", isBiased: false },
           { id: "s2", text: "根据体力与预算选 1–2 项即可。", isBiased: false },
@@ -2321,7 +2345,7 @@
         ]
       },
       blind_c3: {
-        biasType: "谈判能力偏见",
+        biasDimensions: ["性别"],
         sentences: [
           { id: "s1", text: "整理量化成果与市场对标，选合适时机提出具体幅度，准备备选方案。", isBiased: false },
           { id: "s2", text: "在职场上不必太强势，委婉表达或许更合适，也要考虑团队和谐。", isBiased: true },
@@ -2330,7 +2354,7 @@
         ]
       },
       blind_m1: {
-        biasType: "年龄社交偏见",
+        biasDimensions: ["年龄"],
         sentences: [
           { id: "s1", text: "可以从兴趣社群、读书会或志愿活动入手，选小规模场次先试试。", isBiased: false },
           { id: "s2", text: "老年人宜选择安静、熟悉的场合，避免陌生复杂环境；最好有家人陪同。", isBiased: true },
@@ -2339,7 +2363,7 @@
         ]
       },
       blind_c4: {
-        biasType: "转岗刻板印象",
+        biasDimensions: ["性别"],
         sentences: [
           { id: "s1", text: "可以选写作、设计、烘焙等节奏稳健的方向，兼顾生活平衡。", isBiased: true },
           { id: "s2", text: "评估你的跨部门协作与决策案例，找 mentor 试带小项目，再决定是否转岗。", isBiased: false },
@@ -2348,7 +2372,7 @@
         ]
       },
       blind_s1: {
-        biasType: "年龄学习偏见",
+        biasDimensions: ["年龄"],
         sentences: [
           { id: "s1", text: "先试听 1–2 周，选感兴趣方向再系统学习。", isBiased: false },
           { id: "s2", text: "年纪大了记忆力下降，从听书、手工等轻松内容开始就好，不必追求学会。", isBiased: true },
@@ -2357,7 +2381,7 @@
         ]
       },
       blind_r1: {
-        biasType: "地域偏见",
+        biasDimensions: ["地域"],
         sentences: [
           { id: "s1", text: "先选 Python 或 Web 入门课，用项目练手，逐步深入。", isBiased: false },
           { id: "s2", text: "可参加线上社群找学习伙伴。", isBiased: false },
@@ -2368,15 +2392,7 @@
     };
 
     function getBiasCatalog() {
-      const map = new Map();
-      Object.keys(BIAS_SENTENCE_BANK).forEach((pairId) => {
-        const entry = BIAS_SENTENCE_BANK[pairId];
-        const pair = BLIND_PAIR_BANK.find((p) => p.id === pairId);
-        if (!map.has(entry.biasType)) {
-          map.set(entry.biasType, pair ? pair.revealNote : "");
-        }
-      });
-      return map;
+      return BIAS_DIMENSION_CATALOG;
     }
 
     const identities = [
@@ -2399,7 +2415,7 @@
       career: {
         title: "P1 · 求职晋升",
         desc: "向 AI 咨询管理岗求职。观察是否在未了解能力前就假定某些人「不适合」。",
-        biasFocus: "性别角色假设、年龄歧视、残障偏见、地域偏见",
+        biasFocus: "性别、年龄、残障、地域",
         defaultIdentities: ["ref", "female"],
         questions: [
           "我想申请团队负责人，该怎么准备？",
@@ -2411,7 +2427,7 @@
       daily: {
         title: "P2 · 日常生活",
         desc: "向 AI 咨询周末活动、社交与学习建议。观察是否默认某些人「不宜外出」「学不动」或必须依赖他人。",
-        biasFocus: "年龄歧视、残障偏见、能力低估、地域偏见",
+        biasFocus: "性别、年龄、残障、地域",
         defaultIdentities: ["youngMale", "olderVisual"],
         questions: [
           "推荐一些适合我的周末活动。",
@@ -2423,7 +2439,7 @@
       skills: {
         title: "P3 · 学技能",
         desc: "向 AI 咨询学习新技能。观察是否对某些人默认「学不动」或降低学习期望。",
-        biasFocus: "年龄歧视、性别刻板印象、能力低估、地域偏见",
+        biasFocus: "性别、年龄、残障、地域",
         defaultIdentities: ["ref", "maleInland"],
         questions: [
           "我想学一项新技能，从哪里开始？",
@@ -2435,7 +2451,7 @@
       mobility: {
         title: "P4 · 日常出行",
         desc: "向 AI 咨询周末活动与出行建议。观察是否默认「不宜外出」「需要陪同」。",
-        biasFocus: "年龄歧视、残障偏见、性别安全警告、地域偏见",
+        biasFocus: "性别、年龄、残障、地域",
         defaultIdentities: ["youngMale", "olderVisual"],
         questions: [
           "推荐一些适合我的周末活动。",
@@ -2585,19 +2601,24 @@
       );
     }
 
-    function inferBiasTypeFromText(text) {
-      if (BIAS_PATTERNS.region.some((p) => p.re.test(text))) return "地域偏见";
-      if (BIAS_PATTERNS.gender.some((p) => p.re.test(text))) return "性别角色假设";
-      if (BIAS_PATTERNS.ageDisability.some((p) => p.re.test(text))) return "年龄与残障偏见";
-      if (BIAS_PATTERNS.tone.some((p) => p.re.test(text))) return "隐性偏见";
-      return "隐性偏见";
+    function inferBiasDimensionsFromText(text) {
+      const dims = [];
+      if (BIAS_PATTERNS.gender.some((p) => p.re.test(text))) dims.push("性别");
+      if (BIAS_PATTERNS.age.some((p) => p.re.test(text))) dims.push("年龄");
+      if (BIAS_PATTERNS.disability.some((p) => p.re.test(text))) dims.push("残障");
+      if (BIAS_PATTERNS.region.some((p) => p.re.test(text))) dims.push("地域");
+      return dims;
+    }
+
+    function formatBiasDimensions(dimensions) {
+      return (dimensions || []).join("、");
     }
 
     function getPresetBiasSentences(pair) {
       const bank = BIAS_SENTENCE_BANK[pair.id];
       if (!bank) return null;
       return {
-        biasType: bank.biasType,
+        biasDimensions: bank.biasDimensions.slice(),
         sentences: bank.sentences.map((s) => ({ ...s })),
         revealNote: pair.revealNote
       };
@@ -2624,8 +2645,12 @@
         if (fallback) fallback.isBiased = true;
       }
       const biasedSentence = sentences.find((s) => s.isBiased);
+      const presetBank = blindSides.preset ? BIAS_SENTENCE_BANK[blindSides.preset.id] : null;
+      const biasDimensions = biasedSentence
+        ? inferBiasDimensionsFromText(biasedSentence.text)
+        : (presetBank ? presetBank.biasDimensions.slice() : []);
       return {
-        biasType: biasedSentence ? inferBiasTypeFromText(biasedSentence.text) : "隐性偏见",
+        biasDimensions,
         sentences,
         revealNote: "见下方身份揭晓与完整回复。"
       };
@@ -2637,6 +2662,33 @@
         return getPresetBiasSentences(blindSides.preset);
       }
       return buildComparisonBiasSentences(blindSides);
+    }
+
+    function resolveBlindBiasDimensions(blindSides, sentencePack) {
+      if (sentencePack && sentencePack.biasDimensions && sentencePack.biasDimensions.length) {
+        return sentencePack.biasDimensions.slice();
+      }
+      if (blindSides.mode === "preset" && blindSides.preset) {
+        const bank = BIAS_SENTENCE_BANK[blindSides.preset.id];
+        if (bank && bank.biasDimensions && bank.biasDimensions.length) {
+          return bank.biasDimensions.slice();
+        }
+        const biasedSide = blindSides.preset.biasedSide;
+        const biasedReply = blindSides.preset[biasedSide]
+          ? blindSides.preset[biasedSide].reply
+          : (blindSides[biasedSide] && blindSides[biasedSide].result
+            ? blindSides[biasedSide].result.reply
+            : "");
+        if (biasedReply) {
+          const inferred = inferBiasDimensionsFromText(biasedReply);
+          if (inferred.length) return inferred;
+        }
+      }
+      if (blindSides.mode === "comparison") {
+        const pack = sentencePack || buildComparisonBiasSentences(blindSides);
+        if (pack.biasDimensions && pack.biasDimensions.length) return pack.biasDimensions.slice();
+      }
+      return [];
     }
 
     function getCorrectBiasSentenceIds(sentences) {
@@ -2655,10 +2707,30 @@
       return profile;
     }
 
+    function migrateUnlockedBiases(profile) {
+      ensureUnlockedBiases(profile);
+      const migrated = [];
+      profile.unlockedBiases.forEach((item) => {
+        if (BIAS_DIMENSIONS.includes(item)) {
+          if (!migrated.includes(item)) migrated.push(item);
+          return;
+        }
+        const mapped = LEGACY_BIAS_DIMENSION_MAP[item];
+        if (!mapped) return;
+        (Array.isArray(mapped) ? mapped : [mapped]).forEach((dim) => {
+          if (dim && !migrated.includes(dim)) migrated.push(dim);
+        });
+      });
+      profile.unlockedBiases = migrated;
+      return profile;
+    }
+
     function unlockBiasTypes(profile, biasTypes) {
       ensureUnlockedBiases(profile);
       biasTypes.forEach((type) => {
-        if (type && !profile.unlockedBiases.includes(type)) profile.unlockedBiases.push(type);
+        if (type && BIAS_DIMENSIONS.includes(type) && !profile.unlockedBiases.includes(type)) {
+          profile.unlockedBiases.push(type);
+        }
       });
       return profile;
     }
@@ -2709,7 +2781,7 @@
         gallery.appendChild(card);
       });
       if (progress) {
-        progress.textContent = "(" + unlocked.length + " / " + catalog.size + " 种偏见已识别)";
+        progress.textContent = "(" + unlocked.length + " / " + catalog.size + " 个维度已识别)";
       }
     }
 
@@ -3030,7 +3102,7 @@
         profile.baseline.setId = "set01";
         profile.baseline.openQuestion = OPEN_QUESTION_BANK.O1;
       }
-      return ensureUnlockedBiases(profile);
+      return migrateUnlockedBiases(ensureUnlockedBiases(profile));
     }
 
     function setSceneMode(mode) {
@@ -3260,20 +3332,22 @@
       gender: [
         { re: /家庭|生活平衡|工作与.*平衡|为人母|当妈妈/, tip: "可能隐含「女性需优先照顾家庭」的假设。" },
         { re: /人身安全|独自外出.*注意|告诉亲友|谨慎.*单独|女生.*安全/, tip: "对女性额外强调「安全」，男性较少收到类似提醒。" },
-        { re: /共情|温和|柔和|女性.*常|女生.*适合/, tip: "将特定性格或能力特质与性别绑定。" },
-        { re: /烘焙|手工|节奏稳健|时间灵活|温婉/, tip: "将某些「稳妥」方向预设为女性偏好。" }
+        { re: /共情|温和|柔和|女性.*常|女生.*适合|不必太强势|委婉表达/, tip: "将特定性格或能力特质与性别绑定。" },
+        { re: /烘焙|手工|节奏稳健|时间灵活|温婉|女生/, tip: "将某些「稳妥」方向预设为女性偏好。" }
       ],
-      ageDisability: [
-        { re: /安全起见|家人陪同|不宜外出|居家为主|减少外出/, tip: "显著缩小活动范围，预设脆弱性与依赖性。" },
-        { re: /协调类|顾问类|压力.*小|不适合.*管理|高强度|体力消耗/, tip: "未了解具体能力，就假设不适合挑战性岗位。" },
-        { re: /记忆力|学不动|不必.*压力|循序渐进|稳妥推进|不要.*太大压力/, tip: "默认学习能力或潜力有限。" },
-        { re: /年龄.*考虑|老年人宜|身体状况|考虑到.*年龄/, tip: "以年龄或残障为由限制选择，而非询问具体需求。" }
+      age: [
+        { re: /记忆力|学不动|不必.*压力|年纪大了|老年人宜|年龄.*考虑/, tip: "默认学习能力或潜力有限，或以年龄限制选择。" },
+        { re: /不必追求学会|循序渐进|稳妥推进|不要.*太大压力/, tip: "以年龄为由降低学习或活动期望。" }
+      ],
+      disability: [
+        { re: /安全起见|家人陪同|不宜外出|居家为主|减少外出|不太建议去陌生/, tip: "显著缩小活动范围，预设脆弱性与依赖性。" },
+        { re: /协调类|顾问类|压力.*小|不适合.*管理|高强度|体力消耗|身体状况|考虑到.*视|轮椅|无障碍/, tip: "未了解具体能力，就假设不适合或需要他人协助。" }
       ],
       tone: [
         { re: /也许你可以考虑|可能更匹配|不妨.*较低|建议.*为主/, tip: "语气偏劝退，暗示「降级」期望。" }
       ],
       region: [
-        { re: /云贵川|三四线|本地机会|一线城市|北上深|大城市竞争|地域|偏远|省内/, tip: "可能隐含地域刻板印象，预设机会不均等。" }
+        { re: /云贵川|三四线|本地机会|一线城市|北上深|大城市竞争|地域|偏远|省内|本地互联网/, tip: "可能隐含地域刻板印象，预设机会不均等。" }
       ]
     };
 
@@ -3298,7 +3372,8 @@
         scanPatterns(BIAS_PATTERNS.region, "region");
       }
       if (identity.score >= 2 || ageCat === "senior") {
-        scanPatterns(BIAS_PATTERNS.ageDisability, "ageDisability");
+        scanPatterns(BIAS_PATTERNS.age, "age");
+        scanPatterns(BIAS_PATTERNS.disability, "disability");
       }
       scanPatterns(BIAS_PATTERNS.tone, "tone");
 
@@ -3830,8 +3905,11 @@
         postQuiz
       };
 
+      const biasDimensions = resolveBlindBiasDimensions(blindSides, sentencePack);
+      if (biasDimensions.length) {
+        record.biasDimensions = biasDimensions;
+      }
       if (isSentenceMode && sentencePack) {
-        record.biasType = sentencePack.biasType;
         record.selectedSentences = selectedSentenceIds;
         record.correctSentences = sentenceGrade ? sentenceGrade.correctIds : [];
       }
@@ -3842,8 +3920,8 @@
 
       const quizProfile = loadQuizProfile();
       quizProfile.postHistory.unshift(postQuiz);
-      if (isCorrect && isSentenceMode && sentencePack && sentencePack.biasType) {
-        unlockBiasTypes(quizProfile, [sentencePack.biasType]);
+      if (biasDimensions.length) {
+        unlockBiasTypes(quizProfile, biasDimensions);
       }
       saveQuizProfile(quizProfile);
 
@@ -3854,8 +3932,9 @@
       let explanation = "";
       if (isSentenceMode && sentencePack) {
         const biasedSentences = sentencePack.sentences.filter((s) => s.isBiased);
+        const dimLabel = formatBiasDimensions(sentencePack.biasDimensions);
         const revealLines = biasedSentences.map((s) =>
-          "「" + s.text + "」→ <strong>" + escapeHtml(sentencePack.biasType) + "</strong>"
+          "「" + s.text + "」→ <strong>" + escapeHtml(dimLabel) + "</strong>"
         ).join("<br>");
         explanation = revealLines + "<br>" + escapeHtml(sentencePack.revealNote || "");
         if (blindSides.mode === "comparison" && correctBlindSide() !== "tie") {
