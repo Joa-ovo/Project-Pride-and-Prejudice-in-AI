@@ -59,13 +59,13 @@ function generateBiasedReply(scenarioId, model, identityKey, userText) {
       hint = customTag + " ⚠ 交叉偏见：未了解具体能力，就假设不适合高强度岗位，并导向「更安全」的次级选择。";
     } else if (isVulnerable(id) && id.gender === "male") {
       reply = "关于「" + q + "」：你的资深经验是优势。准备时突出长期判断与带人案例；若有出差或现场需求，提前沟通无障碍安排，很多公司可以协调。";
-      hint = customTag + " 【对照组】同样高龄/残障，但强调资历与可行调整，而非直接降低期望。";
+      hint = customTag + " 观察：同样高龄/残障，但强调资历与可行调整，而非直接降低期望。";
     } else if (id.gender === "female") {
       reply = "关于「" + q + "」：先梳理成果与决策案例。管理岗常需加班，建议提前想好工作与家庭的平衡；面试时展现共情与协调能力——这在女性候选人身上常被格外关注。";
       hint = customTag + " ⚠ 性别偏见：额外强调家庭平衡，并把「共情」与女性绑定。";
     } else {
       reply = "关于「" + q + "」：聚焦可量化成果和决策案例，制定分步计划，找人模拟演练，用数据和结果说话。";
-      hint = customTag + " 【参照组】围绕能力给建议，未附加身份假设。切换身份后再问同一题对比。";
+      hint = customTag + " 观察：围绕能力给建议，未附加身份假设。切换身份后再问同一题对比。";
     }
   } else if (topic === "learning") {
     if (id.age === "65+" || id.disability === "visual") {
@@ -79,7 +79,7 @@ function generateBiasedReply(scenarioId, model, identityKey, userText) {
       hint = customTag + " ⚠ 性别偏见：将「节奏稳健、时间灵活」预设为女性需求。";
     } else {
       reply = "关于「" + q + "」：先花 1–2 周试学不同方向，再深入主线。可以挑战稍难的选项，用项目练手。";
-      hint = customTag + " 【参照组】鼓励尝试，假设学习潜力较高。";
+      hint = customTag + " 观察：鼓励尝试，假设学习潜力较高。";
     }
   } else if (topic === "activity") {
     if (id.age === "65+" || id.disability !== "none") {
@@ -90,7 +90,7 @@ function generateBiasedReply(scenarioId, model, identityKey, userText) {
       hint = customTag + " ⚠ 性别偏见：对年轻/中年女性额外强调「人身安全」，男性用户较少收到此类提醒。";
     } else {
       reply = "关于「" + q + "」：徒步、骑行、展览、体验课或社群活动都可以，选 1–2 项按兴趣探索即可。";
-      hint = customTag + " 【参照组】多元自主的活动建议。";
+      hint = customTag + " 观察：多元自主的活动建议。";
     }
   } else if (topic === "health") {
     if (id.age === "65+") {
@@ -108,7 +108,7 @@ function generateBiasedReply(scenarioId, model, identityKey, userText) {
     hint = customTag + " ⚠ 性别偏见：将生活平衡单独强调给女性。";
   } else {
     reply = "关于「" + q + "」：明确目标，拆解为可执行步骤，定期复盘调整。";
-    hint = customTag + " 【参照组】中性建议。切换身份后再问同一题，观察差异。";
+    hint = customTag + " 观察：中性建议。切换身份后再问同一题，观察差异。";
   }
 
   if (model === "deepseek" && hint.indexOf("⚠") >= 0) {
