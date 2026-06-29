@@ -414,6 +414,49 @@
       color: var(--ribbon);
     }
 
+    .bias-gallery-section {
+      margin: 0.35rem 0 0.55rem;
+    }
+
+    .bias-gallery {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.35rem;
+    }
+
+    .bias-card {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.45);
+      border: 1px solid rgba(139, 105, 20, 0.25);
+      border-radius: 8px;
+      padding: 0.4rem 0.25rem;
+      font-size: 0.72rem;
+      min-height: 3.2rem;
+    }
+
+    .bias-card.locked {
+      color: var(--ink-light);
+      filter: blur(0.4px);
+    }
+
+    .bias-card.locked strong {
+      letter-spacing: 0.12em;
+      color: var(--ink-light);
+    }
+
+    .bias-card.unlocked strong {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--ribbon);
+      margin-bottom: 0.15rem;
+    }
+
+    .bias-card.unlocked p {
+      margin: 0;
+      line-height: 1.35;
+      color: var(--ink-muted);
+    }
+
     .history-list {
       list-style: none;
       margin: 0 0 0.45rem;
@@ -1022,6 +1065,57 @@
       flex-wrap: wrap;
       gap: 0.35rem;
       margin: 0.5rem 0;
+    }
+
+    .blind-sentence-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin: 0.55rem 0;
+    }
+
+    .blind-sentence-choice {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.45rem;
+      font-size: 0.88rem;
+      background: rgba(255, 255, 255, 0.55);
+      border: 1px solid rgba(139, 105, 20, 0.3);
+      border-radius: 10px;
+      padding: 0.45rem 0.55rem;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+      line-height: 1.45;
+    }
+
+    .blind-sentence-choice input {
+      margin-top: 0.2rem;
+      accent-color: var(--ribbon);
+      flex: 0 0 auto;
+    }
+
+    .blind-sentence-choice:has(input:checked),
+    .blind-sentence-choice.is-selected {
+      background: linear-gradient(180deg, #fff6df, #ead7b7);
+      border-color: var(--gold);
+      box-shadow: inset 0 0 0 1px rgba(201, 160, 80, 0.28);
+      color: var(--ribbon);
+      font-weight: 600;
+    }
+
+    .blind-sentence-hint {
+      margin: 0 0 0.35rem;
+      font-size: 0.82rem;
+    }
+
+    .reveal-bias-hit {
+      margin: 0.45rem 0;
+      padding: 0.45rem 0.55rem;
+      background: rgba(201, 123, 138, 0.12);
+      border-left: 3px solid var(--rose);
+      border-radius: 0 8px 8px 0;
+      font-size: 0.88rem;
     }
 
     .choice {
@@ -1668,6 +1762,10 @@
               <div class="archive-stat"><span>最近后测</span><strong id="statPostScore">—</strong></div>
               <div class="archive-stat"><span>变化 Δ</span><strong id="statDelta">—</strong></div>
             </div>
+            <div class="bias-gallery-section">
+              <p class="field-label">偏见图鉴 <span id="biasUnlockProgress"></span></p>
+              <div class="bias-gallery" id="biasGallery"></div>
+            </div>
             <div class="hidden-stats" aria-hidden="true">
               <strong id="statChatGPT">0</strong><strong id="statDeepSeek">0</strong>
             </div>
@@ -1726,15 +1824,17 @@
 
             <div class="blind-panel" id="blindBox">
               <h2>🎯 盲测密室</h2>
-              <p class="muted" id="blindPrompt">下面只显示匿名回复，请选择哪条更可能带有隐性偏见。</p>
+              <p class="muted" id="blindPrompt">下面列出若干候选句，请点选你认为含有偏见的句子（可多选）。</p>
               <p class="muted blind-context" id="blindContext" hidden></p>
               <div class="blind-form-block" id="blindFormBlock">
                 <div class="blind-form-fields">
                   <div class="blind-pedestals compare-grid" id="blindReplies"></div>
-                  <div class="blind-options">
-                    <label class="choice"><input type="radio" name="blindAnswer" value="a" /> A 更有偏见</label>
-                    <label class="choice"><input type="radio" name="blindAnswer" value="b" /> B 更有偏见</label>
-                    <label class="choice"><input type="radio" name="blindAnswer" value="tie" /> 差不多 / 不确定</label>
+                  <p class="muted blind-sentence-hint hidden" id="blindSentenceHint">可多选：只要选中至少一句与标准答案重叠，即算通过。</p>
+                  <div class="blind-sentence-list hidden" id="blindSentenceList"></div>
+                  <div class="blind-options hidden" id="blindIdentityOptions">
+                    <label class="choice"><input type="radio" name="blindAnswer" value="a" /> 回复 A</label>
+                    <label class="choice"><input type="radio" name="blindAnswer" value="b" /> 回复 B</label>
+                    <label class="choice"><input type="radio" name="blindAnswer" value="unsure" /> 无法判断</label>
                   </div>
                   <div class="post-quiz-block" id="postQuizBlock">
                     <h3>④ 偏见觉察后测</h3>
@@ -1931,6 +2031,7 @@
     const BLIND_PAIR_BANK = [
       {
         id: "blind_c1",
+        type: "bias",
         scenarioId: "career",
         scenarioTitle: "P1 · 求职晋升",
         userQuestion: "我想申请团队负责人，该怎么准备？",
@@ -2062,6 +2163,9 @@
         revealNote: "回复 B 直接劝退学习期望，未询问具体目标与能力。"
       }
     ];
+    BLIND_PAIR_BANK.forEach((pair) => {
+      if (!pair.type) pair.type = "bias";
+    });
 
     const OPEN_QUESTION = OPEN_QUESTION_BANK.O1;
 
@@ -2093,9 +2197,132 @@
       research: "先读读研究说明，了解我们在探索什么问题。",
       setup: "请先选定两位身份，再点「生成对比」。",
       compared: "两条回复已就绪～可进入「约束语工坊」练习更公平的问法，或进入盲测密室。",
-      blind: "不看身份，凭直觉选出更有偏见的一条。",
-      blindDone: "本关完成！可查看档案，或再来一局。"
+      blind: "不看身份，点选你认为含有偏见的句子。",
+      blindDone: "本关完成！可查看档案中的偏见图鉴，或再来一局。"
     };
+
+    const BIAS_SENTENCE_BANK = {
+      blind_c1: {
+        biasType: "性别角色假设",
+        sentences: [
+          { id: "s1", text: "建议梳理跨部门项目成果、准备 STAR 案例、了解团队业务痛点。", isBiased: false },
+          { id: "s2", text: "可以找一位现任管理者做模拟面试。", isBiased: false },
+          { id: "s3", text: "管理岗有时需要较多加班，你可以提前想清楚工作与生活的安排。", isBiased: true },
+          { id: "s4", text: "建议先了解团队业务痛点再决定是否申请。", isBiased: false }
+        ]
+      },
+      blind_c2: {
+        biasType: "年龄与残障偏见",
+        sentences: [
+          { id: "s1", text: "团队负责人需要频繁开会、出差。", isBiased: false },
+          { id: "s2", text: "考虑到年龄和身体状况，也许你可以考虑协调类或顾问类岗位，压力会小一些。", isBiased: true },
+          { id: "s3", text: "你的资历可能是优势。", isBiased: false },
+          { id: "s4", text: "准备时突出多年积累的行业判断与带人经验；若涉及出差，可提前说明无障碍需求。", isBiased: false }
+        ]
+      },
+      blind_p2_1: {
+        biasType: "活动范围偏见",
+        sentences: [
+          { id: "s1", text: "可以尝试徒步、学短期技能、参加行业 meetup。", isBiased: false },
+          { id: "s2", text: "根据体力与预算选 1–2 项即可。", isBiased: false },
+          { id: "s3", text: "考虑到视力和年龄，建议以安全、轻松为主：在家听有声书，或让家人陪同在熟悉附近散步。", isBiased: true },
+          { id: "s4", text: "不太建议去陌生复杂场所。", isBiased: true }
+        ]
+      },
+      blind_p2_2: {
+        biasType: "能力低估",
+        sentences: [
+          { id: "s1", text: "学习新东西对记忆力有一定要求。", isBiased: false },
+          { id: "s2", text: "可以从简单的手工或听书类活动开始，不必给自己太大压力。", isBiased: true },
+          { id: "s3", text: "先选方向，用免费资源试学 2 周。", isBiased: false },
+          { id: "s4", text: "可以挑战稍难的选项，用项目练手。", isBiased: false }
+        ]
+      },
+      blind_d1: {
+        biasType: "学习潜力偏见",
+        sentences: [
+          { id: "s1", text: "学习新东西对记忆力有一定要求。", isBiased: false },
+          { id: "s2", text: "可以从简单的手工或听书类活动开始，不必给自己太大压力。", isBiased: true },
+          { id: "s3", text: "先选方向，用免费资源试学 2 周。", isBiased: false },
+          { id: "s4", text: "可以挑战稍难的选项，用项目练手。", isBiased: false }
+        ]
+      },
+      blind_d2: {
+        biasType: "性别刻板印象",
+        sentences: [
+          { id: "s1", text: "先选 Python 或 Web 入门课，用项目练手，逐步深入。", isBiased: false },
+          { id: "s2", text: "女生可以先从 UI 设计、写作等节奏稳健的方向尝试，再考虑是否学编程。", isBiased: true },
+          { id: "s3", text: "选定方向后坚持小项目练手。", isBiased: false },
+          { id: "s4", text: "可以参加线上社群找学习伙伴。", isBiased: false }
+        ]
+      },
+      blind_d3: {
+        biasType: "性别安全警告",
+        sentences: [
+          { id: "s1", text: "规划路线与预算，提前了解交通住宿，留足灵活时间，注意当地习俗。", isBiased: false },
+          { id: "s2", text: "展览、咖啡探店都不错。", isBiased: false },
+          { id: "s3", text: "若是独自外出，务必注意人身安全，行程告知亲友。", isBiased: true },
+          { id: "s4", text: "提前查好无障碍设施与交通。", isBiased: false }
+        ]
+      },
+      blind_d4: {
+        biasType: "活动范围偏见",
+        sentences: [
+          { id: "s1", text: "可以尝试徒步、学短期技能、参加行业 meetup。", isBiased: false },
+          { id: "s2", text: "根据体力与预算选 1–2 项即可。", isBiased: false },
+          { id: "s3", text: "考虑到视力和年龄，建议以安全、轻松为主：在家听有声书，或让家人陪同在熟悉附近散步。", isBiased: true },
+          { id: "s4", text: "不太建议去陌生复杂场所。", isBiased: true }
+        ]
+      },
+      blind_c3: {
+        biasType: "谈判能力偏见",
+        sentences: [
+          { id: "s1", text: "整理量化成果与市场对标，选合适时机提出具体幅度，准备备选方案。", isBiased: false },
+          { id: "s2", text: "在职场上不必太强势，委婉表达或许更合适，也要考虑团队和谐。", isBiased: true },
+          { id: "s3", text: "用数据支撑你的贡献与期望。", isBiased: false },
+          { id: "s4", text: "可以先和 mentor 演练谈薪话术。", isBiased: false }
+        ]
+      },
+      blind_m1: {
+        biasType: "年龄社交偏见",
+        sentences: [
+          { id: "s1", text: "可以从兴趣社群、读书会或志愿活动入手，选小规模场次先试试。", isBiased: false },
+          { id: "s2", text: "老年人宜选择安静、熟悉的场合，避免陌生复杂环境；最好有家人陪同。", isBiased: true },
+          { id: "s3", text: "每周固定参加一次小型活动，逐步扩大圈子。", isBiased: false },
+          { id: "s4", text: "线上社群也是低门槛起点。", isBiased: false }
+        ]
+      },
+      blind_c4: {
+        biasType: "转岗刻板印象",
+        sentences: [
+          { id: "s1", text: "可以选写作、设计、烘焙等节奏稳健的方向，兼顾生活平衡。", isBiased: true },
+          { id: "s2", text: "评估你的跨部门协作与决策案例，找 mentor 试带小项目，再决定是否转岗。", isBiased: false },
+          { id: "s3", text: "梳理你主导过的关键项目成果。", isBiased: false },
+          { id: "s4", text: "与上级沟通你的管理意愿与准备度。", isBiased: false }
+        ]
+      },
+      blind_s1: {
+        biasType: "年龄学习偏见",
+        sentences: [
+          { id: "s1", text: "先试听 1–2 周，选感兴趣方向再系统学习。", isBiased: false },
+          { id: "s2", text: "年纪大了记忆力下降，从听书、手工等轻松内容开始就好，不必追求学会。", isBiased: true },
+          { id: "s3", text: "设定小目标，每周固定学习时段。", isBiased: false },
+          { id: "s4", text: "找同伴互相督促更容易坚持。", isBiased: false }
+        ]
+      }
+    };
+
+    function getBiasCatalog() {
+      const map = new Map();
+      Object.keys(BIAS_SENTENCE_BANK).forEach((pairId) => {
+        const entry = BIAS_SENTENCE_BANK[pairId];
+        const pair = BLIND_PAIR_BANK.find((p) => p.id === pairId);
+        if (!map.has(entry.biasType)) {
+          map.set(entry.biasType, pair ? pair.revealNote : "");
+        }
+      });
+      return map;
+    }
 
     const identities = [
       { id: "ref", label: "参照组", detail: "男性 · 26-45 · 无残疾", score: 0, ageCategory: "adult" },
@@ -2286,6 +2513,147 @@
       const fallback = pool.length ? pool : BLIND_PAIR_BANK;
       const id = takeNextFromQueue(BLIND_QUEUE_KEY + (scenarioId || ""), fallback.map((p) => p.id));
       return fallback.find((p) => p.id === id) || fallback[0];
+    }
+
+    function splitReplySentences(text) {
+      return String(text)
+        .replace(/\n+/g, " ")
+        .split(/(?<=[。！？；])/)
+        .map((s) => s.trim())
+        .filter((s) => s.length > 6);
+    }
+
+    function sentenceMatchesBiasPattern(text) {
+      return Object.values(BIAS_PATTERNS).some((patterns) =>
+        patterns.some((p) => p.re.test(text))
+      );
+    }
+
+    function inferBiasTypeFromText(text) {
+      if (BIAS_PATTERNS.gender.some((p) => p.re.test(text))) return "性别角色假设";
+      if (BIAS_PATTERNS.ageDisability.some((p) => p.re.test(text))) return "年龄与残障偏见";
+      if (BIAS_PATTERNS.tone.some((p) => p.re.test(text))) return "隐性偏见";
+      return "隐性偏见";
+    }
+
+    function getPresetBiasSentences(pair) {
+      const bank = BIAS_SENTENCE_BANK[pair.id];
+      if (!bank) return null;
+      return {
+        biasType: bank.biasType,
+        sentences: bank.sentences.map((s) => ({ ...s })),
+        revealNote: pair.revealNote
+      };
+    }
+
+    function buildComparisonBiasSentences(blindSides) {
+      const biasedSide = correctBlindSide();
+      const sentences = [];
+      let n = 1;
+      ["a", "b"].forEach((side) => {
+        splitReplySentences(blindSides[side].result.reply).forEach((text) => {
+          const sideBiased = side === biasedSide;
+          const hasPattern = sentenceMatchesBiasPattern(text);
+          sentences.push({
+            id: "d" + n++,
+            text,
+            isBiased: sideBiased && (hasPattern || biasedSide !== "tie"),
+            side
+          });
+        });
+      });
+      if (!sentences.some((s) => s.isBiased)) {
+        const fallback = sentences.find((s) => s.side === biasedSide);
+        if (fallback) fallback.isBiased = true;
+      }
+      const biasedSentence = sentences.find((s) => s.isBiased);
+      return {
+        biasType: biasedSentence ? inferBiasTypeFromText(biasedSentence.text) : "隐性偏见",
+        sentences,
+        revealNote: "见下方身份揭晓与完整回复。"
+      };
+    }
+
+    function resolveBlindSentencePack(blindSides) {
+      if (blindSides.mode === "preset") {
+        if (blindSides.preset.type === "identity") return null;
+        return getPresetBiasSentences(blindSides.preset);
+      }
+      return buildComparisonBiasSentences(blindSides);
+    }
+
+    function getCorrectBiasSentenceIds(sentences) {
+      return sentences.filter((s) => s.isBiased).map((s) => s.id);
+    }
+
+    function gradeBiasSentenceAnswer(sentences, selectedIds) {
+      const correctIds = getCorrectBiasSentenceIds(sentences);
+      if (!correctIds.length) return { correct: null, correctIds };
+      const hasOverlap = selectedIds.some((id) => correctIds.includes(id));
+      return { correct: hasOverlap, correctIds };
+    }
+
+    function ensureUnlockedBiases(profile) {
+      if (!Array.isArray(profile.unlockedBiases)) profile.unlockedBiases = [];
+      return profile;
+    }
+
+    function unlockBiasTypes(profile, biasTypes) {
+      ensureUnlockedBiases(profile);
+      biasTypes.forEach((type) => {
+        if (type && !profile.unlockedBiases.includes(type)) profile.unlockedBiases.push(type);
+      });
+      return profile;
+    }
+
+    function renderBlindSentenceOptions(sentences) {
+      const list = $("blindSentenceList");
+      list.innerHTML = "";
+      sentences.forEach((sentence, index) => {
+        const label = document.createElement("label");
+        label.className = "blind-sentence-choice";
+        label.innerHTML =
+          '<input type="checkbox" name="blindSentence" value="' + sentence.id + '" />' +
+          "<span>" + (index + 1) + ". " + escapeHtml(sentence.text) + "</span>";
+        list.appendChild(label);
+      });
+      syncAllChoiceStates(list);
+    }
+
+    function getSelectedBlindSentenceIds() {
+      return Array.from(document.querySelectorAll("input[name='blindSentence']:checked")).map((el) => el.value);
+    }
+
+    function setBlindInputMode(mode) {
+      const isSentence = mode === "sentence";
+      $("blindReplies").classList.toggle("hidden", isSentence);
+      $("blindSentenceList").classList.toggle("hidden", !isSentence);
+      $("blindSentenceHint").classList.toggle("hidden", !isSentence);
+      $("blindIdentityOptions").classList.toggle("hidden", isSentence);
+    }
+
+    function renderBiasGallery() {
+      const gallery = $("biasGallery");
+      const progress = $("biasUnlockProgress");
+      if (!gallery) return;
+      const catalog = getBiasCatalog();
+      const profile = ensureUnlockedBiases(loadQuizProfile());
+      const unlocked = profile.unlockedBiases;
+      gallery.innerHTML = "";
+      catalog.forEach((description, biasType) => {
+        const card = document.createElement("div");
+        const isUnlocked = unlocked.includes(biasType);
+        card.className = "bias-card " + (isUnlocked ? "unlocked" : "locked");
+        if (isUnlocked) {
+          card.innerHTML = "<strong>" + escapeHtml(biasType) + "</strong><p>" + escapeHtml(description) + "</p>";
+        } else {
+          card.innerHTML = "<strong>？？？</strong>";
+        }
+        gallery.appendChild(card);
+      });
+      if (progress) {
+        progress.textContent = "(" + unlocked.length + " / " + catalog.size + " 种偏见已识别)";
+      }
     }
 
     function renderPreQuizForm() {
@@ -2605,7 +2973,7 @@
         profile.baseline.setId = "set01";
         profile.baseline.openQuestion = OPEN_QUESTION_BANK.O1;
       }
-      return profile;
+      return ensureUnlockedBiases(profile);
     }
 
     function setSceneMode(mode) {
@@ -3194,6 +3562,7 @@
       }
 
       let useMarkdown = false;
+      let blindFormat = "sentence";
       if (lastComparison) {
         const resultA = lastComparison.originalResultA || lastComparison.resultA;
         const resultB = lastComparison.originalResultB || lastComparison.resultB;
@@ -3202,31 +3571,44 @@
         blindSides = normalOrder
           ? { mode: "comparison", a: { identity: lastComparison.identityA, result: resultA }, b: { identity: lastComparison.identityB, result: resultB } }
           : { mode: "comparison", a: { identity: lastComparison.identityB, result: resultB }, b: { identity: lastComparison.identityA, result: resultA } };
-        $("blindPrompt").textContent = "下面只显示匿名回复，请选择哪条更可能带有隐性偏见。";
+        $("blindPrompt").textContent = "下面列出若干候选句（来自两段匿名回复），请点选你认为含有偏见的句子（可多选）。";
         $("blindContext").textContent = "用户提问：「" + blindQuestion + "」";
         $("blindContext").hidden = false;
         useMarkdown = isDeepSeekModel(lastComparison.model);
       } else {
         const pair = drawNextBlindPair($("scenario").value);
+        blindFormat = pair.type === "identity" ? "identity" : "sentence";
         const normalOrder = Math.random() > 0.5;
         blindSides = normalOrder
           ? { mode: "preset", preset: pair, a: { result: { reply: pair.a.reply } }, b: { result: { reply: pair.b.reply } } }
           : { mode: "preset", preset: pair, a: { result: { reply: pair.b.reply } }, b: { result: { reply: pair.a.reply } } };
-        $("blindPrompt").textContent = pair.prompt;
+        $("blindPrompt").textContent = blindFormat === "identity"
+          ? pair.prompt
+          : "下面列出若干候选句，请点选你认为含有偏见的句子（可多选）。";
         $("blindContext").textContent = "用户提问：「" + pair.userQuestion + "」";
         $("blindContext").hidden = false;
       }
 
-      $("blindReplies").innerHTML = "";
-      ["a", "b"].forEach((side) => {
-        const article = document.createElement("article");
-        article.className = "reply-card";
-        article.innerHTML =
-          '<p class="reply-meta">匿名回复 ' + side.toUpperCase() + "</p>" +
-          formatReplyHtml(blindSides[side].result.reply, useMarkdown);
-        $("blindReplies").appendChild(article);
-      });
-      document.querySelectorAll("input[name='blindAnswer']").forEach((i) => { i.checked = false; });
+      blindSides.format = blindFormat;
+      if (blindFormat === "sentence") {
+        blindSides.sentencePack = resolveBlindSentencePack(blindSides);
+        setBlindInputMode("sentence");
+        renderBlindSentenceOptions(blindSides.sentencePack.sentences);
+      } else {
+        setBlindInputMode("identity");
+        $("blindReplies").innerHTML = "";
+        ["a", "b"].forEach((side) => {
+          const article = document.createElement("article");
+          article.className = "reply-card";
+          article.innerHTML =
+            '<p class="reply-meta">匿名回复 ' + side.toUpperCase() + "</p>" +
+            formatReplyHtml(blindSides[side].result.reply, useMarkdown);
+          $("blindReplies").appendChild(article);
+        });
+        document.querySelectorAll("input[name='blindAnswer']").forEach((i) => { i.checked = false; });
+      }
+
+      document.querySelectorAll("input[name='blindSentence']").forEach((i) => { i.checked = false; });
       syncAllChoiceStates($("blindFormBlock"));
       $("blindResult").style.display = "none";
       $("blindCompleteActions").classList.add("hidden");
@@ -3275,8 +3657,22 @@
 
     async function submitBlind() {
       if (!blindSides) return;
-      const selected = document.querySelector("input[name='blindAnswer']:checked");
-      if (!selected) { alert("请先选择一个盲测答案。"); return; }
+
+      const isSentenceMode = blindSides.format !== "identity";
+      let selectedSentenceIds = [];
+      let selectedIdentity = null;
+
+      if (isSentenceMode) {
+        selectedSentenceIds = getSelectedBlindSentenceIds();
+        if (!selectedSentenceIds.length) {
+          alert("请至少点选一句你认为含有偏见的句子。");
+          return;
+        }
+      } else {
+        const selected = document.querySelector("input[name='blindAnswer']:checked");
+        if (!selected) { alert("请先选择一个盲测答案。"); return; }
+        selectedIdentity = selected.value;
+      }
 
       const postForm = $("postQuizForm");
       const postQuestions = getBaselineQuizQuestions() || ensurePreQuizSet().questions;
@@ -3298,8 +3694,21 @@
         date: new Date().toISOString()
       };
 
-      const correctSide = correctBlindSide();
-      const isCorrect = selected.value === correctSide || (correctSide === "tie" && selected.value === "tie");
+      let isCorrect = false;
+      let correctSide = null;
+      let sentenceGrade = null;
+      let sentencePack = blindSides.sentencePack;
+
+      if (isSentenceMode) {
+        if (!sentencePack) sentencePack = resolveBlindSentencePack(blindSides);
+        sentenceGrade = gradeBiasSentenceAnswer(sentencePack.sentences, selectedSentenceIds);
+        isCorrect = sentenceGrade.correct === true;
+        correctSide = sentenceGrade.correctIds.join(",");
+      } else {
+        correctSide = correctBlindSide();
+        isCorrect = selectedIdentity === correctSide || (correctSide === "tie" && selectedIdentity === "unsure");
+      }
+
       const record = {
         date: new Date().toISOString(),
         scenario: lastComparison ? scenarioData[lastComparison.scenarioId].title : blindSides.preset.scenarioTitle,
@@ -3307,11 +3716,18 @@
         question: lastComparison ? lastComparison.question : blindSides.preset.userQuestion,
         identityA: lastComparison ? lastComparison.identityA.detail : "—",
         identityB: lastComparison ? lastComparison.identityB.detail : "—",
-        blindAnswer: selected.value,
+        blindFormat: isSentenceMode ? "sentence" : "identity",
+        blindAnswer: isSentenceMode ? selectedSentenceIds : selectedIdentity,
         correctAnswer: correctSide,
         correct: isCorrect,
         postQuiz
       };
+
+      if (isSentenceMode && sentencePack) {
+        record.biasType = sentencePack.biasType;
+        record.selectedSentences = selectedSentenceIds;
+        record.correctSentences = sentenceGrade ? sentenceGrade.correctIds : [];
+      }
 
       const records = loadRecords();
       records.unshift(record);
@@ -3319,21 +3735,37 @@
 
       const quizProfile = loadQuizProfile();
       quizProfile.postHistory.unshift(postQuiz);
+      if (isCorrect && isSentenceMode && sentencePack && sentencePack.biasType) {
+        unlockBiasTypes(quizProfile, [sentencePack.biasType]);
+      }
       saveQuizProfile(quizProfile);
 
       const baseline = quizProfile.baseline;
       const delta = baseline ? postQuiz.score - baseline.score : null;
       const deltaText = delta === null ? "" : " · 相较前测 " + (delta >= 0 ? "+" : "") + delta + " 分";
 
-      let explanation;
-      if (blindSides.mode === "preset") {
+      let explanation = "";
+      if (isSentenceMode && sentencePack) {
+        const biasedSentences = sentencePack.sentences.filter((s) => s.isBiased);
+        const revealLines = biasedSentences.map((s) =>
+          "「" + s.text + "」→ <strong>" + escapeHtml(sentencePack.biasType) + "</strong>"
+        ).join("<br>");
+        explanation = revealLines + "<br>" + escapeHtml(sentencePack.revealNote || "");
+        if (blindSides.mode === "comparison" && correctBlindSide() !== "tie") {
+          const side = correctBlindSide();
+          explanation += "<br>对应身份：" + escapeHtml(blindSides[side].identity.detail) + "。";
+        } else if (blindSides.mode === "preset" && blindSides.preset) {
+          const side = blindSides.preset.biasedSide;
+          explanation += "<br>该偏见句来自匿名回复 " + side.toUpperCase() + "。";
+        }
+      } else if (blindSides.mode === "preset") {
         explanation = isCorrect
           ? blindSides.preset.revealNote
-          : "更有偏见的是匿名回复 " + correctSide.toUpperCase() + "。" + blindSides.preset.revealNote;
+          : "标准答案是回复 " + correctSide.toUpperCase() + "。" + blindSides.preset.revealNote;
       } else if (correctSide === "tie") {
-        explanation = "这组身份偏见风险接近，选「差不多」也合理。";
+        explanation = "这组身份偏见风险接近，选「无法判断」也合理。";
       } else {
-        explanation = "更有偏见的是匿名回复 " + correctSide.toUpperCase() + "，对应身份：" + blindSides[correctSide].identity.detail + "。";
+        explanation = "标准答案是回复 " + correctSide.toUpperCase() + "，对应身份：" + blindSides[correctSide].identity.detail + "。";
       }
 
       const sync = await saveRecordToSupabase(record);
@@ -3342,7 +3774,8 @@
       $("blindResult").innerHTML =
         "<strong>" + (isCorrect ? "🎉 识别正确！本关已完成" : "这次没有选中标准答案。") + "</strong>" +
         "<p>后测分数：" + postQuiz.score + " 分" + deltaText + "</p>" +
-        "<p>" + explanation + "</p><p>" + syncNote + "</p>";
+        (isSentenceMode ? '<div class="reveal-bias-hit">' + explanation + "</div>" : "<p>" + explanation + "</p>") +
+        "<p>" + syncNote + "</p>";
       $("blindResult").style.display = "block";
       $("blindFormBlock").classList.add("is-done");
       $("blindCompleteActions").classList.remove("hidden");
@@ -3427,7 +3860,9 @@
       $("biasTipsBox").style.display = "none";
       $("biasTipsBox").innerHTML = "";
       $("blindReplies").innerHTML = "";
+      $("blindSentenceList").innerHTML = "";
       document.querySelectorAll("input[name='blindAnswer']").forEach((i) => { i.checked = false; });
+      document.querySelectorAll("input[name='blindSentence']").forEach((i) => { i.checked = false; });
       renderPostQuizForm();
       $("blindBtn").disabled = true;
       $("rewriteBtn").disabled = true;
@@ -3471,15 +3906,18 @@
           " · " + record.scenario + " · 后测 " + postScore;
         $("historyList").appendChild(li);
       });
+      renderBiasGallery();
       updateGuideText();
       updateQuizUiState();
     }
 
     function exportRecords() {
+      const quizProfile = loadQuizProfile();
       const payload = {
         exportedAt: new Date().toISOString(),
-        baselineQuiz: loadQuizProfile().baseline,
-        postQuizHistory: loadQuizProfile().postHistory,
+        baselineQuiz: quizProfile.baseline,
+        postQuizHistory: quizProfile.postHistory,
+        unlockedBiases: quizProfile.unlockedBiases || [],
         scoreDelta: getScoreDelta(),
         sessions: loadRecords()
       };
