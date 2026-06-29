@@ -2664,6 +2664,33 @@
       return buildComparisonBiasSentences(blindSides);
     }
 
+    function resolveBlindBiasDimensions(blindSides, sentencePack) {
+      if (sentencePack && sentencePack.biasDimensions && sentencePack.biasDimensions.length) {
+        return sentencePack.biasDimensions.slice();
+      }
+      if (blindSides.mode === "preset" && blindSides.preset) {
+        const bank = BIAS_SENTENCE_BANK[blindSides.preset.id];
+        if (bank && bank.biasDimensions && bank.biasDimensions.length) {
+          return bank.biasDimensions.slice();
+        }
+        const biasedSide = blindSides.preset.biasedSide;
+        const biasedReply = blindSides.preset[biasedSide]
+          ? blindSides.preset[biasedSide].reply
+          : (blindSides[biasedSide] && blindSides[biasedSide].result
+            ? blindSides[biasedSide].result.reply
+            : "");
+        if (biasedReply) {
+          const inferred = inferBiasDimensionsFromText(biasedReply);
+          if (inferred.length) return inferred;
+        }
+      }
+      if (blindSides.mode === "comparison") {
+        const pack = sentencePack || buildComparisonBiasSentences(blindSides);
+        if (pack.biasDimensions && pack.biasDimensions.length) return pack.biasDimensions.slice();
+      }
+      return [];
+    }
+
     function getCorrectBiasSentenceIds(sentences) {
       return sentences.filter((s) => s.isBiased).map((s) => s.id);
     }
@@ -3878,8 +3905,11 @@
         postQuiz
       };
 
+      const biasDimensions = resolveBlindBiasDimensions(blindSides, sentencePack);
+      if (biasDimensions.length) {
+        record.biasDimensions = biasDimensions;
+      }
       if (isSentenceMode && sentencePack) {
-        record.biasDimensions = sentencePack.biasDimensions;
         record.selectedSentences = selectedSentenceIds;
         record.correctSentences = sentenceGrade ? sentenceGrade.correctIds : [];
       }
@@ -3890,8 +3920,8 @@
 
       const quizProfile = loadQuizProfile();
       quizProfile.postHistory.unshift(postQuiz);
-      if (isCorrect && isSentenceMode && sentencePack && sentencePack.biasDimensions && sentencePack.biasDimensions.length) {
-        unlockBiasTypes(quizProfile, sentencePack.biasDimensions);
+      if (biasDimensions.length) {
+        unlockBiasTypes(quizProfile, biasDimensions);
       }
       saveQuizProfile(quizProfile);
 

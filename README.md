@@ -29,6 +29,7 @@
 - `spec.md`：MVP 设计说明
 - `research/`：研究资料（`questions.md`、`sources.md`、`summary.md`、`data/`）
 - `research/idea.html`：早期概念页归档；请从 `index.html` 进入正式体验
+- `midterm.pptx`：中期答辩 PPT（课程交付物，已纳入仓库）
 - `api/chat.js`：Vercel 本地代理（可选）
 
 ## 研究方向
