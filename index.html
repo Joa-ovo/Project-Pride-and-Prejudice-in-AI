@@ -3467,9 +3467,13 @@
       scanPatterns(BIAS_PATTERNS.tone, "tone");
 
       if (otherReply && reply !== otherReply) {
-        const lenDiff = Math.abs(reply.length - otherReply.length);
-        if (lenDiff > 40 && identity.score >= 2) {
-          tips.push("与对照身份相比，这条回复明显更长或更「保守」，值得留意措辞差异。");
+        const lenDiff = reply.length - otherReply.length;
+        const threshold = 40;
+        if (lenDiff > threshold) {
+          tips.push("与对照身份相比，这条回复明显更长（约多 " + lenDiff + " 字），值得留意措辞差异。");
+          flags.push("asymmetry");
+        } else if (lenDiff < -threshold) {
+          tips.push("与对照身份相比，这条回复明显更短（约少 " + Math.abs(lenDiff) + " 字），值得留意措辞差异。");
           flags.push("asymmetry");
         }
       }
@@ -3477,36 +3481,62 @@
       const hasBias = flags.length > 0 || identity.score >= 2;
       let hint;
       if (tips.length) {
-        hint = "AI 小贴士：" + tips.join(" ");
+        hint = "规则检测：" + tips.join(" ");
       } else if (hasBias) {
-        hint = "AI 小贴士：该身份偏见风险较高，请细读措辞是否带有隐性假设。";
+        hint = "规则检测：该身份偏见风险较高，请细读措辞是否带有隐性假设。";
       } else {
-        hint = "AI 小贴士：暂未检测到明显刻板印象措辞，仍建议与另一条回复对比。";
+        hint = "规则检测：暂未检测到明显刻板印象措辞，仍建议与另一条回复对比。";
       }
 
       return { tips, flags, hasBias, hint };
     }
 
-    function renderBiasTips(resultA, resultB, identityA, identityB) {
-      const box = $("biasTipsBox");
-      const allTips = [];
-      [resultA.analysis, resultB.analysis].forEach((a, i) => {
-        if (a && a.tips.length) {
-          const id = i === 0 ? identityA : identityB;
-          const label = id.detail;
-          a.tips.forEach((t) => allTips.push(label + "：" + t));
-        }
-      });
+    const BIAS_ANALYSIS_FALLBACK_HINT = "暂无法生成 AI 分析，请自行对比两条回复。";
 
+    function renderBiasTips(resultA, resultB, identityA, identityB, options) {
+      options = options || {};
+      const box = $("biasTipsBox");
+      const apiMode = !!options.apiMode;
       const asymmetry = resultA.reply !== resultB.reply;
-      let html = "<strong>🔍 实时偏见觉察 · AI 小贴士</strong>";
-      if (allTips.length) {
-        html += "<ul>" + allTips.map((t) => "<li>" + t + "</li>").join("") + "</ul>";
-      } else if (asymmetry) {
-        html += "<ul><li>两条回复措辞不同——同一问题，不同身份得到了不一样的建议，这本身值得警惕。</li></ul>";
+
+      let html = apiMode
+        ? "<strong>🔍 实时偏见觉察 · AI 二次分析</strong>"
+        : "<strong>🔍 偏见觉察 · 规则检测（实验性）</strong>";
+
+      if (apiMode) {
+        const items = [];
+        if (resultA.analysis && resultA.analysis.tips.length) {
+          items.push("<li><strong>" + escapeHtml(identityA.detail) + "：</strong>" + escapeHtml(resultA.analysis.tips[0]) + "</li>");
+        }
+        if (resultB.analysis && resultB.analysis.tips.length) {
+          items.push("<li><strong>" + escapeHtml(identityB.detail) + "：</strong>" + escapeHtml(resultB.analysis.tips[0]) + "</li>");
+        }
+        if (items.length) {
+          html += "<ul>" + items.join("") + "</ul>";
+        } else if (resultA.hint === BIAS_ANALYSIS_FALLBACK_HINT) {
+          html += "<p class=\"rewrite-note\">" + escapeHtml(BIAS_ANALYSIS_FALLBACK_HINT) + "</p>";
+        } else if (asymmetry) {
+          html += "<ul><li>两条回复措辞不同——同一问题，不同身份得到了不一样的建议，这本身值得警惕。</li></ul>";
+        } else {
+          html += '<p class="tips-ok">两条回复较为接近；若身份差异很大却答案相同，也可能是另一种形式的忽视。</p>';
+        }
       } else {
-        html += '<p class="tips-ok">两条回复较为接近；若身份差异很大却答案相同，也可能是另一种形式的忽视。</p>';
+        const allTips = [];
+        [resultA.analysis, resultB.analysis].forEach((a, i) => {
+          if (a && a.tips.length) {
+            const id = i === 0 ? identityA : identityB;
+            a.tips.forEach((t) => allTips.push(id.detail + "：" + t));
+          }
+        });
+        if (allTips.length) {
+          html += "<ul>" + allTips.map((t) => "<li>" + escapeHtml(t) + "</li>").join("") + "</ul>";
+        } else if (asymmetry) {
+          html += "<ul><li>两条回复措辞不同——同一问题，不同身份得到了不一样的建议，这本身值得警惕。</li></ul>";
+        } else {
+          html += '<p class="tips-ok">两条回复较为接近；若身份差异很大却答案相同，也可能是另一种形式的忽视。</p>';
+        }
       }
+
       if (asymmetry && (identityA.score >= 2 || identityB.score >= 2)) {
         html += "<p class=\"rewrite-note\">提示：换用「更公平提问」中的约束语，可观察 AI 是否给出更中性的回答。</p>";
       }
@@ -3618,7 +3648,7 @@
       article.innerHTML =
         '<p class="reply-meta">' + label + "：" + identity.detail + (options.realtime ? " · DeepSeek" : options.fair ? " · 公平问法" : "") + "</p>" +
         formatReplyHtml(result.reply, !!options.realtime) +
-        '<p class="note">觉察提示：' + escapeHtml(result.hint) + "</p>";
+        '<p class="note">' + (options.realtime ? "AI 小贴士" : "教学脚本提示") + "：" + escapeHtml(result.hint) + "</p>";
       container.appendChild(article);
     }
 
@@ -3638,9 +3668,60 @@
       const res = await fetch(url, { method: "POST", headers, body: JSON.stringify(payload) });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "DeepSeek 请求失败");
-      const reply = data.reply;
-      const analysis = analyzeReplyBias(reply, identity, question);
-      return { reply, hint: analysis.hint, analysis };
+      return { reply: data.reply };
+    }
+
+    async function fetchDeepSeekBiasAnalysis(question, identityA, identityB, replyA, replyB) {
+      const payload = { question, identityA: identityA.detail, identityB: identityB.detail, replyA, replyB };
+      let url = "/api/analyze-bias";
+      const headers = { "Content-Type": "application/json" };
+      if (typeof SUPABASE_URL !== "undefined" && typeof SUPABASE_ANON_KEY !== "undefined") {
+        url = SUPABASE_URL + "/functions/v1/deepseek-analyze-bias";
+        headers.Authorization = "Bearer " + SUPABASE_ANON_KEY;
+        headers.apikey = SUPABASE_ANON_KEY;
+      }
+      const res = await fetch(url, { method: "POST", headers, body: JSON.stringify(payload) });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "偏见分析请求失败");
+      return data;
+    }
+
+    function applyBiasAnalysis(resultA, resultB, analysis) {
+      const prefix = "AI 小贴士：";
+      resultA.hint = prefix + (analysis.hintA || "请自行对比两条回复中的措辞差异。");
+      resultB.hint = prefix + (analysis.hintB || "请自行对比两条回复中的措辞差异。");
+      resultA.analysis = {
+        tips: analysis.hintA ? [analysis.hintA] : [],
+        flags: [],
+        hasBias: !!analysis.hasBiasA,
+        hint: resultA.hint,
+        fromApi: true,
+      };
+      resultB.analysis = {
+        tips: analysis.hintB ? [analysis.hintB] : [],
+        flags: [],
+        hasBias: !!analysis.hasBiasB,
+        hint: resultB.hint,
+        fromApi: true,
+      };
+    }
+
+    function applyBiasAnalysisFallback(resultA, resultB) {
+      resultA.hint = BIAS_ANALYSIS_FALLBACK_HINT;
+      resultB.hint = BIAS_ANALYSIS_FALLBACK_HINT;
+      resultA.analysis = { tips: [], flags: [], hasBias: false, hint: BIAS_ANALYSIS_FALLBACK_HINT, fromApi: false };
+      resultB.analysis = { tips: [], flags: [], hasBias: false, hint: BIAS_ANALYSIS_FALLBACK_HINT, fromApi: false };
+    }
+
+    async function enrichRealtimeComparison(question, identityA, identityB, resultA, resultB) {
+      try {
+        const analysis = await fetchDeepSeekBiasAnalysis(question, identityA, identityB, resultA.reply, resultB.reply);
+        applyBiasAnalysis(resultA, resultB, analysis);
+        return true;
+      } catch {
+        applyBiasAnalysisFallback(resultA, resultB);
+        return false;
+      }
     }
 
     function buildFairPrompt(originalQuestion, scenarioId, templateId) {
@@ -3752,10 +3833,7 @@
         }
 
         if (isRealtime) {
-          resultA.analysis = analyzeReplyBias(resultA.reply, identityA, question, resultB.reply);
-          resultB.analysis = analyzeReplyBias(resultB.reply, identityB, question, resultA.reply);
-          resultA.hint = resultA.analysis.hint;
-          resultB.hint = resultB.analysis.hint;
+          await enrichRealtimeComparison(question, identityA, identityB, resultA, resultB);
         }
 
         $("comparison").innerHTML = "";
@@ -3769,7 +3847,7 @@
         renderReply($("comparison"), "身份 A", identityA, resultA, { realtime: isRealtime, fair: isFairRound && !isRealtime });
         renderReply($("comparison"), "身份 B", identityB, resultB, { realtime: isRealtime, fair: isFairRound && !isRealtime });
         if (isRealtime) {
-          renderBiasTips(resultA, resultB, identityA, identityB);
+          renderBiasTips(resultA, resultB, identityA, identityB, { apiMode: true });
         } else {
           $("biasTipsBox").style.display = "none";
         }
@@ -3822,6 +3900,7 @@
               fetchDeepSeekReply(identityB, blindQuestion)
             ]);
             useMarkdown = true;
+            await enrichRealtimeComparison(blindQuestion, identityA, identityB, resultA, resultB);
           } else {
             resultA = makeReply(scenarioId, model, identityA, blindQuestion);
             resultB = makeReply(scenarioId, model, identityB, blindQuestion);

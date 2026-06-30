@@ -40,7 +40,7 @@
 
 **Supabase 字段对照：** 见 [`research/data/supabase-schema.md`](research/data/supabase-schema.md)。
 
-**AI 来源说明：** 默认推荐 DeepSeek 经 Supabase Edge Function 调用；亦可选「教学脚本」预设回复以保证课堂演示稳定。正式收数据时请在论文中明确被试使用的模式，并对照 `research/questions.md` 中的 64 格审计设计。
+**AI 来源说明：** 默认推荐 DeepSeek 经 Supabase Edge Function 生成回复；实时模式下觉察提示由 **二次 DeepSeek 分析**（`deepseek-analyze-bias`）基于当次回复正文生成。亦可选「教学脚本」预设回复与规则检测提示以保证课堂演示稳定。正式收数据时请在论文中明确被试使用的模式，并对照 `research/questions.md` 中的 64 格审计设计。
 
 ## 目录结构
 
