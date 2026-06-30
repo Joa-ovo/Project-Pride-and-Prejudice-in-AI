@@ -3139,6 +3139,9 @@
       profile.baseline = result;
       saveQuizProfile(profile);
       pendingPreQuizSet = null;
+      saveBaselineToSupabase(result).then((sync) => {
+        if (!sync.ok) console.warn("[baseline upload]", sync.reason);
+      });
       $("preQuizDoneMsg").textContent = "前测完成！年龄段：" + participantIdentity.label + "；基线分数 " + result.score + " 分。现在可以开始身份对话了。";
       $("preQuizDoneMsg").classList.remove("hidden");
       updateQuizUiState();
@@ -3908,18 +3911,59 @@
         : "tie";
     }
 
+    function formatBlindAnswerForSupabase(blindAnswer) {
+      if (Array.isArray(blindAnswer)) return blindAnswer.join(",");
+      return blindAnswer == null ? null : String(blindAnswer);
+    }
+
+    function resolveQuizType(record) {
+      if (record.replayMode) return "复玩盲测";
+      if (record.postQuiz) return "盲测+后测";
+      return "盲测";
+    }
+
+    function resolveParticipantIdentityLabel(baseline) {
+      if (!baseline || !baseline.participantIdentity) return null;
+      const id = baseline.participantIdentity;
+      return id.label || id.value || null;
+    }
+
+    async function saveBaselineToSupabase(baseline) {
+      if (!window.supabaseClient) return { ok: false, reason: "未连接 Supabase" };
+      const { error } = await window.supabaseClient.from("session_records").insert({
+        quiz_type: "前测",
+        quiz_score: baseline.score,
+        quiz_answers: baseline.answers,
+        baseline_score: baseline.score,
+        participant_identity: resolveParticipantIdentityLabel(baseline),
+        surprise: ""
+      });
+      return error ? { ok: false, reason: error.message } : { ok: true };
+    }
+
     async function saveRecordToSupabase(record) {
       if (!window.supabaseClient) return { ok: false, reason: "未连接 Supabase" };
       const baseline = loadQuizProfile().baseline;
       const { error } = await window.supabaseClient.from("session_records").insert({
-        scenario: record.scenario, model: record.model, question: record.question,
-        identity_a: record.identityA, identity_b: record.identityB,
-        blind_answer: record.blindAnswer, correct_answer: record.correctAnswer,
+        scenario: record.scenario,
+        model: record.model,
+        question: record.question,
+        identity_a: record.identityA,
+        identity_b: record.identityB,
+        blind_answer: formatBlindAnswerForSupabase(record.blindAnswer),
+        correct_answer: record.correctAnswer,
         correct: record.correct,
+        quiz_type: resolveQuizType(record),
+        quiz_score: record.postQuiz ? record.postQuiz.score : null,
+        quiz_answers: record.postQuiz ? record.postQuiz.answers : null,
         baseline_score: baseline ? baseline.score : null,
         post_quiz_score: record.postQuiz ? record.postQuiz.score : null,
         quiz_delta: record.postQuiz && baseline ? record.postQuiz.score - baseline.score : null,
-        surprise: record.postQuiz ? record.postQuiz.openText || "" : ""
+        surprise: record.postQuiz ? (record.postQuiz.openText || "") : "",
+        bias_dimensions: record.biasDimensions && record.biasDimensions.length ? record.biasDimensions : null,
+        blind_format: record.blindFormat || null,
+        replay_mode: !!record.replayMode,
+        participant_identity: resolveParticipantIdentityLabel(baseline)
       });
       return error ? { ok: false, reason: error.message } : { ok: true };
     }
