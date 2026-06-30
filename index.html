@@ -1872,7 +1872,8 @@
                   </div>
                   <div class="post-quiz-block" id="postQuizBlock">
                     <h3>④ 偏见觉察后测</h3>
-                    <p class="muted">与体验前<strong>完全相同</strong>的 5 道题，请据<strong>此刻</strong>的想法作答。</p>
+                    <p class="muted" id="postQuizReplayHint" hidden>复玩模式 · 你已完成过一次完整流程，本次可跳过后测。</p>
+                    <p class="muted" id="postQuizIntro">与体验前<strong>完全相同</strong>的 5 道题，请据<strong>此刻</strong>的想法作答。</p>
                     <p class="quiz-scale-hint">量表题：1 = 非常不同意，5 = 非常同意。</p>
                     <form id="postQuizForm"></form>
                   </div>
@@ -2242,6 +2243,7 @@
       homeDone: "你已有档案记录啦～可去奖杯室查看，或再玩一局。",
       research: "先读读研究说明，了解我们在探索什么问题。",
       setup: "请先选定两位身份，再点「生成对比」。",
+      setupReady: "前测已完成～可直接进入盲测密室，或先选身份生成对比。",
       compared: "两条回复已就绪～可进入「约束语工坊」练习更公平的问法，或进入盲测密室。",
       blind: "不看身份，点选你认为含有偏见的句子。",
       blindDone: "本关完成！可查看档案中的偏见图鉴，或再来一局。"
@@ -2510,6 +2512,11 @@
       return !!loadQuizProfile().baseline;
     }
 
+    function hasCompletedFullSession() {
+      if (loadQuizProfile().postHistory.length > 0) return true;
+      return loadRecords().some((r) => r.postQuiz && typeof r.postQuiz.score === "number");
+    }
+
     function shuffleArray(arr) {
       const a = arr.slice();
       for (let i = a.length - 1; i > 0; i--) {
@@ -2610,6 +2617,63 @@
       return dims;
     }
 
+    function parseBiasFocusString(focusStr) {
+      if (!focusStr) return [];
+      return focusStr.split(/[、,，\s]+/).filter((d) => BIAS_DIMENSIONS.includes(d));
+    }
+
+    function inferBiasDimensionsFromIdentities(identityA, identityB) {
+      const dims = new Set();
+      [identityA, identityB].forEach((identity) => {
+        if (!identity) return;
+        if (identity.id === "female" || identity.id === "intersection" || identity.id === "olderVisual") {
+          dims.add("性别");
+        }
+        if (identity.region === "inland" || identity.id === "maleInland") {
+          dims.add("地域");
+        }
+        const ageCat = getAgeCategory(identity);
+        if (identity.score >= 2 || ageCat === "senior") {
+          dims.add("年龄");
+          dims.add("残障");
+        }
+      });
+      return Array.from(dims);
+    }
+
+    function getScenarioPresetBiasDimensions(scenarioId) {
+      const dims = new Set();
+      BLIND_PAIR_BANK.filter((p) => p.scenarioId === scenarioId).forEach((pair) => {
+        const bank = BIAS_SENTENCE_BANK[pair.id];
+        if (bank && bank.biasDimensions) {
+          bank.biasDimensions.forEach((d) => dims.add(d));
+        }
+      });
+      return Array.from(dims);
+    }
+
+    function resolveComparisonBiasDimensions(blindSides, biasedSentence) {
+      if (biasedSentence) {
+        const inferred = inferBiasDimensionsFromText(biasedSentence.text);
+        if (inferred.length) return inferred;
+      }
+      const idA = blindSides.a.identity || (lastComparison ? lastComparison.identityA : null);
+      const idB = blindSides.b.identity || (lastComparison ? lastComparison.identityB : null);
+      if (idA && idB) {
+        const fromIds = inferBiasDimensionsFromIdentities(idA, idB);
+        if (fromIds.length) return fromIds;
+      }
+      const scenarioId = lastComparison ? lastComparison.scenarioId : $("scenario").value;
+      const scenario = scenarioData[scenarioId];
+      if (scenario) {
+        const fromFocus = parseBiasFocusString(scenario.biasFocus);
+        if (fromFocus.length) return fromFocus;
+      }
+      const fromPresets = getScenarioPresetBiasDimensions(scenarioId);
+      if (fromPresets.length) return fromPresets;
+      return [];
+    }
+
     function formatBiasDimensions(dimensions) {
       return (dimensions || []).join("、");
     }
@@ -2645,10 +2709,7 @@
         if (fallback) fallback.isBiased = true;
       }
       const biasedSentence = sentences.find((s) => s.isBiased);
-      const presetBank = blindSides.preset ? BIAS_SENTENCE_BANK[blindSides.preset.id] : null;
-      const biasDimensions = biasedSentence
-        ? inferBiasDimensionsFromText(biasedSentence.text)
-        : (presetBank ? presetBank.biasDimensions.slice() : []);
+      const biasDimensions = resolveComparisonBiasDimensions(blindSides, biasedSentence);
       return {
         biasDimensions,
         sentences,
@@ -2687,6 +2748,12 @@
       if (blindSides.mode === "comparison") {
         const pack = sentencePack || buildComparisonBiasSentences(blindSides);
         if (pack.biasDimensions && pack.biasDimensions.length) return pack.biasDimensions.slice();
+        const biasedSide = correctBlindSide();
+        const biasedReply = biasedSide !== "tie" && blindSides[biasedSide]
+          ? blindSides[biasedSide].result.reply
+          : "";
+        const fallback = resolveComparisonBiasDimensions(blindSides, biasedReply ? { text: biasedReply } : null);
+        if (fallback.length) return fallback;
       }
       return [];
     }
@@ -3143,7 +3210,7 @@
           const key = $("blindCompleteActions").classList.contains("hidden") ? "blind" : "blindDone";
           if ($("guideTextBlind")) $("guideTextBlind").textContent = guideMessages[key];
         } else {
-          const key = lastComparison ? "compared" : "setup";
+          const key = lastComparison ? "compared" : (hasBaselineQuiz() ? "setupReady" : "setup");
           if ($("guideTextGame")) $("guideTextGame").textContent = guideMessages[key];
         }
       }
@@ -3166,9 +3233,28 @@
       });
     }
 
+    function updateBlindEntryState() {
+      const canEnter = hasBaselineQuiz();
+      const blindBtn = $("blindBtn");
+      const mapBlind = $("mapBlindRoom");
+      if (blindBtn) blindBtn.disabled = !canEnter;
+      if (mapBlind) mapBlind.disabled = !canEnter;
+    }
+
     function updateMapRooms() {
-      const el = $("mapBlindRoom");
-      if (el) el.disabled = !lastComparison;
+      updateBlindEntryState();
+    }
+
+    function configureBlindPostQuizUi() {
+      const skipPost = hasCompletedFullSession();
+      const block = $("postQuizBlock");
+      const submitBtn = $("submitBlindBtn");
+      const replayHint = $("postQuizReplayHint");
+      if (block) block.classList.toggle("hidden", skipPost);
+      if (submitBtn) {
+        submitBtn.textContent = skipPost ? "提交盲测 · 查看结果" : "提交盲测 + 后测 · 查看结果";
+      }
+      if (replayHint) replayHint.classList.toggle("hidden", !skipPost);
     }
 
     function pickQuote(excludeText) {
@@ -3330,7 +3416,7 @@
 
     const BIAS_PATTERNS = {
       gender: [
-        { re: /家庭|生活平衡|工作与.*平衡|为人母|当妈妈/, tip: "可能隐含「女性需优先照顾家庭」的假设。" },
+        { re: /家庭|生活平衡|工作与.*平衡|工作与生活的安排|为人母|当妈妈|加班.*生活/, tip: "可能隐含「女性需优先照顾家庭」的假设。" },
         { re: /人身安全|独自外出.*注意|告诉亲友|谨慎.*单独|女生.*安全/, tip: "对女性额外强调「安全」，男性较少收到类似提醒。" },
         { re: /共情|温和|柔和|女性.*常|女生.*适合|不必太强势|委婉表达/, tip: "将特定性格或能力特质与性别绑定。" },
         { re: /烘焙|手工|节奏稳健|时间灵活|温婉|女生/, tip: "将某些「稳妥」方向预设为女性偏好。" }
@@ -3795,6 +3881,7 @@
       $("blindResult").style.display = "none";
       $("blindCompleteActions").classList.add("hidden");
       $("blindFormBlock").classList.remove("is-done");
+      configureBlindPostQuizUi();
       setSceneMode("blind");
       switchView("game");
       scrollPanel($("blindBox"));
@@ -3856,25 +3943,29 @@
         selectedIdentity = selected.value;
       }
 
+      const skipPostQuiz = hasCompletedFullSession();
       const postForm = $("postQuizForm");
       const postQuestions = getBaselineQuizQuestions() || ensurePreQuizSet().questions;
-      const postAnswers = collectQuestionnaireAnswers(postForm, postQuestions);
-      const missing = postQuestions.some((q) => !postAnswers[q.id]);
-      if (missing) {
-        alert("请完成下方后测 5 道题（与本关前测相同）。");
-        scrollPanel($("postQuizBlock"));
-        return;
-      }
+      let postQuiz = null;
 
-      const postScored = scoreQuestionnaire(postAnswers, postQuestions);
-      const postQuiz = {
-        score: postScored.score,
-        total: postScored.total,
-        max: postScored.max,
-        answers: postAnswers,
-        openText: getOpenQuestionText(postForm),
-        date: new Date().toISOString()
-      };
+      if (!skipPostQuiz) {
+        const postAnswers = collectQuestionnaireAnswers(postForm, postQuestions);
+        const missing = postQuestions.some((q) => !postAnswers[q.id]);
+        if (missing) {
+          alert("请完成下方后测 5 道题（与本关前测相同）。");
+          scrollPanel($("postQuizBlock"));
+          return;
+        }
+        const postScored = scoreQuestionnaire(postAnswers, postQuestions);
+        postQuiz = {
+          score: postScored.score,
+          total: postScored.total,
+          max: postScored.max,
+          answers: postAnswers,
+          openText: getOpenQuestionText(postForm),
+          date: new Date().toISOString()
+        };
+      }
 
       let isCorrect = false;
       let correctSide = null;
@@ -3902,10 +3993,18 @@
         blindAnswer: isSentenceMode ? selectedSentenceIds : selectedIdentity,
         correctAnswer: correctSide,
         correct: isCorrect,
-        postQuiz
+        postQuiz,
+        replayMode: skipPostQuiz
       };
 
       const biasDimensions = resolveBlindBiasDimensions(blindSides, sentencePack);
+      if (!biasDimensions.length) {
+        console.warn("[submitBlind] biasDimensions empty", {
+          mode: blindSides.mode,
+          scenario: record.scenario,
+          hasComparison: !!lastComparison
+        });
+      }
       if (biasDimensions.length) {
         record.biasDimensions = biasDimensions;
       }
@@ -3919,15 +4018,18 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
 
       const quizProfile = loadQuizProfile();
-      quizProfile.postHistory.unshift(postQuiz);
+      if (postQuiz) quizProfile.postHistory.unshift(postQuiz);
       if (biasDimensions.length) {
         unlockBiasTypes(quizProfile, biasDimensions);
       }
       saveQuizProfile(quizProfile);
 
       const baseline = quizProfile.baseline;
-      const delta = baseline ? postQuiz.score - baseline.score : null;
+      const delta = postQuiz && baseline ? postQuiz.score - baseline.score : null;
       const deltaText = delta === null ? "" : " · 相较前测 " + (delta >= 0 ? "+" : "") + delta + " 分";
+      const postScoreLine = skipPostQuiz
+        ? "<p>复玩模式 · 后测已跳过</p>"
+        : "<p>后测分数：" + postQuiz.score + " 分" + deltaText + "</p>";
 
       let explanation = "";
       if (isSentenceMode && sentencePack) {
@@ -3959,7 +4061,7 @@
 
       $("blindResult").innerHTML =
         "<strong>" + (isCorrect ? "🎉 识别正确！本关已完成" : "这次没有选中标准答案。") + "</strong>" +
-        "<p>后测分数：" + postQuiz.score + " 分" + deltaText + "</p>" +
+        postScoreLine +
         (isSentenceMode ? '<div class="reveal-bias-hit">' + explanation + "</div>" : "<p>" + explanation + "</p>") +
         "<p>" + syncNote + "</p>";
       $("blindResult").style.display = "block";
@@ -4050,7 +4152,7 @@
       document.querySelectorAll("input[name='blindAnswer']").forEach((i) => { i.checked = false; });
       document.querySelectorAll("input[name='blindSentence']").forEach((i) => { i.checked = false; });
       renderPostQuizForm();
-      $("blindBtn").disabled = true;
+      updateBlindEntryState();
       $("rewriteBtn").disabled = true;
       setSceneMode("dialogue");
       updateGuideText();
@@ -4087,14 +4189,15 @@
       records.slice(0, 6).forEach((record) => {
         const li = document.createElement("li");
         const icon = record.correct ? "✅" : "❌";
-        const postScore = record.postQuiz ? record.postQuiz.score : "—";
+        const postLabel = record.replayMode ? "复玩·跳过后测" : (record.postQuiz ? "后测 " + record.postQuiz.score : "—");
         li.textContent = icon + " " + new Date(record.date).toLocaleString("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) +
-          " · " + record.scenario + " · 后测 " + postScore;
+          " · " + record.scenario + " · " + postLabel;
         $("historyList").appendChild(li);
       });
       renderBiasGallery();
       updateGuideText();
       updateQuizUiState();
+      updateBlindEntryState();
     }
 
     function exportRecords() {
@@ -4183,6 +4286,7 @@
       initSectionQuotes();
       updateGuideText();
       updateQuizUiState();
+      updateBlindEntryState();
 
       $("scenario").addEventListener("change", updateScenario);
       $("model").addEventListener("change", updateModelHint);
