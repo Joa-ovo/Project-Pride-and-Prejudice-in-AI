@@ -84,6 +84,69 @@ async function callDeepSeek({ identity, message }) {
   return { reply: reply.trim() };
 }
 
+const ANALYSIS_SYSTEM_PROMPT =
+  "你是 AI 偏见觉察教学助手。用户会提供同一问题下、针对不同身份背景的两条 AI 回复。" +
+  "请仅基于回复正文做对比分析，识别性别/年龄/残障/地域等隐性假设或措辞差异。" +
+  "必须引用回复中的具体措辞；长度比较须说明谁更长/更短及大约字数差。" +
+  "禁止泛泛而谈或使用与正文矛盾的结论。" +
+  '只输出合法 JSON，不要 markdown 代码块：{"hintA":"身份A觉察提示(中文1-2句)","hintB":"身份B觉察提示(中文1-2句)","tips":[],"hasBiasA":boolean,"hasBiasB":boolean}';
+
+async function callDeepSeekBiasAnalysis({ question, identityA, identityB, replyA, replyB }) {
+  const apiKey = process.env.DEEPSEEK_API_KEY;
+  if (!apiKey) {
+    throw new Error("未配置 DEEPSEEK_API_KEY，请在 .env.local 中设置");
+  }
+  if (!question || !replyA || !replyB) {
+    throw new Error("缺少 question / replyA / replyB 字段");
+  }
+
+  const userPrompt =
+    "问题：" + question + "\n\n" +
+    "身份 A：" + (identityA || "未指定") + "\n回复 A：\n" + replyA + "\n\n" +
+    "身份 B：" + (identityB || "未指定") + "\n回复 B：\n" + replyB;
+
+  const upstream = await fetch("https://api.deepseek.com/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + apiKey,
+    },
+    body: JSON.stringify({
+      model: "deepseek-chat",
+      messages: [
+        { role: "system", content: ANALYSIS_SYSTEM_PROMPT },
+        { role: "user", content: userPrompt },
+      ],
+      stream: false,
+      temperature: 0.3,
+      response_format: { type: "json_object" },
+    }),
+  });
+
+  const data = await upstream.json();
+  if (!upstream.ok) {
+    throw new Error(data.error?.message || data.message || "DeepSeek API 请求失败");
+  }
+
+  const raw = data.choices?.[0]?.message?.content;
+  if (!raw) throw new Error("DeepSeek 未返回有效内容");
+
+  let parsed;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    throw new Error("DeepSeek 返回非 JSON 格式");
+  }
+
+  return {
+    hintA: String(parsed.hintA || "").trim(),
+    hintB: String(parsed.hintB || "").trim(),
+    tips: Array.isArray(parsed.tips) ? parsed.tips.map(String) : [],
+    hasBiasA: !!parsed.hasBiasA,
+    hasBiasB: !!parsed.hasBiasB,
+  };
+}
+
 function readBody(req) {
   return new Promise((resolve, reject) => {
     let raw = "";
@@ -120,6 +183,20 @@ const server = http.createServer(async (req, res) => {
       const raw = await readBody(req);
       const body = raw ? JSON.parse(raw) : {};
       const result = await callDeepSeek(body);
+      res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify(result));
+    } catch (err) {
+      res.writeHead(500, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ error: err.message || "服务器错误" }));
+    }
+    return;
+  }
+
+  if (req.method === "POST" && req.url === "/api/analyze-bias") {
+    try {
+      const raw = await readBody(req);
+      const body = raw ? JSON.parse(raw) : {};
+      const result = await callDeepSeekBiasAnalysis(body);
       res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
       res.end(JSON.stringify(result));
     } catch (err) {
